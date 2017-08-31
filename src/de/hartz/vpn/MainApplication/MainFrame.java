@@ -3,6 +3,7 @@ package de.hartz.vpn.MainApplication;
 import de.hartz.vpn.Helper.Helper;
 import de.hartz.vpn.Helper.OpenVPNParserHelper;
 import de.hartz.vpn.Helper.UiHelper;
+import de.hartz.vpn.MainApplication.Server.MetaServer;
 import de.hartz.vpn.Utilities.EasyHtmlComponent;
 import de.hartz.vpn.Utilities.Logger;
 import de.hartz.vpn.Utilities.StatusComponent;
@@ -89,6 +90,13 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         padding.add(statusPanel, BorderLayout.NORTH);
 
         setVisible(true);
+        startVPN();
+    }
+
+    private void startVPN() {
+        if (UserData.isClientInstallation()) {
+            new MetaServer().start();
+        }
         new OpenVPNRunner("server" + Helper.getOpenVPNConfigExtension(), this);
     }
 

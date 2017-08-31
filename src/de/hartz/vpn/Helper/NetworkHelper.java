@@ -1,23 +1,37 @@
 package de.hartz.vpn.Helper;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Enumeration;
 
 /**
  * Created by kaiha on 31.08.2017.
  */
 public class NetworkHelper {
 
-    public class AdvancedEncryptionStandard
+    /**
+     * https://stackoverflow.com/questions/15554296/simple-java-aes-encrypt-decrypt-example
+     */
+    public static class AdvancedEncryptionStandard
     {
         private byte[] key;
 
         private static final String ALGORITHM = "AES";
+
+        private byte[] getDefaultKey() {
+            return "AFHSAksagAOMOLL".getBytes(StandardCharsets.UTF_8);
+        }
+
+        public AdvancedEncryptionStandard() {
+            key = getDefaultKey();
+        }
 
         public AdvancedEncryptionStandard(byte[] key)
         {
@@ -101,5 +115,45 @@ public class NetworkHelper {
                 connection.disconnect();
             }
         }
+    }
+
+    /**
+     * Get the external ip of the device that is connected to the internet.
+     * @return the external ip.
+     */
+    public static String getExternalIp() {
+        try {
+            URL whatIsMyIp = new URL("http://checkip.amazonaws.com");
+            BufferedReader in = new BufferedReader(new InputStreamReader(whatIsMyIp.openStream()));
+            String ip = in.readLine();
+            return ip;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Get a list of all already used ip addresses.
+     * @returns ArrayList of all used ipaddresses.
+     */
+    public static ArrayList<String> getAllUsedIpAddresses() {
+        ArrayList<String> ipaddresses = new ArrayList<>();
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                    String ip = enumIpAddr.nextElement().toString();
+                    // Only ipv4 addresses.
+                    if (ip.contains(".")) {
+                        // remove prefix "/"
+                        ipaddresses.add(ip.substring(1));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ipaddresses;
     }
 }

@@ -6,10 +6,10 @@ import de.hartz.vpn.MainApplication.UserData;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 /**
@@ -21,17 +21,6 @@ public class ExternalIpPanel extends InstallationPanel implements ActionListener
     public ExternalIpPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        URL whatIsMyIp = null;
-        try {
-            whatIsMyIp = new URL("http://checkip.amazonaws.com");
-            BufferedReader in = new BufferedReader(new InputStreamReader(whatIsMyIp.openStream()));
-
-            String ip = in.readLine();
-
-            add(new JLabel(ip));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     // TODO: RENAME

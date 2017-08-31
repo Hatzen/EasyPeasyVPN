@@ -1,5 +1,6 @@
 package de.hartz.vpn.MainApplication.Server;
 
+import de.hartz.vpn.Helper.NetworkHelper;
 import de.hartz.vpn.Helper.OpenVPNHelper;
 import de.hartz.vpn.Helper.Statics;
 
@@ -121,17 +122,25 @@ public class MetaServer extends Thread {
     }
 
     private void sendConfigObject() throws IOException {
+        // TODO: Use encryption here too. But its not so important.
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
         oos.writeObject(new ConfigState());
         oos.flush();
     }
 
     private void sendFile(File file) throws IOException {
-        // TODO: IMPORTANT , ADD ENCRYPTION HERE!!
         byte [] byteArray  = new byte [(int)file.length()];
         fis = new FileInputStream(file);
         bis = new BufferedInputStream(fis);
         bis.read(byteArray,0,byteArray.length);
+
+        NetworkHelper.AdvancedEncryptionStandard aes = new NetworkHelper.AdvancedEncryptionStandard();
+        try {
+            byteArray = aes.encrypt(byteArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         os = socket.getOutputStream();
 
         // Send size, because EOF only will be sent on closing socket.
@@ -143,18 +152,5 @@ public class MetaServer extends Thread {
         os.write(byteArray,0,byteArray.length);
         os.flush();
         System.out.println("Sent");
-        //socket.shutdownOutput();
-
-
-        /*byte[] b = new byte[1024];
-        int len = 0;
-        int bytcount = 1024;
-        FileOutputStream inFile = new FileOutputStream(file);
-        InputStream is = socket.getInputStream();
-        BufferedInputStream in2 = new BufferedInputStream(is, 1024);
-        while ((len = in2.read(b, 0, 1024)) != -1) {
-            bytcount = bytcount + 1024;
-            inFile.write(b, 0, len);
-        }*/
     }
 }

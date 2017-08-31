@@ -1,5 +1,6 @@
 package de.hartz.vpn.Installation.Client;
 
+import de.hartz.vpn.Helper.NetworkHelper;
 import de.hartz.vpn.Helper.OpenVPNHelper;
 import de.hartz.vpn.Helper.Statics;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
@@ -134,9 +135,16 @@ public class MetaClient extends Thread {
         }
 
         // Get bytes.
-        byte[] bytes = new byte[byteCount];
-        is.read(bytes);
-        fos.write(bytes, 0, byteCount);
+        byte[] byteArray = new byte[byteCount];
+        is.read(byteArray);
+
+        NetworkHelper.AdvancedEncryptionStandard aes = new NetworkHelper.AdvancedEncryptionStandard();
+        try {
+            byteArray = aes.decrypt(byteArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        fos.write(byteArray, 0, byteCount);
 
         fos.close();
     }
