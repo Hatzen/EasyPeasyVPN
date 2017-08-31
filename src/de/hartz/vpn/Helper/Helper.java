@@ -1,5 +1,6 @@
 package de.hartz.vpn.Helper;
 
+import de.hartz.vpn.Utilities.Linux;
 import de.hartz.vpn.Utilities.OutputStreamHandler;
 
 import javax.imageio.ImageIO;
@@ -245,6 +246,26 @@ public class Helper {
         }
     }
 
+    @Linux
+    public static boolean hasAPT() {
+        ProcessBuilder pb = new ProcessBuilder("whereis", "apt");
+        pb.redirectErrorStream(true);
+        Process process = null;
+        try {
+            process = pb.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        OutputStreamHandler outputHandler = new OutputStreamHandler(process.getInputStream());
+        outputHandler.start();
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return (outputHandler.getOutput().toString().length() > 0);
+    }
+
     /**
      * https://www.mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
      * @return
@@ -260,5 +281,4 @@ public class Helper {
     public static boolean isLinux() {
         return (OS.contains("nix") || OS.contains("nux") || OS.indexOf("aix") > 0 || isMac());
     }
-
 }

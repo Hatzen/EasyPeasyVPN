@@ -2,11 +2,11 @@ package de.hartz.vpn.Installation;
 
 import de.hartz.vpn.Helper.Helper;
 import de.hartz.vpn.Helper.UserData;
-import de.hartz.vpn.Utilities.OutputStreamHandler;
-import de.hartz.vpn.Utilities.Linux;
-import de.hartz.vpn.Utilities.Windows;
 import de.hartz.vpn.Installation.Server.ConfigOpenVPN;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
+import de.hartz.vpn.Utilities.Linux;
+import de.hartz.vpn.Utilities.OutputStreamHandler;
+import de.hartz.vpn.Utilities.Windows;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,66 +87,10 @@ public class ExpressInstallationPanel extends InstallationPanel {
     private void startLinuxInstallation() {
         try {
             // TODO: Check for different distributions and use their package manager.
-            if (Helper.isLinux()) {
-                ProcessBuilder pb = new ProcessBuilder("apt-get", "update");
-                pb.redirectErrorStream(true);
-                Process process = pb.start();
-                OutputStreamHandler outputHandler = new OutputStreamHandler(process.getInputStream());
-                outputHandler.start();
-                process.waitFor();
-                addLineToOutput(outputHandler.getOutput().toString());
-
-                pb = new ProcessBuilder("apt-get", "--yes", "--force-yes", "install", "openvpn");
-                pb.redirectErrorStream(true);
-                process = pb.start();
-                outputHandler = new OutputStreamHandler(process.getInputStream());
-                outputHandler.start();
-                process.waitFor();
-                addLineToOutput(outputHandler.getOutput().toString());
-                int exitValue = process.exitValue();
-
-                if (exitValue == 0) {
-                    onInstallationSuccess();
-                } else {
-                    addLineToOutput("Error by installation, exitcode: " + exitValue);
-                }
+            if (Helper.hasAPT()) {
+                installViaAPT();
             } else {
-                // TODO: Fix dependency hell, openssl have to be installed too..
-                File source = Helper.getResourceAsFile("resources/installer/openvpn-latest-stable.tar.gz");
-                File dest = new File(Helper.getTempDirectory(), source.getName());
-                String tarFolder = dest.getParent();
-                copyFile(source, dest);
-
-                String[][] commands = {{"tar", "-xzf", dest.getName()}, {"./configure"}, {"make"}, {"make install"}}; //
-                int exitValue = 0;
-                isInstalled = true;
-                for (String[] command : commands) {
-                    System.out.println(Arrays.toString(command));
-                    ProcessBuilder pb = new ProcessBuilder(command);
-                    pb.directory(new File(tarFolder));
-                    pb.redirectErrorStream(true);
-                    Process process = pb.start();
-                    OutputStreamHandler outputHandler = new OutputStreamHandler(process.getInputStream());
-                    outputHandler.start();
-                    process.waitFor();
-                    addLineToOutput(outputHandler.getOutput().toString());
-                    exitValue = process.exitValue();
-                    System.out.println("" + exitValue);
-                    System.out.println("---");
-
-                    if (exitValue != 0) {
-                        isInstalled = false;
-                        addLineToOutput("Error by installation, exitcode: " + exitValue);
-                        break;
-                    }
-                    tarFolder = dest.getParent() + "/" + getTarCreatedFolder(tarFolder) + "/";
-                }
-
-                if (isInstalled) {
-                    onInstallationSuccess();
-                } else {
-                    addLineToOutput("Error by installation, exitcode: " + exitValue);
-                }
+                installOnLinuxWithoutPackageManager();
             }
         } catch (Exception e) {
             addLineToOutput("Error: " + e.getLocalizedMessage());
@@ -154,6 +98,80 @@ public class ExpressInstallationPanel extends InstallationPanel {
         }
         finally {
             Helper.deleteTempDirectory();
+        }
+    }
+
+    @Linux
+    private void installViaAPT() throws Exception {
+        ProcessBuilder pb = new ProcessBuilder("apt-get", "update");
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
+        OutputStreamHandler outputHandler = new OutputStreamHandler(process.getInputStream());
+        outputHandler.start();
+        process.waitFor();
+        addLineToOutput(outputHandler.getOutput().toString());
+
+        pb = new ProcessBuilder("apt-get", "--yes", "--force-yes", "install", "openvpn");
+        pb.redirectErrorStream(true);
+        process = pb.start();
+        outputHandler = new OutputStreamHandler(process.getInputStream());
+        outputHandler.start();
+        process.waitFor();
+        addLineToOutput(outputHandler.getOutput().toString());
+        int exitValue = process.exitValue();
+
+        if (exitValue == 0) {
+            onInstallationSuccess();
+        } else {
+            addLineToOutput("Error by installation, exitcode: " + exitValue);
+        }
+    }
+
+    @Linux
+    private void installOnLinuxWithoutPackageManager() throws Exception {
+        // TODO: Fix dependency hell, openssl have to be installed too..
+        // Currently openvpn is installed, but openssl is missing. So this is quite useless until openssl is added..
+
+        boolean notCompletedYet = true;
+        if (notCompletedYet) {
+            addLineToOutput("Error: Currently only apt is supported on linux. Installation aborted.");
+            return;
+        }
+
+        File source = Helper.getResourceAsFile("resources/installer/openvpn-latest-stable.tar.gz");
+        File dest = new File(Helper.getTempDirectory(), source.getName());
+        String tarFolder = dest.getParent();
+        copyFile(source, dest);
+
+        String[][] commands = {{"tar", "-xzf", dest.getName()}, {"./configure"}, {"make"}, {"make install"}}; //
+        int exitValue = 0;
+        isInstalled = true;
+        for (String[] command : commands) {
+            System.out.println(Arrays.toString(command));
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.directory(new File(tarFolder));
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+            OutputStreamHandler outputHandler = new OutputStreamHandler(process.getInputStream());
+            outputHandler.start();
+            process.waitFor();
+            addLineToOutput(outputHandler.getOutput().toString());
+            exitValue = process.exitValue();
+            System.out.println("" + exitValue);
+            System.out.println("---");
+
+            if (exitValue != 0) {
+                isInstalled = false;
+                addLineToOutput("Error by installation, exitcode: " + exitValue);
+                break;
+            }
+            tarFolder = dest.getParent() + "/" + getTarCreatedFolder(tarFolder) + "/";
+        }
+
+        if (isInstalled) {
+            onInstallationSuccess();
+        } else {
+            addLineToOutput("Error by installation, exitcode: " + exitValue);
         }
     }
 
@@ -208,8 +226,6 @@ public class ExpressInstallationPanel extends InstallationPanel {
         isInstalled = true;
 
         if (UserData.isClientInstallation()) {
-            // TODO: Create "new ConfigOpenVPN" for client. Move cert files etc..
-
             new de.hartz.vpn.Installation.Client.ConfigOpenVPN();
         } else {
             ConfigState configState = new ConfigState();

@@ -14,13 +14,10 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String[] args) {
-        // TODO: If already configurated start mainframe..
-        // TODO: Save config files persistent.
         if (true) {
             new MainFrame();
             return;
         }
-
 
         if ( args.length > 0) {
             if (args.length == 2 && args[0].equals("server") && args[0].equals("express")) {
