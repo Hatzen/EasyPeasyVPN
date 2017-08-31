@@ -1,6 +1,5 @@
 package de.hartz.vpn.Installation.Client;
 
-// TODO: Why this doesnt work? Or at least intellij show erros...
 import de.hartz.vpn.Helper.Helper;
 import de.hartz.vpn.Helper.Statics;
 import de.hartz.vpn.Helper.UserData;
@@ -10,15 +9,13 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import static de.hartz.vpn.MainApplication.Server.SimpleFileServer.*;
+import static de.hartz.vpn.MainApplication.Server.MetaServer.*;
 
 
 /**
- * Created by kaiha on 21.06.2017.
+ * Meta client to get the network config file and the needed certificate.
  */
-
-// TODO: RENAME
-public class SimpleFileClient extends Thread {
+public class MetaClient extends Thread {
 
     interface ClientListener {
         void onError(Exception e);
@@ -40,7 +37,7 @@ public class SimpleFileClient extends Thread {
     private String serverIp;
     private ArrayList<String> commands;
 
-    public SimpleFileClient( ClientListener clientListener ) {
+    public MetaClient(ClientListener clientListener ) {
         this.clientListener = clientListener;
         this.serverIp = UserData.serverIp;
         commands = new ArrayList<>();

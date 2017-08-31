@@ -3,7 +3,7 @@ package de.hartz.vpn.Helper;
 import java.util.ArrayList;
 
 /**
- * Created by kaiha on 02.07.2017.
+ * Class that stores all vpn users.
  */
 public class UserList extends ArrayList<UserList.User> {
 

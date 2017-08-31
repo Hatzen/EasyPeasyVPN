@@ -1,7 +1,7 @@
 package de.hartz.vpn.MainApplication;
 
 /**
- * Created by kaiha on 02.07.2017.
+ * Interface to change the online state of the user.
  */
 public interface NetworkStateInterface {
 

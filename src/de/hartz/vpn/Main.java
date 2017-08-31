@@ -7,6 +7,10 @@ import de.hartz.vpn.MainApplication.MainFrame;
 import java.awt.*;
 import java.util.Arrays;
 
+/**
+ * Main class the program starts with.
+ * Can be started with gui or from console.
+ */
 public class Main {
 
     public static void main(String[] args) {

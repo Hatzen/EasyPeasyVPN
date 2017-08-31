@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by kaiha on 02.07.2017.
+ * A circle that is red or green depending on the boolean online status.
  */
 public class StatusComponent extends JLabel implements ListCellRenderer<String> {
 

@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by kaiha on 09.06.2017.
  * An annotation that indicates that a specific method must be run under the operating system linux.
+ * Equal to {@link Windows}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

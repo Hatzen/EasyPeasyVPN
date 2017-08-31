@@ -1,7 +1,7 @@
 package de.hartz.vpn.Utilities;
 
 /**
- * Created by kaiha on 10.06.2017.
+ * Interface to log.
  */
 public interface Logger {
 

@@ -16,8 +16,6 @@ import java.nio.file.Files;
 import java.util.Arrays;
 
 /**
- * Created by kaiha on 28.05.2017.
- *
  * Class that installs the openvpn adapter.
  *
  * https://examples.javacodegeeks.com/core-java/lang/processbuilder/java-lang-processbuilder-example/

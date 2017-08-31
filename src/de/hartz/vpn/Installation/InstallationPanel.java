@@ -5,9 +5,17 @@ import de.hartz.vpn.Utilities.Logger;
 import javax.swing.*;
 
 /**
- * Created by kaiha on 01.06.2017.
+ * Interface for every installation panel, so it has a predefined behaviour and logger.
  */
-public abstract class InstallationPanel extends JPanel implements PanelInterface, Logger {
+public abstract class InstallationPanel extends JPanel implements Logger {
+
+    public abstract void onSelect();
+
+    /**
+     *
+     * @return boolean indicating whether deselecting is possible.
+     */
+    public abstract boolean onDeselect();
 
     public void addLogLine(String line) {
         System.out.println(line);

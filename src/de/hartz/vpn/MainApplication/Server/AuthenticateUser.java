@@ -3,7 +3,7 @@ package de.hartz.vpn.MainApplication.Server;
 import java.util.HashMap;
 
 /**
- * Created by kaiha on 22.06.2017.
+ * Script to get users authenticated. if needed openvpn will call it.
  */
 public class AuthenticateUser {
 

@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Created by kaiha on 28.05.2017.
+ * The installation controller that can show a given order of panels.
  */
 public class InstallationController {
 

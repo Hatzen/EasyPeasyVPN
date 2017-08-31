@@ -1,7 +1,7 @@
 package de.hartz.vpn.Installation;
 
 import de.hartz.vpn.Helper.UserData;
-import de.hartz.vpn.MainApplication.Server.SimpleFileServer;
+import de.hartz.vpn.MainApplication.Server.MetaServer;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +13,6 @@ import java.net.*;
 import java.util.Enumeration;
 
 /**
- * Created by kaiha on 28.05.2017.
  */
 public class ExternalIpPanel extends InstallationPanel implements ActionListener {
 
@@ -38,7 +37,7 @@ public class ExternalIpPanel extends InstallationPanel implements ActionListener
     // TODO: RENAME
     private void startMediationServer() {
         if (!UserData.isClientInstallation()) {
-            new SimpleFileServer().start();
+            new MetaServer().start();
         }
     }
 

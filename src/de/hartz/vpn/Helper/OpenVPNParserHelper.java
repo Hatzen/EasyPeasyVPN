@@ -1,7 +1,7 @@
 package de.hartz.vpn.Helper;
 
 /**
- * Created by kaiha on 02.07.2017.
+ * Class that contains functions to get specific informations from a logline of the OpenVPN stdout.
  */
 public class OpenVPNParserHelper {
 

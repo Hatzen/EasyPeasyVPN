@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.util.Scanner;
 
 /**
- * Created by kaiha on 03.06.2017.
  * Class that handles the output of a process or similar.
  * The term of input and output switches from this perspective.
  */

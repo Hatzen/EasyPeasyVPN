@@ -17,7 +17,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by kaiha on 01.07.2017.
+ * The main frame of the client. It displays the current vpn connection.
+ * And can start a server or connect to an existing one.
  */
 public class MainFrame extends JFrame implements ActionListener, Logger, NetworkStateInterface {
     private final int STATUS_HEIGHT = 50;

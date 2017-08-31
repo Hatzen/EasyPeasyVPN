@@ -5,7 +5,7 @@ import de.hartz.vpn.MainApplication.Server.ConfigState;
 import java.io.Serializable;
 
 /**
- * Created by kaiha on 02.07.2017.
+ * Hold the data for the current session of this user.
  */
 public class UserData implements Serializable{
 

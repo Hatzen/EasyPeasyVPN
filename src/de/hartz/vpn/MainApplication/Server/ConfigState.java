@@ -3,7 +3,7 @@ package de.hartz.vpn.MainApplication.Server;
 import java.io.Serializable;
 
 /**
- * Created by kaiha on 02.06.2017.
+ * Configfile that represents the configuration of a network. Used by client and server.
  */
 public class ConfigState implements Serializable {
 

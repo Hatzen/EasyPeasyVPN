@@ -9,9 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by kaiha on 20.06.2017.
+ * Panel that connects a client to a network.
  */
-public class ConnectToServerPanel extends InstallationPanel implements SimpleFileClient.ClientListener {
+public class ConnectToServerPanel extends InstallationPanel implements MetaClient.ClientListener {
 
     private JTextField serverAddress;
     private boolean successfullConnected = false;
@@ -40,7 +40,7 @@ public class ConnectToServerPanel extends InstallationPanel implements SimpleFil
     public boolean onDeselect() {
         if (!successfullConnected) {
             UserData.serverIp = serverAddress.getText();
-            new SimpleFileClient(this).start();
+            new MetaClient(this).start();
         }
         return false;
     }

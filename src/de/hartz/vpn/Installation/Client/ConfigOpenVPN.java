@@ -9,7 +9,7 @@ import java.io.*;
 import static de.hartz.vpn.Installation.Server.ConfigOpenVPN.*;
 
 /**
- * Created by kaiha on 21.06.2017.
+ * Class that writes the needed openvpn config file.
  */
 public class ConfigOpenVPN {
 

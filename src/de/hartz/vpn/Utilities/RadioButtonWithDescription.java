@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 /**
- * Created by kaiha on 20.06.2017.
+ * GUI class to be able to have title and description to an radio button.
  */
 public class RadioButtonWithDescription extends JPanel {
 

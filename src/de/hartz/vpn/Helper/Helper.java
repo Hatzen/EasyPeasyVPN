@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.prefs.Preferences;
 
 /**
- * Created by kaiha on 02.06.2017.
  * Helper Class that contains static methods that are needed in different classes.
  */
 public class Helper {
@@ -101,26 +100,6 @@ public class Helper {
     public static String getOpenVPNInstallationPath() {
         if (Helper.isWindows()) {
             String findValue = "OpenVPN";
-
-            // TODO: Remove this? This does not always work. Regedit works always..
-            /*
-            // [TODO: Replace backslashes with slashes or vise versa.]
-            // https://stackoverflow.com/questions/10434065/how-to-retrieve-the-modified-value-of-an-environment-variable-which-is-modified
-            // This should work on most machines, but dont have to.
-            Map<String, String> env = System.getenv();
-            for (String envName : env.keySet()) {
-                String value = env.get(envName);
-                if (envName.contains(findValue) || value.contains(findValue) ) {
-                    int indexOfFindValue = value.indexOf(findValue);
-                    // if it should be bin path..  value.indexOf(";", indexOfFindValue)
-                    String path = value.substring( value.lastIndexOf(";" ,indexOfFindValue)+1, indexOfFindValue + findValue.length() );
-                    if (path.charAt(path.length()-1) != File.separator.charAt(0)) {
-                        path += File.separator;
-                    }
-                    return path;
-                }
-            }
-            */
 
             // After installations getenv() returns old values, missing openvpn...
             // HACK AROUND THIS;

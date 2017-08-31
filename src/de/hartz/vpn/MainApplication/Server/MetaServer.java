@@ -8,11 +8,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * Created by kaiha on 21.06.2017.
- * http://www.rgagnon.com/javadetails/java-0542.html
+ * This class represents a meta server that handles the exchange of the necessary config and certificates to get
+ * communication working.
+ * Based on http://www.rgagnon.com/javadetails/java-0542.html
  */
-// TODO: RENAME
-public class SimpleFileServer extends Thread {
+public class MetaServer extends Thread {
 
     private static final String CONFIG_FOLDER = Helper.getOpenVPNInstallationPath() + "easy-rsa\\keys\\";
 
@@ -34,7 +34,7 @@ public class SimpleFileServer extends Thread {
     private String filePathCert;
     private String filePathKey;
 
-    public SimpleFileServer() {
+    public MetaServer() {
 
     }
 

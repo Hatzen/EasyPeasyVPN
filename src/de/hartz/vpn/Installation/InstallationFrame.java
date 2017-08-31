@@ -4,14 +4,14 @@ import de.hartz.vpn.Helper.Helper;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
- * Created by kaiha on 28.05.2017.
+ * The gui for the {@link InstallationController}.
  */
 public class InstallationFrame extends JFrame implements ActionListener {
 

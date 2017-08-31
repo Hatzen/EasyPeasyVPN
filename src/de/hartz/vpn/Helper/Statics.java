@@ -1,7 +1,7 @@
 package de.hartz.vpn.Helper;
 
 /**
- * Created by kaiha on 02.07.2017.
+ * Global and statics variables that are needed  often at different locations.
  */
 public final class Statics {
 

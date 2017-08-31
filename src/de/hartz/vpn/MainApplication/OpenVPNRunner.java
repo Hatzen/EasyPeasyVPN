@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by kaiha on 02.07.2017.
+ * This class executes a openvpn process with a given config file.
  */
 public class OpenVPNRunner extends Thread {
     private String configName;

@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by kaiha on 20.06.2017.
+ * TODO: Remove.
  */
 public class ClientOrServerPanel extends InstallationPanel implements ActionListener {
 
