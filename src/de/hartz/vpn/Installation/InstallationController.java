@@ -73,18 +73,7 @@ public class InstallationController {
      * @param currentPanel The current panel on which the next button was clicked.
      */
     public void onNextClick(InstallationPanel currentPanel) {
-        if (currentPanel instanceof ClientOrServerPanel) {
-            currentPanelOrder.clear();
-            if (((ClientOrServerPanel) currentPanel).isClientInstallation()) {
-                currentPanelOrder.addAll(clientPanelOrder);
-                System.out.println("Client installation");
-                UserData.clientInstallation = true;
-            } else {
-                System.out.println("Server installation");
-                currentPanelOrder.addAll(expressPanelOrder);
-                UserData.clientInstallation = false;
-            }
-        } else if (currentPanel instanceof StartPanel) {
+        if (currentPanel instanceof StartPanel) {
             currentPanelOrder.clear();
             if (((StartPanel) currentPanel).isExpressInstallation()) {
                 currentPanelOrder.addAll(expressPanelOrder);
@@ -126,11 +115,25 @@ public class InstallationController {
      * Starts the installation process.
      * @param showGUI Boolean indicating whether the application is started via console.
      */
-    public void startInstallation(boolean showGUI) {
+    public void startInstallation(boolean showGUI, boolean client) {
         hasGUI = showGUI;
         if (showGUI) {
             // TODO: GUI doesnt react some time. Because of extracting files etc.. Create loading screen. Also might be initalization of all the panels!!
             initGUI();
+
+            if(client) {
+                System.out.println("Client installation");
+                currentPanelOrder.clear();
+                currentPanelOrder.addAll(clientPanelOrder);
+                UserData.clientInstallation = true;
+            } else {
+                System.out.println("Server installation");
+                currentPanelOrder.clear();
+                currentPanelOrder.addAll(expressPanelOrder);
+                UserData.clientInstallation = false;
+            }
+
+
             showPanel(0);
         } else {
             drawLogoWithoutGUI();
@@ -179,22 +182,18 @@ public class InstallationController {
         mainFrame = new InstallationFrame("Installation");
         mainFrame.setVisible(true);
 
-        ClientOrServerPanel clientOrServerPanel = new ClientOrServerPanel();
         InstallationPanel startPanel = new StartPanel();
 
         // ClientPanels
-        clientPanelOrder.add(clientOrServerPanel);
         clientPanelOrder.add(new ConnectToServerPanel());
         clientPanelOrder.add(new ExternalIpPanel());
 
         // ExpressServer Panels
-        expressPanelOrder.add(clientOrServerPanel);
         expressPanelOrder.add(startPanel);
         expressPanelOrder.add(new ExpressInstallationPanel());
         expressPanelOrder.add(new ExternalIpPanel());
 
         // CustomServer panels
-        customPanelOrder.add(clientOrServerPanel);
         customPanelOrder.add(startPanel);
         customPanelOrder.add(new ChoosePerformancePanel());
         customPanelOrder.add(new ChooseNetworkType());
@@ -205,9 +204,6 @@ public class InstallationController {
         // Mediation Server
             // How to forward ips / access router
         // "How secure/ fast is this" panel
-
-
-        currentPanelOrder.addAll(clientPanelOrder);
     }
 
     private void showPanel(int index) {

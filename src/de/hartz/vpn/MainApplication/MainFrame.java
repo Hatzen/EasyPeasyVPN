@@ -3,6 +3,7 @@ package de.hartz.vpn.MainApplication;
 import de.hartz.vpn.Helper.Helper;
 import de.hartz.vpn.Helper.OpenVPNParserHelper;
 import de.hartz.vpn.Helper.UiHelper;
+import de.hartz.vpn.Installation.InstallationController;
 import de.hartz.vpn.MainApplication.Server.MetaServer;
 import de.hartz.vpn.Utilities.EasyHtmlComponent;
 import de.hartz.vpn.Utilities.Logger;
@@ -90,7 +91,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         padding.add(statusPanel, BorderLayout.NORTH);
 
         setVisible(true);
-        startVPN();
+        //startVPN();
     }
 
     private void startVPN() {
@@ -170,9 +171,9 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == createNetworkItem) {
-
+            InstallationController.getInstance().startInstallation(true, false);
         } else if (actionEvent.getSource() == joinNetworkItem) {
-
+            InstallationController.getInstance().startInstallation(true, true);
         } else if (actionEvent.getSource() == aboutItem) {
             JOptionPane.showMessageDialog(this,
                     new EasyHtmlComponent("EasyPeasyVPN <br> Contribute under: <a href=\"https://github.com/Hatzen/EasyPeasyVPN\">https://github.com/Hatzen/EasyPeasyVPN</a>"));

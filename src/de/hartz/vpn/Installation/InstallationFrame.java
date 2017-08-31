@@ -23,7 +23,7 @@ public class InstallationFrame extends JFrame implements ActionListener {
         setMinimumSize(new Dimension(500,500));
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         UiHelper.setLookAndFeelAndIcon(this);
 
