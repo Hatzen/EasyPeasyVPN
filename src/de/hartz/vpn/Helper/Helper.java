@@ -2,6 +2,7 @@ package de.hartz.vpn.Helper;
 
 import de.hartz.vpn.Utilities.OutputStreamHandler;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -36,6 +37,21 @@ public class Helper {
         JDialog dialog = optionPane.createDialog("Error");
         dialog.setAlwaysOnTop(true);
         dialog.setVisible(true);
+    }
+
+    public static void setLookAndFeelAndIcon(JFrame frame) {
+        try {
+            File file = Helper.getResourceAsFile("resources/icon.png");
+            Image image = ImageIO.read( file );
+            frame.setIconImage(image);
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
+        }
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

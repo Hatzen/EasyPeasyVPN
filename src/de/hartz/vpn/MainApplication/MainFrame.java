@@ -44,20 +44,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         initTray();
-
-        // TODO: Move icon and look and feel to central position (use here and in installation frame).
-        try {
-            File file = Helper.getResourceAsFile("resources/icon.png");
-            Image image = ImageIO.read( file );
-            setIconImage(image);
-        } catch (IOException | NullPointerException e) {
-            e.printStackTrace();
-        }
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        Helper.setLookAndFeelAndIcon(this);
         initMenuBar();
 
         // Overview tab.

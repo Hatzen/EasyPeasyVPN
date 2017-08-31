@@ -130,11 +130,6 @@ public class InstallationController {
         hasGUI = showGUI;
         if (showGUI) {
             // TODO: GUI doesnt react some time. Because of extracting files etc.. Create loading screen. Also might be initalization of all the panels!!
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
             initGUI();
             showPanel(0);
         } else {

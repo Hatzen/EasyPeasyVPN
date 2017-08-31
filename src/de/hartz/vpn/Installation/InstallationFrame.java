@@ -2,13 +2,10 @@ package de.hartz.vpn.Installation;
 
 import de.hartz.vpn.Helper.Helper;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * The gui for the {@link InstallationController}.
@@ -27,13 +24,8 @@ public class InstallationFrame extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        try {
-            File file = Helper.getResourceAsFile("resources/icon.png");
-            Image image = ImageIO.read( file );
-            setIconImage(image);
-        } catch (IOException | NullPointerException e) {
-            e.printStackTrace();
-        }
+
+        Helper.setLookAndFeelAndIcon(this);
 
         JPanel navigation = new JPanel();
         navigation.setLayout(new BorderLayout());
