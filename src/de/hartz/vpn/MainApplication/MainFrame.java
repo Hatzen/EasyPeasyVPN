@@ -5,6 +5,7 @@ import de.hartz.vpn.Helper.OpenVPNParserHelper;
 import de.hartz.vpn.Helper.UserData;
 import de.hartz.vpn.Helper.UserList;
 import de.hartz.vpn.Utilities.Logger;
+import de.hartz.vpn.Utilities.EasyHtmlComponent;
 import de.hartz.vpn.Utilities.StatusComponent;
 
 import javax.imageio.ImageIO;
@@ -15,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * The main frame of the client. It displays the current vpn connection.
@@ -28,6 +30,11 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     private StatusComponent ownStatus;
     private JTabbedPane content;
     private JTextArea outputTextArea;
+
+    private JMenuItem aboutItem;
+    private JMenuItem manualItem;
+    private JMenuItem createNetworkItem;
+    private JMenuItem joinNetworkItem;
 
     public MainFrame() {
         setTitle("EasyPeasy");
@@ -51,6 +58,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
+        initMenuBar();
 
         // Overview tab.
         content = new JTabbedPane();
@@ -98,6 +106,27 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         new OpenVPNRunner("server" + Helper.getOpenVPNConfigExtension(), this);
     }
 
+    private void initMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu networkMenu = new JMenu("Network");
+        JMenu helpMenu = new JMenu("Help");
+        createNetworkItem = new JMenuItem("Create");
+        createNetworkItem.addActionListener(this);
+        joinNetworkItem = new JMenuItem("Join");
+        joinNetworkItem.addActionListener(this);
+        aboutItem = new JMenuItem("About");
+        aboutItem.addActionListener(this);
+        manualItem = new JMenuItem("Manual");
+        manualItem.addActionListener(this);
+        add(menuBar,  BorderLayout.NORTH);
+        menuBar.add(networkMenu);
+            networkMenu.add(createNetworkItem);
+            networkMenu.add(joinNetworkItem);
+        menuBar.add(helpMenu);
+            helpMenu.add(manualItem);
+            helpMenu.add(aboutItem);
+    }
+
     private void initTray() {
         TrayIcon trayIcon = null;
         if (SystemTray.isSupported()) {
@@ -111,13 +140,10 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             }
             PopupMenu popup = new PopupMenu();
             final MenuItem openItem = new MenuItem("Open");
-            final MenuItem aboutItem = new MenuItem("About");
             final MenuItem exitItem = new MenuItem("Exit");
             ActionListener listener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    if (e.getSource() == aboutItem) {
-
-                    } else if (e.getSource() == exitItem) {
+                    if (e.getSource() == exitItem) {
                         System.exit(0);
                     } else { // Source == openItem
                         setVisible(true);
@@ -125,10 +151,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
                 }
             };
             openItem.addActionListener(listener);
-            aboutItem.addActionListener(listener);
             exitItem.addActionListener(listener);
             popup.add(openItem);
-            popup.add(aboutItem);
             popup.add(exitItem);
             trayIcon = new TrayIcon(image, "EasyPeasyVPN", popup);
             trayIcon.setImageAutoSize(true);
@@ -151,7 +175,18 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource() == createNetworkItem) {
 
+        } else if (actionEvent.getSource() == joinNetworkItem) {
+
+        } else if (actionEvent.getSource() == aboutItem) {
+            JOptionPane.showMessageDialog(this,
+                    new EasyHtmlComponent("EasyPeasyVPN <br> Contribute under: <a href=\"https://github.com/Hatzen/EasyPeasyVPN\">https://github.com/Hatzen/EasyPeasyVPN</a>"));
+        } else if (actionEvent.getSource() == manualItem) {
+            try {
+                EasyHtmlComponent.openURLInBrowser(new URL("https://github.com/Hatzen/EasyPeasyVPN/wiki"));
+            } catch (Exception e) {}
+        }
     }
 
     @Override
