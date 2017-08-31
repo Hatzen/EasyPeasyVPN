@@ -2,10 +2,9 @@ package de.hartz.vpn.MainApplication;
 
 import de.hartz.vpn.Helper.Helper;
 import de.hartz.vpn.Helper.OpenVPNParserHelper;
-import de.hartz.vpn.Helper.UserData;
-import de.hartz.vpn.Helper.UserList;
-import de.hartz.vpn.Utilities.Logger;
+import de.hartz.vpn.Helper.UiHelper;
 import de.hartz.vpn.Utilities.EasyHtmlComponent;
+import de.hartz.vpn.Utilities.Logger;
 import de.hartz.vpn.Utilities.StatusComponent;
 
 import javax.imageio.ImageIO;
@@ -44,7 +43,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         initTray();
-        Helper.setLookAndFeelAndIcon(this);
+        UiHelper.setLookAndFeelAndIcon(this);
         initMenuBar();
 
         // Overview tab.

@@ -3,15 +3,11 @@ package de.hartz.vpn.Helper;
 import de.hartz.vpn.Utilities.Linux;
 import de.hartz.vpn.Utilities.OutputStreamHandler;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 import java.util.prefs.Preferences;
 
 /**
@@ -19,41 +15,8 @@ import java.util.prefs.Preferences;
  */
 public class Helper {
 
-    //TODO: If possible get rid off..
-    // @Windows
-    public static String openVPNBinPath;
-
     private static String OS = System.getProperty("os.name").toLowerCase();
     private static File TEMP_FOLDER;
-
-    /**
-     * Shows an error window to inform the user.
-     * https://stackoverflow.com/questions/9119481/how-to-present-a-simple-alert-message-in-java
-     * @param text The text that will be displayed in the window.
-     */
-    public static void showAlert(String text) {
-        // TODO: Respect show gui and maybe write it to the console.
-        Toolkit.getDefaultToolkit().beep();
-        JOptionPane optionPane = new JOptionPane(text,JOptionPane.ERROR_MESSAGE);
-        JDialog dialog = optionPane.createDialog("Error");
-        dialog.setAlwaysOnTop(true);
-        dialog.setVisible(true);
-    }
-
-    public static void setLookAndFeelAndIcon(JFrame frame) {
-        try {
-            File file = Helper.getResourceAsFile("resources/icon.png");
-            Image image = ImageIO.read( file );
-            frame.setIconImage(image);
-        } catch (IOException | NullPointerException e) {
-            e.printStackTrace();
-        }
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * @returns the platform depended file extension for the config files, to start openvpn.
@@ -107,85 +70,6 @@ public class Helper {
             return null;
         }
     }
-
-    /**
-     * TODO: TIDY UP!!!! MODULARIZE.
-     * TODO: Get working under linux?! And maybe same concept to find openssl?
-     * Finds the installation path of openvpn through the environment variables.
-     * @return The installation path or null if not found.
-     */
-    public static String getOpenVPNInstallationPath() {
-        if (Helper.isWindows()) {
-            String findValue = "OpenVPN";
-
-            // After installations getenv() returns old values, missing openvpn...
-            // HACK AROUND THIS;
-            // https://stackoverflow.com/questions/10434065/how-to-retrieve-the-modified-value-of-an-environment-variable-which-is-modified
-            ProcessBuilder pb = new ProcessBuilder( "cmd.exe");
-            pb.redirectErrorStream(true);
-            Process process = null;
-            try {
-                process = pb.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            OutputStreamHandler outputHandler = new OutputStreamHandler(process.getInputStream());
-            PrintWriter commandExecutor = new PrintWriter(process.getOutputStream());
-            commandExecutor.println("reg query \"HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment\"\n");
-            commandExecutor.println("exit");
-            commandExecutor.flush();
-            commandExecutor.close();
-            outputHandler.start();
-            try {
-                process.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            String pathVar = outputHandler.getOutput().toString();
-            //TODO: MODULARISE..
-            if (pathVar.contains(findValue)) {
-                int indexOfFindValue = pathVar.indexOf(findValue);
-                // if it should be bin path..  value.indexOf(";", indexOfFindValue)
-                openVPNBinPath = pathVar.substring( pathVar.lastIndexOf(";" ,indexOfFindValue)+1, pathVar.indexOf("bin", indexOfFindValue) + "bin".length() );
-                String path = pathVar.substring( pathVar.lastIndexOf(";" ,indexOfFindValue)+1, indexOfFindValue + findValue.length() );
-                if (path.charAt(path.length()-1) != File.separator.charAt(0)) {
-                    path += File.separator;
-                }
-                return path;
-            }
-            //END OF: HACK AROUND THIS;
-
-
-        } else {
-            // TODO: Files in this folder might be auto started. Wanted?
-            String filePath = "/etc/openvpn/";
-            File installationPath = new File(filePath);
-            if(installationPath.exists())
-                return filePath;
-            else if (installationPath.mkdirs()) {
-                return filePath;
-            }
-            System.err.println(filePath + " cannot create directories ");
-        }
-        return null;
-    }
-
-    /**
-     * Checks if OpenSSL/ OpenVPN is avaiale on command line. Needed if openvpn is fresh installed and path is not ready yet.
-     * @return true if path needs an extension.
-     */
-    public static boolean needsPathUpdate() {
-        String findValue = "OpenVPN";
-        Map<String, String> env = System.getenv();
-        for (String envName : env.keySet()) {
-            String value = env.get(envName);
-            if (envName.contains(findValue) || value.contains(findValue) ) {
-                return false;
-            }
-        }
-        return true;
-    }
-
 
     /**
      * Creates a temporary folder, if not created yet, and returns the path to this folder.
@@ -246,6 +130,10 @@ public class Helper {
         }
     }
 
+    /**
+     * Function that indicates whether the system uses apt as packet manager.
+     * @return
+     */
     @Linux
     public static boolean hasAPT() {
         ProcessBuilder pb = new ProcessBuilder("whereis", "apt");

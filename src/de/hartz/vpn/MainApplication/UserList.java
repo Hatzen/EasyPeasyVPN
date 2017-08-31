@@ -1,4 +1,4 @@
-package de.hartz.vpn.Helper;
+package de.hartz.vpn.MainApplication;
 
 import java.util.ArrayList;
 

@@ -1,7 +1,7 @@
 package de.hartz.vpn.Installation;
 
-import de.hartz.vpn.Helper.UserData;
 import de.hartz.vpn.MainApplication.Server.MetaServer;
+import de.hartz.vpn.MainApplication.UserData;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

@@ -1,9 +1,11 @@
 package de.hartz.vpn.Installation;
 
 import de.hartz.vpn.Helper.Helper;
-import de.hartz.vpn.Helper.UserData;
+import de.hartz.vpn.Helper.OpenVPNHelper;
+import de.hartz.vpn.Helper.UiHelper;
 import de.hartz.vpn.Installation.Server.ConfigOpenVPN;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
+import de.hartz.vpn.MainApplication.UserData;
 import de.hartz.vpn.Utilities.Linux;
 import de.hartz.vpn.Utilities.OutputStreamHandler;
 import de.hartz.vpn.Utilities.Windows;
@@ -58,7 +60,7 @@ public class ExpressInstallationPanel extends InstallationPanel {
         if ( !Helper.isAdmin() ) {
             addLineToOutput("Program not launched as admin. Please start again with permissions. They are needed to install the vpn adapter");
             if(InstallationController.hasGUI())
-                Helper.showAlert("Program not launched as admin. Please start again with permissions. They are needed to install the vpn adapter");
+                UiHelper.showAlert("Program not launched as admin. Please start again with permissions. They are needed to install the vpn adapter");
             return;
         }
         if (Helper.isWindows()) {
@@ -176,7 +178,7 @@ public class ExpressInstallationPanel extends InstallationPanel {
     }
 
     private boolean isAlreadyInstalled() {
-        return (Helper.getOpenVPNInstallationPath() != null);
+        return (OpenVPNHelper.getOpenVPNInstallationPath() != null);
     }
 
     @Windows
@@ -249,7 +251,7 @@ public class ExpressInstallationPanel extends InstallationPanel {
     @Override
     public boolean onDeselect() {
         if (!isInstalled) {
-            Helper.showAlert("Installation failed. See the log for the error and try again.");
+            UiHelper.showAlert("Installation failed. See the log for the error and try again.");
             return false;
         }
         return true;

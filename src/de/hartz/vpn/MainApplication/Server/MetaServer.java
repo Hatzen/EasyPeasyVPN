@@ -1,6 +1,6 @@
 package de.hartz.vpn.MainApplication.Server;
 
-import de.hartz.vpn.Helper.Helper;
+import de.hartz.vpn.Helper.OpenVPNHelper;
 import de.hartz.vpn.Helper.Statics;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import java.net.Socket;
  */
 public class MetaServer extends Thread {
 
-    private static final String CONFIG_FOLDER = Helper.getOpenVPNInstallationPath() + "easy-rsa\\keys\\";
+    private static final String CONFIG_FOLDER = OpenVPNHelper.getOpenVPNInstallationPath() + "easy-rsa\\keys\\";
 
     // TODO: Replace. (?)
     public static final String SEND_CONFIG = "SEND_CONFIG";

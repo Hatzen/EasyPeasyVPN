@@ -1,7 +1,8 @@
 package de.hartz.vpn.Installation.Client;
 
 import de.hartz.vpn.Helper.Helper;
-import de.hartz.vpn.Helper.UserData;
+import de.hartz.vpn.Helper.OpenVPNHelper;
+import de.hartz.vpn.MainApplication.UserData;
 import de.hartz.vpn.Utilities.Linux;
 
 import java.io.*;
@@ -16,7 +17,7 @@ public class ConfigOpenVPN {
     private static String INSTALLATION_PATH;
 
     public ConfigOpenVPN() {
-        INSTALLATION_PATH = Helper.getOpenVPNInstallationPath();
+        INSTALLATION_PATH = OpenVPNHelper.getOpenVPNInstallationPath();
         if (Helper.isWindows()) {
             String replaceSingleBackSlash = "\\\\";
             INSTALLATION_PATH = INSTALLATION_PATH.replaceAll(replaceSingleBackSlash, "/");

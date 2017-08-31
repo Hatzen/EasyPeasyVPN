@@ -1,10 +1,12 @@
 package de.hartz.vpn.Installation.Server;
 
-import de.hartz.vpn.Helper.*;
+import de.hartz.vpn.Helper.Helper;
+import de.hartz.vpn.Helper.OpenVPNHelper;
+import de.hartz.vpn.Helper.Statics;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
-import de.hartz.vpn.Utilities.OutputStreamHandler;
 import de.hartz.vpn.Utilities.Linux;
 import de.hartz.vpn.Utilities.Logger;
+import de.hartz.vpn.Utilities.OutputStreamHandler;
 import de.hartz.vpn.Utilities.Windows;
 
 import java.io.*;
@@ -38,7 +40,7 @@ public class ConfigOpenVPN {
         this.configState = configState;
         this.logger = logger;
 
-        INSTALLATION_PATH = Helper.getOpenVPNInstallationPath();
+        INSTALLATION_PATH = OpenVPNHelper.getOpenVPNInstallationPath();
         if (Helper.isWindows()) {
             String replaceSingleBackSlash = "\\\\";
             INSTALLATION_PATH = INSTALLATION_PATH.replaceAll(replaceSingleBackSlash, "/");
@@ -382,9 +384,9 @@ public class ConfigOpenVPN {
         // Write commands.
         PrintWriter commandExecutor = new PrintWriter(process.getOutputStream());
         logger.addLogLine(command);
-        if (Helper.needsPathUpdate()) {
-            commandExecutor.println("SET PATH=%PATH%;" + Helper.openVPNBinPath);
-            System.out.println("SET PATH=%PATH%;" + Helper.openVPNBinPath);
+        if (OpenVPNHelper.needsPathUpdate()) {
+            commandExecutor.println("SET PATH=%PATH%;" + OpenVPNHelper.openVPNBinPath);
+            System.out.println("SET PATH=%PATH%;" + OpenVPNHelper.openVPNBinPath);
         }
         commandExecutor.println("vars.bat");
         commandExecutor.println(command);

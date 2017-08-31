@@ -1,6 +1,6 @@
 package de.hartz.vpn.MainApplication;
 
-import de.hartz.vpn.Helper.Helper;
+import de.hartz.vpn.Helper.OpenVPNHelper;
 import de.hartz.vpn.Utilities.Logger;
 import de.hartz.vpn.Utilities.OutputStreamHandler;
 
@@ -22,7 +22,7 @@ public class OpenVPNRunner extends Thread {
 
     @Override
     public void run() {
-        String configPath = Helper.getOpenVPNInstallationPath() + "config" + File.separator;
+        String configPath = OpenVPNHelper.getOpenVPNInstallationPath() + "config" + File.separator;
         ProcessBuilder pb = new ProcessBuilder( "openvpn ", configPath + configName );
         pb.redirectErrorStream(true);
         pb.directory(new File(configPath));

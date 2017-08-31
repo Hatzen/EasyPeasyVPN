@@ -1,4 +1,4 @@
-package de.hartz.vpn.Helper;
+package de.hartz.vpn.MainApplication;
 
 import de.hartz.vpn.MainApplication.Server.ConfigState;
 

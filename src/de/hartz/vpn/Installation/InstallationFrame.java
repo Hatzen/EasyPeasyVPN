@@ -1,6 +1,6 @@
 package de.hartz.vpn.Installation;
 
-import de.hartz.vpn.Helper.Helper;
+import de.hartz.vpn.Helper.UiHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +25,7 @@ public class InstallationFrame extends JFrame implements ActionListener {
         setLayout(new BorderLayout());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        Helper.setLookAndFeelAndIcon(this);
+        UiHelper.setLookAndFeelAndIcon(this);
 
         JPanel navigation = new JPanel();
         navigation.setLayout(new BorderLayout());

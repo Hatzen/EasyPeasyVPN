@@ -1,12 +1,12 @@
 package de.hartz.vpn.Installation;
 
-import de.hartz.vpn.Helper.UserData;
-import de.hartz.vpn.Installation.Client.ConnectToServerPanel;
 import de.hartz.vpn.Helper.Helper;
-import de.hartz.vpn.MainApplication.Server.ConfigState;
+import de.hartz.vpn.Installation.Client.ConnectToServerPanel;
 import de.hartz.vpn.Installation.Server.ChooseNetworkType;
 import de.hartz.vpn.Installation.Server.ChoosePerformancePanel;
 import de.hartz.vpn.Installation.Server.StartPanel;
+import de.hartz.vpn.MainApplication.Server.ConfigState;
+import de.hartz.vpn.MainApplication.UserData;
 
 import javax.swing.*;
 import java.io.BufferedReader;

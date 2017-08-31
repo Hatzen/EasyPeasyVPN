@@ -1,8 +1,8 @@
 package de.hartz.vpn;
 
-import de.hartz.vpn.Helper.UserData;
 import de.hartz.vpn.Installation.InstallationController;
 import de.hartz.vpn.MainApplication.MainFrame;
+import de.hartz.vpn.MainApplication.UserData;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -14,6 +14,8 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String[] args) {
+
+        new de.hartz.vpn.MediationServer.Main();
         if (true) {
             new MainFrame();
             return;

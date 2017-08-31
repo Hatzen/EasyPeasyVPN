@@ -1,9 +1,9 @@
 package de.hartz.vpn.Installation.Client;
 
-import de.hartz.vpn.Helper.Helper;
-import de.hartz.vpn.Helper.UserData;
+import de.hartz.vpn.Helper.UiHelper;
 import de.hartz.vpn.Installation.InstallationController;
 import de.hartz.vpn.Installation.InstallationPanel;
+import de.hartz.vpn.MainApplication.UserData;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,7 +48,7 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
     @Override
     public void onError(Exception e) {
         successfullConnected = false;
-        Helper.showAlert(e.getMessage());
+        UiHelper.showAlert(e.getMessage());
     }
 
     @Override

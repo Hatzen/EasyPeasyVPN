@@ -1,9 +1,9 @@
 package de.hartz.vpn.Installation.Client;
 
-import de.hartz.vpn.Helper.Helper;
+import de.hartz.vpn.Helper.OpenVPNHelper;
 import de.hartz.vpn.Helper.Statics;
-import de.hartz.vpn.Helper.UserData;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
+import de.hartz.vpn.MainApplication.UserData;
 
 import java.io.*;
 import java.net.Socket;
@@ -23,9 +23,9 @@ public class MetaClient extends Thread {
         void onFinish();
     }
 
-    public static final String FILE_PATH_CA = Helper.getOpenVPNInstallationPath() + "client.ca";
-    public static final String FILE_PATH_CRT = Helper.getOpenVPNInstallationPath() + "client.crt";
-    public static final String FILE_PATH_KEY = Helper.getOpenVPNInstallationPath() + "client.key";
+    public static final String FILE_PATH_CA = OpenVPNHelper.getOpenVPNInstallationPath() + "client.ca";
+    public static final String FILE_PATH_CRT = OpenVPNHelper.getOpenVPNInstallationPath() + "client.crt";
+    public static final String FILE_PATH_KEY = OpenVPNHelper.getOpenVPNInstallationPath() + "client.key";
     //public final static int FILE_SIZE = Integer.MAX_VALUE; //doesnt work because its to large..
 
     private FileOutputStream fos = null;
