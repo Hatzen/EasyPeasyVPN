@@ -26,7 +26,7 @@ public class NetworkHelper {
         private static final String ALGORITHM = "AES";
 
         private byte[] getDefaultKey() {
-            return "AFHSAksagAOMOLL".getBytes(StandardCharsets.UTF_8);
+            return "AFHSAksagAOMOLL6".getBytes(StandardCharsets.UTF_8);
         }
 
         public AdvancedEncryptionStandard() {

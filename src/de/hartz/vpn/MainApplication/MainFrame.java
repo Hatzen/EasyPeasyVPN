@@ -23,7 +23,7 @@ import java.net.URL;
  * The main frame of the client. It displays the current vpn connection.
  * And can start a server or connect to an existing one.
  */
-public class MainFrame extends JFrame implements ActionListener, Logger, NetworkStateInterface {
+public class MainFrame extends JFrame implements ActionListener, Logger, NetworkStateInterface, InstallationController.InstallationCallback {
     private final int STATUS_HEIGHT = 50;
 
     private JList list;
@@ -38,7 +38,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     private JMenuItem joinNetworkItem;
 
     public MainFrame() {
-        setTitle("EasyPeasy");
+        setTitle("EasyPeasyVPN");
         setMinimumSize(new Dimension(500,500));
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -95,10 +95,13 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     }
 
     private void startVPN() {
-        if (UserData.isClientInstallation()) {
-            new MetaServer().start();
+        String configFilename = "client";
+        if (!UserData.isClientInstallation()) {
+            MetaServer.getInstance().startServer();
+            configFilename = "server";
         }
-        new OpenVPNRunner("server" + Helper.getOpenVPNConfigExtension(), this);
+
+        new OpenVPNRunner(configFilename + Helper.getOpenVPNConfigExtension(), this);
     }
 
     private void initMenuBar() {
@@ -107,8 +110,10 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         JMenu helpMenu = new JMenu("Help");
         createNetworkItem = new JMenuItem("Create");
         createNetworkItem.addActionListener(this);
+        createNetworkItem.setAccelerator(KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
         joinNetworkItem = new JMenuItem("Join");
         joinNetworkItem.addActionListener(this);
+        joinNetworkItem.setAccelerator(KeyStroke.getKeyStroke('J', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
         aboutItem = new JMenuItem("About");
         aboutItem.addActionListener(this);
         manualItem = new JMenuItem("Manual");
@@ -139,6 +144,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             ActionListener listener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     if (e.getSource() == exitItem) {
+                        // TODO: Make sure process like server and openvpn etc. are closed softly.
                         System.exit(0);
                     } else { // Source == openItem
                         setVisible(true);
@@ -171,9 +177,9 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == createNetworkItem) {
-            InstallationController.getInstance().startInstallation(true, false);
+            InstallationController.getInstance().startInstallation(true, false, this);
         } else if (actionEvent.getSource() == joinNetworkItem) {
-            InstallationController.getInstance().startInstallation(true, true);
+            InstallationController.getInstance().startInstallation(true, true, this);
         } else if (actionEvent.getSource() == aboutItem) {
             JOptionPane.showMessageDialog(this,
                     new EasyHtmlComponent("EasyPeasyVPN <br> Contribute under: <a href=\"https://github.com/Hatzen/EasyPeasyVPN\">https://github.com/Hatzen/EasyPeasyVPN</a>"));
@@ -218,5 +224,15 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     @Override
     public void setOnlineState(boolean online) {
         ownStatus.setOnline(online);
+    }
+
+    @Override
+    public void onInstallationSuccess() {
+        startVPN();
+    }
+
+    @Override
+    public void onInstallationCanceled() {
+
     }
 }

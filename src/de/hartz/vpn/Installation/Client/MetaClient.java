@@ -144,7 +144,7 @@ public class MetaClient extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        fos.write(byteArray, 0, byteCount);
+        fos.write(byteArray, 0, byteArray.length);
 
         fos.close();
     }

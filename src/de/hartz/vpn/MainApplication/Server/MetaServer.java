@@ -14,8 +14,10 @@ import java.net.Socket;
  * Based on http://www.rgagnon.com/javadetails/java-0542.html
  */
 public class MetaServer extends Thread {
-
     private static final String CONFIG_FOLDER = OpenVPNHelper.getOpenVPNInstallationPath() + "easy-rsa\\keys\\";
+    private static MetaServer instance;
+    private static boolean run;
+    private static boolean running;
 
     // TODO: Replace. (?)
     public static final String SEND_CONFIG = "SEND_CONFIG";
@@ -35,15 +37,68 @@ public class MetaServer extends Thread {
     private String filePathCert;
     private String filePathKey;
 
-    public MetaServer() {
+    private MetaServer() {
 
+    }
+
+    /**
+     * Singelton cause only one server can listen to that port.
+     * @returns the one and only server.
+     */
+    public static MetaServer getInstance() {
+        if (instance == null) {
+            instance = new MetaServer();
+            run = true;
+        }
+        return instance;
+    }
+
+    /**
+     * Starts the server if needed.
+     */
+    public void startServer() {
+        if(running) {
+            return;
+        }
+        super.start();
+    }
+
+    /**
+     * Deny access to thread method to ensure that {@link MetaServer#startServer()} is used.
+     */
+    @Override
+    public void start() {
+        throw new RuntimeException("Start the Server with startServer Method!");
+    }
+
+    /**
+     * Function to stop the server from listening.
+     */
+    public void stopServer() {
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        run = false;
+        instance = null;
+        running = false;
+    }
+
+    /**
+     * Check whether the server socket has crashed.
+     * @returns true if the meta server is still running.
+     */
+    public boolean isRunning() {
+        return running;
     }
 
     @Override
     public void run() {
         try {
             serverSocket = new ServerSocket(Statics.MEDIATION_SERVER_PORT);
-            while (true) {
+            running = true;
+            while (run) {
                 System.out.println("Waiting...");
                 try {
                     // TODO: Check if accept has to run in own thread. So multipy clients can connect at same time..
@@ -56,6 +111,9 @@ public class MetaServer extends Thread {
                     do {
                         answerCommand(command);
                         command = bufferedReader.readLine();
+                        if(command == null) {
+                            System.err.print("Client connection interruption");
+                        }
                     }
                     while(!isExitCommand(command));
 
@@ -71,6 +129,7 @@ public class MetaServer extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            running = false;
             if (serverSocket != null) try {
                 serverSocket.close();
             } catch (IOException e) {

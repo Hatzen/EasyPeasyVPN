@@ -58,6 +58,12 @@ public class InstallationFrame extends JFrame implements ActionListener {
         this.content.repaint();
     }
 
+    public void setNextButtonTextToFinish(boolean finish) {
+        if(finish)
+            nextButton.setText("Finish");
+        else
+            nextButton.setText("Next");
+    }
 
     public void setNextEnabled(boolean enabled) {
         nextButton.setEnabled(enabled);

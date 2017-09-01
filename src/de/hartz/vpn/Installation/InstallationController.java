@@ -19,15 +19,19 @@ import java.util.ArrayList;
  */
 public class InstallationController {
 
-    public enum NeededPanels {
-        CLIENT,
-        SERVER,
-        SERVER_EXPRESS,
-        SERVER_CUSTOM
+    /**
+     * Interface to notify the caller after installation.
+     */
+    public interface InstallationCallback {
+
+        void onInstallationSuccess();
+        void onInstallationCanceled();
+
     }
 
     private static InstallationController instance = new InstallationController();
     private InstallationFrame mainFrame;
+    private InstallationCallback callback;
 
     private static boolean hasGUI;
 
@@ -37,20 +41,6 @@ public class InstallationController {
 
     private ArrayList<InstallationPanel> expressPanelOrder;
     private ArrayList<InstallationPanel> customPanelOrder;
-
-    // TODO: Check if this is more beautiful.
-    public void setUpNeededPanels(NeededPanels neededPanel) {
-        switch (neededPanel) {
-            case CLIENT:
-                break;
-            case SERVER:
-                break;
-            case SERVER_EXPRESS:
-                break;
-            case SERVER_CUSTOM:
-                break;
-        }
-    }
 
     /**
      * Returns the singleton instance of this class
@@ -115,8 +105,9 @@ public class InstallationController {
      * Starts the installation process.
      * @param showGUI Boolean indicating whether the application is started via console.
      */
-    public void startInstallation(boolean showGUI, boolean client) {
+    public void startInstallation(boolean showGUI, boolean client, InstallationCallback callback) {
         hasGUI = showGUI;
+        this.callback = callback;
         if (showGUI) {
             // TODO: GUI doesnt react some time. Because of extracting files etc.. Create loading screen. Also might be initalization of all the panels!!
             initGUI();
@@ -210,12 +201,15 @@ public class InstallationController {
         InstallationPanel panel = currentPanelOrder.get(index);
         panel.onSelect();
         mainFrame.setContent(panel);
+        mainFrame.setNextButtonTextToFinish(false);
         mainFrame.setNextEnabled(true);
         mainFrame.setPreviousEnabled(true);
         if (isFirst(panel)) {
             mainFrame.setPreviousEnabled(false);
         }
-        if (isLast(panel)) {
+        if (panel.isFinishingPanel()) {
+            mainFrame.setNextButtonTextToFinish(true);
+        } else if (isLast(panel)) {
             mainFrame.setNextEnabled(false);
         }
     }
@@ -248,6 +242,11 @@ public class InstallationController {
     }
 
     private void showNextPanel(InstallationPanel currentPanel) {
+        if (currentPanel.isFinishingPanel()) {
+            callback.onInstallationSuccess();
+            mainFrame.dispose();
+        }
+
         boolean panelCanBeDeselected = currentPanel.onDeselect();
         if ( !panelCanBeDeselected) {
             return;

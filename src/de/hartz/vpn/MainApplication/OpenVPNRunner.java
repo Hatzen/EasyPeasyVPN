@@ -23,7 +23,7 @@ public class OpenVPNRunner extends Thread {
     @Override
     public void run() {
         String configPath = OpenVPNHelper.getOpenVPNInstallationPath() + "config" + File.separator;
-        ProcessBuilder pb = new ProcessBuilder( "openvpn ", configPath + configName );
+        ProcessBuilder pb = new ProcessBuilder( "openvpn", configPath + configName );
         pb.redirectErrorStream(true);
         pb.directory(new File(configPath));
         Process process = null;

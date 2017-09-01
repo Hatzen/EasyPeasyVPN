@@ -127,7 +127,8 @@ public class ConfigOpenVPN {
         #comp-lzo
         */
 
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(INSTALLATION_PATH + "config/client.ovpn"), "utf-8"))) {
+        String filePath = INSTALLATION_PATH + "config" + File.separator + "client" + Helper.getOpenVPNConfigExtension();
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "utf-8"))) {
             writer.write(content);
         } catch (IOException e) {
             e.printStackTrace();
@@ -158,7 +159,9 @@ public class ConfigOpenVPN {
         iptables -P INPUT ACCEPT
         iptables -P OUTPUT ACCEPT
         iptables -P FORWARD ACCEPT
-        iptables -F
+
+
+        // iptables -F // TODO: Why flush at the end? It will delete all rules!?
         */
 
 

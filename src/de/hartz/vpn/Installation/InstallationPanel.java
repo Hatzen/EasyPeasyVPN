@@ -17,6 +17,14 @@ public abstract class InstallationPanel extends JPanel implements Logger {
      */
     public abstract boolean onDeselect();
 
+    /**
+     * Method indicating whether the panel is the last installation step.
+     * @return
+     */
+    public boolean isFinishingPanel() {
+        return false;
+    }
+
     public void addLogLine(String line) {
         System.out.println(line);
     }

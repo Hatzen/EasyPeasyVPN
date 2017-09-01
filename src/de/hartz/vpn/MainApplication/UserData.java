@@ -16,6 +16,8 @@ public class UserData implements Serializable{
 
     // TODO: SAVE IT PERSISTENT!!
 
+    // TODO: ADD MEDIATOR LIST; CUSTOM CLASS MEDIATOR (Name, IP/URL, isRemoteIpAddress)
+
     //Client only.
     public static String serverIp;
     //END OF: Client only.
