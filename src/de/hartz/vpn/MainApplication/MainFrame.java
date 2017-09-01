@@ -1,7 +1,7 @@
 package de.hartz.vpn.MainApplication;
 
 import de.hartz.vpn.Helper.Helper;
-import de.hartz.vpn.Helper.OpenVPNParserHelper;
+import de.hartz.vpn.Helper.NetworkHelper;
 import de.hartz.vpn.Helper.UiHelper;
 import de.hartz.vpn.Installation.InstallationController;
 import de.hartz.vpn.MainApplication.Server.MetaServer;
@@ -18,6 +18,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static de.hartz.vpn.Helper.Statics.SOFTWARE_NAME;
 
 /**
  * The main frame of the client. It displays the current vpn connection.
@@ -38,7 +44,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     private JMenuItem joinNetworkItem;
 
     public MainFrame() {
-        setTitle("EasyPeasyVPN");
+        setTitle(SOFTWARE_NAME);
         setMinimumSize(new Dimension(500,500));
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -155,7 +161,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             exitItem.addActionListener(listener);
             popup.add(openItem);
             popup.add(exitItem);
-            trayIcon = new TrayIcon(image, "EasyPeasyVPN", popup);
+            trayIcon = new TrayIcon(image, SOFTWARE_NAME, popup);
             trayIcon.setImageAutoSize(true);
             trayIcon.addActionListener(listener);
             try {
@@ -182,7 +188,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             InstallationController.getInstance().startInstallation(true, true, this);
         } else if (actionEvent.getSource() == aboutItem) {
             JOptionPane.showMessageDialog(this,
-                    new EasyHtmlComponent("EasyPeasyVPN <br> Contribute under: <a href=\"https://github.com/Hatzen/EasyPeasyVPN\">https://github.com/Hatzen/EasyPeasyVPN</a>"));
+                    new EasyHtmlComponent(SOFTWARE_NAME + " <br> Contribute under: <a href=\"https://github.com/Hatzen/EasyPeasyVPN\">https://github.com/Hatzen/EasyPeasyVPN</a>"));
         } else if (actionEvent.getSource() == manualItem) {
             try {
                 EasyHtmlComponent.openURLInBrowser(new URL("https://github.com/Hatzen/EasyPeasyVPN/wiki"));
@@ -204,26 +210,45 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
         String tmp;
         if (line.contains(SUCCESSFUL_INIT)) {
+            // Successful connected.
             System.out.println("Online");
             setOnlineState(true);
-        } else if ((tmp = OpenVPNParserHelper.getServerIpFromLine(line)) != null) {
+        } /*else if ((tmp = OpenVPNParserHelper.getServerIpFromLine(line)) != null) {
             UserData.userList.add(new UserList.User(tmp, "The Server"));
-            // TODO: Only set text if this is the server.
+            // TODO: Only set text if this is the server. ANSWER: looks like the specific line only appears on the server!
             ownStatusText.setText(tmp);
-        } else if((tmp = OpenVPNParserHelper.getClientIpFromLine(line)) != null) {
+        }else if((tmp = OpenVPNParserHelper.getClientIpFromLine(line)) != null) {
             String clientIp = tmp;
             String clientName = OpenVPNParserHelper.getClientNameFromLine(line);
             UserData.userList.add(new UserList.User(clientIp, clientName));
         } else if((tmp = OpenVPNParserHelper.getDisconnectedClientNameFromLine(line)) != null) {
             System.out.println(tmp);
             UserData.userList.removeUserByName(tmp);
-        }
+        }*/
         refreshModel();
     }
 
     @Override
     public void setOnlineState(boolean online) {
         ownStatus.setOnline(online);
+        if (online) {
+            // Check for avaiable connections.
+            final ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+            ses.scheduleWithFixedDelay(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO: Get netadress of vpn from config.
+                    String netaddress = "10.0.0";
+                    ArrayList<String> ips = NetworkHelper.getAllReachableClientsForNetaddress(netaddress);
+
+                    UserData.userList.clear();
+                    for (String ip : ips) {
+                        UserData.userList.add(new UserList.User(ip, "-"));
+                    }
+                    refreshModel();
+                }
+            }, 0, 1, TimeUnit.MINUTES);
+        }
     }
 
     @Override

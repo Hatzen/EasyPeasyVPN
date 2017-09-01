@@ -5,6 +5,8 @@ package de.hartz.vpn.Helper;
  */
 public final class Statics {
 
+    public static final String SOFTWARE_NAME = "EasyPeasyVPN";
+
     public static final int MEDIATION_SERVER_PORT = 13267;
     public static final String DEFAULT_CLIENT_NAME = "DefaultClient";
 

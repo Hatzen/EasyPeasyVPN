@@ -138,6 +138,7 @@ public class ConfigOpenVPN {
     @Linux
     public void configurateIptables() {
         // Maybe not needed?
+        // https://arashmilani.com/post?id=53
 
         /*
         // TODO: Save persistent: iptables-save && iptables-restore.

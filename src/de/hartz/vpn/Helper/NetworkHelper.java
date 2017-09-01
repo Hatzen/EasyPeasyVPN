@@ -3,10 +3,7 @@ package de.hartz.vpn.Helper;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.URL;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -25,6 +22,7 @@ public class NetworkHelper {
 
         private static final String ALGORITHM = "AES";
 
+        // TODO: Dont use a static key.. Maybe replace by creating from server ip address (key which is known by every one)
         private byte[] getDefaultKey() {
             return "AFHSAksagAOMOLL6".getBytes(StandardCharsets.UTF_8);
         }
@@ -155,5 +153,52 @@ public class NetworkHelper {
             e.printStackTrace();
         }
         return ipaddresses;
+    }
+
+    /**
+     * Get a list of all subnetmasks.
+     * TODO: Check whether all interfaces are checked!
+     * https://stackoverflow.com/questions/1221517/how-to-get-subnet-mask-of-local-system-using-java
+     * @returns a list of netmasks for every ip.
+     */
+    public static ArrayList<Short> getAllUsedIpAdressesNetmasks() {
+        ArrayList<Short> netmasks = new ArrayList<>();
+        InetAddress localHost = null;
+        try {
+            localHost = Inet4Address.getLocalHost();
+            NetworkInterface networkInterface = NetworkInterface.getByInetAddress(localHost);
+            for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
+                netmasks.add( address.getNetworkPrefixLength() );
+            }
+        } catch (UnknownHostException | SocketException e) {
+            e.printStackTrace();
+        }
+        return netmasks;
+    }
+
+    /**
+     * Pings all clients via ICMP in the given network and returns a list with all ips that answered.
+     * IMPORTANT:  Currently only ipv4 with subnetmask /24 is supported!
+     * https://stackoverflow.com/questions/3345857/how-to-get-a-list-of-ip-connected-in-same-network-subnet-using-java
+     * @param netaddress the netadress to check.
+     * @return
+     */
+    public static ArrayList<String> getAllReachableClientsForNetaddress(String netaddress) {
+        final ArrayList<String> ipAddresses = new ArrayList<>();
+        final int timeout=1000;
+        for (int i=1;i<255;i++){
+            final String host= netaddress + "." + i;
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        if (InetAddress.getByName(host).isReachable(timeout)) {
+                            ipAddresses.add(host);
+                        }
+                    } catch (IOException e) { e.printStackTrace(); }
+                }
+            }.start();
+        }
+        return ipAddresses;
     }
 }
