@@ -40,6 +40,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
     private JMenuItem aboutItem;
     private JMenuItem manualItem;
+    private JMenuItem networkInfoItem;
+    private JMenuItem mediationMenuItem;
     private JMenuItem createNetworkItem;
     private JMenuItem joinNetworkItem;
 
@@ -113,21 +115,40 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     private void initMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu networkMenu = new JMenu("Network");
+        JMenu extrasMenu = new JMenu("Extras");
         JMenu helpMenu = new JMenu("Help");
+
         createNetworkItem = new JMenuItem("Create");
         createNetworkItem.addActionListener(this);
         createNetworkItem.setAccelerator(KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+
         joinNetworkItem = new JMenuItem("Join");
         joinNetworkItem.addActionListener(this);
         joinNetworkItem.setAccelerator(KeyStroke.getKeyStroke('J', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+
+        networkInfoItem = new JMenuItem("Network info");
+        networkInfoItem.addActionListener(this);
+        networkInfoItem.setAccelerator(KeyStroke.getKeyStroke('I', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+
+        mediationMenuItem = new JMenuItem("Mediation settings");
+        mediationMenuItem.addActionListener(this);
+        mediationMenuItem.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+
         aboutItem = new JMenuItem("About");
         aboutItem.addActionListener(this);
+        aboutItem.setAccelerator(KeyStroke.getKeyStroke('A', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+
         manualItem = new JMenuItem("Manual");
         manualItem.addActionListener(this);
+        manualItem.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+
         add(menuBar,  BorderLayout.NORTH);
         menuBar.add(networkMenu);
             networkMenu.add(createNetworkItem);
             networkMenu.add(joinNetworkItem);
+        menuBar.add(extrasMenu);
+            extrasMenu.add(networkInfoItem);
+            extrasMenu.add(mediationMenuItem);
         menuBar.add(helpMenu);
             helpMenu.add(manualItem);
             helpMenu.add(aboutItem);
@@ -186,6 +207,10 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             InstallationController.getInstance().startInstallation(true, false, this);
         } else if (actionEvent.getSource() == joinNetworkItem) {
             InstallationController.getInstance().startInstallation(true, true, this);
+        } else if (actionEvent.getSource() == networkInfoItem) {
+            new NetworkInfoFrame();
+        } else if (actionEvent.getSource() == joinNetworkItem) {
+            InstallationController.getInstance().startInstallation(true, true, this);
         } else if (actionEvent.getSource() == aboutItem) {
             JOptionPane.showMessageDialog(this,
                     new EasyHtmlComponent(SOFTWARE_NAME + " <br> Contribute under: <a href=\"https://github.com/Hatzen/EasyPeasyVPN\">https://github.com/Hatzen/EasyPeasyVPN</a>"));
@@ -208,23 +233,11 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     public void checkLine(String line) {
         final String SUCCESSFUL_INIT = "Initialization Sequence Completed";
 
-        String tmp;
         if (line.contains(SUCCESSFUL_INIT)) {
             // Successful connected.
             System.out.println("Online");
             setOnlineState(true);
-        } /*else if ((tmp = OpenVPNParserHelper.getServerIpFromLine(line)) != null) {
-            UserData.userList.add(new UserList.User(tmp, "The Server"));
-            // TODO: Only set text if this is the server. ANSWER: looks like the specific line only appears on the server!
-            ownStatusText.setText(tmp);
-        }else if((tmp = OpenVPNParserHelper.getClientIpFromLine(line)) != null) {
-            String clientIp = tmp;
-            String clientName = OpenVPNParserHelper.getClientNameFromLine(line);
-            UserData.userList.add(new UserList.User(clientIp, clientName));
-        } else if((tmp = OpenVPNParserHelper.getDisconnectedClientNameFromLine(line)) != null) {
-            System.out.println(tmp);
-            UserData.userList.removeUserByName(tmp);
-        }*/
+        }
         refreshModel();
     }
 

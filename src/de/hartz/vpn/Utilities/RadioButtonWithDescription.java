@@ -5,18 +5,23 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 /**
- * GUI class to be able to have title and description to an radio button.
+ * GUI class to be able to have title and description to a radio button.
  */
 public class RadioButtonWithDescription extends JPanel {
 
     private JRadioButton radioButton;
-    private JTextArea descriptionLabel;
+    private Component descriptionComponent;
 
     public RadioButtonWithDescription(String radioButtonText, String description) {
         this(radioButtonText, description, null);
     }
 
     public RadioButtonWithDescription(String radioButtonText, String description, ActionListener actionListener) {
+        this(radioButtonText, getDescriptionLabel(description) , actionListener);
+    }
+
+    public RadioButtonWithDescription(String radioButtonText, Component descriptionComponent, ActionListener actionListener) {
+        this.descriptionComponent = descriptionComponent;
         setLayout(new GridLayout(2,1));
 
         radioButton = new JRadioButton(radioButtonText);
@@ -24,27 +29,18 @@ public class RadioButtonWithDescription extends JPanel {
         if (actionListener != null) {
             radioButton.addActionListener(actionListener);
         }
-        //JPanel leftTabulator = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel leftTabulator = new JPanel(new GridLayout());
         leftTabulator.setAlignmentX(LEFT_ALIGNMENT);
         leftTabulator.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
-        descriptionLabel = new JTextArea(description);
-        descriptionLabel.setWrapStyleWord(true);
-        descriptionLabel.setLineWrap(true);
-        descriptionLabel.setEditable(false);
-        descriptionLabel.setEnabled(false);
-        descriptionLabel.setBorder(null);
-        descriptionLabel.setOpaque(false);
-        descriptionLabel.setFont(new Font("Helvetica", Font.PLAIN, 12));
 
         add(radioButton);
         add(leftTabulator);
-        leftTabulator.add(descriptionLabel);
+        leftTabulator.add(descriptionComponent);
     }
 
     public void setEnabled(boolean enabled) {
         radioButton.setEnabled(enabled);
-        descriptionLabel.setEnabled(enabled);
+        descriptionComponent.setEnabled(enabled);
     }
 
     public void setSelected(boolean selected) {
@@ -57,6 +53,19 @@ public class RadioButtonWithDescription extends JPanel {
 
     public boolean isEventSource(Object source) {
         return radioButton == source;
+    }
+
+    private static JTextArea getDescriptionLabel(String description) {
+        JTextArea descriptionLabel = new JTextArea(description);
+        descriptionLabel.setWrapStyleWord(true);
+        descriptionLabel.setLineWrap(true);
+        descriptionLabel.setEditable(false);
+        descriptionLabel.setEnabled(false);
+        descriptionLabel.setBorder(null);
+        descriptionLabel.setOpaque(false);
+        descriptionLabel.setFont(new Font("Helvetica", Font.PLAIN, 12));
+
+        return descriptionLabel;
     }
 
 }

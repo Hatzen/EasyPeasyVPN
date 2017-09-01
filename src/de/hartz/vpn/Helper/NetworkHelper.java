@@ -3,7 +3,10 @@ package de.hartz.vpn.Helper;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -132,7 +135,7 @@ public class NetworkHelper {
     }
 
     /**
-     * Get a list of all already used ip addresses.
+     * Get a list of all already used ip addresses with its subnetmask.
      * @returns ArrayList of all used ipaddresses.
      */
     public static ArrayList<String> getAllUsedIpAddresses() {
@@ -141,7 +144,13 @@ public class NetworkHelper {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
                 NetworkInterface intf = en.nextElement();
                 for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-                    String ip = enumIpAddr.nextElement().toString();
+                    InetAddress tmpAddress = enumIpAddr.nextElement();
+                    /*NetworkInterface networkInterface = NetworkInterface.getByInetAddress(tmpAddress);
+                    for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
+                        netmasks.add( address.getNetworkPrefixLength() );
+                    }*/
+                    short subnet = NetworkInterface.getByInetAddress(tmpAddress).getInterfaceAddresses().get(0).getNetworkPrefixLength();
+                    String ip = tmpAddress.toString() + "/" + subnet;
                     // Only ipv4 addresses.
                     if (ip.contains(".")) {
                         // remove prefix "/"
@@ -153,27 +162,6 @@ public class NetworkHelper {
             e.printStackTrace();
         }
         return ipaddresses;
-    }
-
-    /**
-     * Get a list of all subnetmasks.
-     * TODO: Check whether all interfaces are checked!
-     * https://stackoverflow.com/questions/1221517/how-to-get-subnet-mask-of-local-system-using-java
-     * @returns a list of netmasks for every ip.
-     */
-    public static ArrayList<Short> getAllUsedIpAdressesNetmasks() {
-        ArrayList<Short> netmasks = new ArrayList<>();
-        InetAddress localHost = null;
-        try {
-            localHost = Inet4Address.getLocalHost();
-            NetworkInterface networkInterface = NetworkInterface.getByInetAddress(localHost);
-            for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
-                netmasks.add( address.getNetworkPrefixLength() );
-            }
-        } catch (UnknownHostException | SocketException e) {
-            e.printStackTrace();
-        }
-        return netmasks;
     }
 
     /**
