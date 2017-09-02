@@ -1,7 +1,9 @@
 package de.hartz.vpn.Installation.Server;
 
-import de.hartz.vpn.Utilities.RadioButtonWithDescription;
 import de.hartz.vpn.Installation.InstallationPanel;
+import de.hartz.vpn.MainApplication.Server.ConfigState;
+import de.hartz.vpn.MainApplication.UserData;
+import de.hartz.vpn.Utilities.RadioButtonWithDescription;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -19,6 +21,8 @@ public class StartPanel extends InstallationPanel implements ActionListener {
 
     public StartPanel() {
         isExpressInstallation = true;
+        ConfigState configState = new ConfigState();
+        UserData.getInstance().setVpnConfigState(configState);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 

@@ -20,14 +20,15 @@ public class Main {
             return;
         }
 
+        // TODO: TEST COMMAND LINE AGAIN! Espacially callback = null might be a problem..
         if ( args.length > 0) {
             if (args.length == 2 && args[0].equals("server") && args[0].equals("express")) {
-                UserData.clientInstallation = false;
-                InstallationController.getInstance().startInstallation(false);
+                UserData.getInstance().setClientInstallation(false);
+                InstallationController.getInstance().startInstallation(false, false, null);
             } else if (args.length == 2 && args[0].equals("client")) {
-                UserData.clientInstallation = true;
+                UserData.getInstance().setClientInstallation(true);
                 UserData.serverIp = args[1];
-                InstallationController.getInstance().startInstallation(false);
+                InstallationController.getInstance().startInstallation(false, true, null);
             }
             else {
                 System.out.println("invalid parameter " + Arrays.toString(args));
@@ -35,9 +36,9 @@ public class Main {
         } else {
             // Is GUI not possible?
             if (GraphicsEnvironment.isHeadless()) {
-                InstallationController.getInstance().startInstallation(false);
+                InstallationController.getInstance().startInstallation(false, true,null);
             } else {
-                InstallationController.getInstance().startInstallation(true);
+                InstallationController.getInstance().startInstallation(true, true, null);
             }
         }
     }

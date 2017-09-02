@@ -1,0 +1,74 @@
+package de.hartz.vpn.Installation.Server;
+
+import de.hartz.vpn.Helper.UiHelper;
+import de.hartz.vpn.Installation.InstallationController;
+import de.hartz.vpn.Installation.InstallationPanel;
+import de.hartz.vpn.Installation.Mediator;
+import de.hartz.vpn.MainApplication.UserData;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+/**
+ * Created by kaiha on 02.09.2017.
+ */
+public class NetworkNamePanel extends InstallationPanel implements ActionListener {
+
+    private static final String NO_SELECTION = "NONE";
+
+    private JTextField networkNameField;
+    private JComboBox mediatorBox;
+
+    public NetworkNamePanel() {
+
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        networkNameField = new JTextField();
+        networkNameField.setMaximumSize( new Dimension( 1000, 50) );
+
+        ArrayList<Mediator> mediatorList = UserData.getInstance().getMediatorList();
+        String[] comboBoxSource = new String[mediatorList.size()+1];
+        comboBoxSource[0] = NO_SELECTION;
+        for (int i = 0; i < mediatorList.size(); i++ ) {
+            comboBoxSource[i+1] = mediatorList.get(i).getMediatorName();
+        }
+        mediatorBox = new JComboBox(comboBoxSource);
+        mediatorBox.setSelectedIndex(1);
+        mediatorBox.setMaximumSize( new Dimension( 1000, 50) );
+        mediatorBox.addActionListener(this);
+
+        add(new JLabel("Enter a Networkname:"));
+        add(networkNameField);
+        add(new JLabel("Select Mediation Server:"));
+        add(mediatorBox);
+        // Inivisible Panel to keep the other components normal sized.
+        add(new JPanel());
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) {
+    }
+
+    @Override
+    public void onSelect() {
+
+    }
+
+    @Override
+    public boolean onDeselect() {
+        // TODO: Check if name is free at mediator.
+        String networkName = networkNameField.getText();
+        if (networkName.isEmpty()) {
+            UiHelper.showAlert("Missing networkname!");
+            return false;
+        }
+        InstallationController.getInstance().getTmpConfigState().setNetworkName(networkName);
+
+        // TODO: Handle mediator.
+
+        return true;
+    }
+}

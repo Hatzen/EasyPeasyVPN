@@ -10,10 +10,17 @@ public class StatusComponent extends JLabel implements ListCellRenderer<String> 
 
     private final static int PADDING = 10;
     private boolean online;
+    private boolean connecting;
 
 
     public void setOnline(boolean online) {
         this.online = online;
+        connecting = false;
+        repaint();
+    }
+
+    public void setConnecting(boolean connecting) {
+        this.connecting = connecting;
         repaint();
     }
 
@@ -26,6 +33,9 @@ public class StatusComponent extends JLabel implements ListCellRenderer<String> 
             g2d.setPaint(Color.green);
         } else {
             g2d.setPaint(Color.red);
+        }
+        if (connecting) {
+            g2d.setPaint(Color.yellow);
         }
         g2d.fillOval(PADDING, PADDING, getHeight()-2*PADDING, getHeight()-2*PADDING);
     }

@@ -3,6 +3,7 @@ package de.hartz.vpn.MainApplication.Server;
 import de.hartz.vpn.Helper.NetworkHelper;
 import de.hartz.vpn.Helper.OpenVPNHelper;
 import de.hartz.vpn.Helper.Statics;
+import de.hartz.vpn.MainApplication.UserData;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -183,7 +184,7 @@ public class MetaServer extends Thread {
     private void sendConfigObject() throws IOException {
         // TODO: Use encryption here too. But its not so important.
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-        oos.writeObject(new ConfigState());
+        oos.writeObject(UserData.getInstance().getVpnConfigState());
         oos.flush();
     }
 

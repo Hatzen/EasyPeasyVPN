@@ -4,7 +4,6 @@ import de.hartz.vpn.Helper.Helper;
 import de.hartz.vpn.Helper.OpenVPNHelper;
 import de.hartz.vpn.Helper.UiHelper;
 import de.hartz.vpn.Installation.Server.ConfigOpenVPN;
-import de.hartz.vpn.MainApplication.Server.ConfigState;
 import de.hartz.vpn.MainApplication.UserData;
 import de.hartz.vpn.Utilities.Linux;
 import de.hartz.vpn.Utilities.OutputStreamHandler;
@@ -227,12 +226,10 @@ public class ExpressInstallationPanel extends InstallationPanel {
         addLineToOutput("Installation successful.");
         isInstalled = true;
 
-        if (UserData.isClientInstallation()) {
+        if (UserData.getInstance().isClientInstallation()) {
             new de.hartz.vpn.Installation.Client.ConfigOpenVPN();
         } else {
-            ConfigState configState = new ConfigState();
-            UserData.setVpnConfigState(configState);
-            new ConfigOpenVPN(configState, this);
+            new ConfigOpenVPN(UserData.getInstance().getVpnConfigState(), this);
         }
     }
 

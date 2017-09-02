@@ -1,11 +1,17 @@
 package de.hartz.vpn.MainApplication.Server;
 
+import de.hartz.vpn.Helper.NetworkHelper;
+
 import java.io.Serializable;
+
+import static de.hartz.vpn.MainApplication.Server.ConfigState.Protocol.UDP;
 
 /**
  * Configfile that represents the configuration of a network. Used by client and server.
  */
 public class ConfigState implements Serializable {
+
+    // TODO: Maybe add mediator?
 
     public enum Adapter {
         OpenVPN,
@@ -13,16 +19,27 @@ public class ConfigState implements Serializable {
         FreeLan
     }
 
+    // TODO: Tcp not supported by mediator.
+    public enum Protocol {
+        TCP,
+        UDP
+    }
+
+    // TODO: Closed tunnel not supported by software. Needs networkbridge between adapters (?)
     public enum Tunnel {
         CLOSED,
         SPLIT
     }
 
+    // TODO: Site connections needs traffic redirection by every computer or the gateway to vpn-gateway. Not really supported by Software.
     public enum NetworkType {
         SITE_TO_SITE,
         SITE_TO_END,
         END_TO_END,
     }
+
+    private String networkName;
+    private Protocol protocol;
 
     private Tunnel tunnel;
     private Adapter adapter;
@@ -30,9 +47,8 @@ public class ConfigState implements Serializable {
 
     private boolean needsAuthentication;
 
-    // Only for showing valid ip configuration, if NetworkType == SITE_TO_SITE.
-    private String possibleIp;
-    private int subnetmask;
+    private String netaddress;
+    private short subnetmask;
 
     /**
      * Default Constructor for Express Configuration.
@@ -41,17 +57,19 @@ public class ConfigState implements Serializable {
         tunnel = Tunnel.SPLIT;
         adapter = Adapter.OpenVPN;
         networkType = NetworkType.END_TO_END;
+        protocol = UDP;
+        netaddress = NetworkHelper.getRecommendedIp();
+        subnetmask = 24;
 
         needsAuthentication = false;
     }
 
-    public ConfigState(Tunnel tunnel, Adapter adapter, NetworkType networkType, boolean needsAuthentication, String possibleIp, int subnetmask) {
-        this.tunnel = tunnel;
-        this.adapter = adapter;
-        this.networkType = networkType;
-        this.needsAuthentication = needsAuthentication;
-        this.possibleIp = possibleIp;
-        this.subnetmask = subnetmask;
+    public String getNetworkName() {
+        return networkName;
+    }
+
+    public void setNetworkName(String networkName) {
+        this.networkName = networkName;
     }
 
     public Tunnel getTunnel() {
@@ -86,20 +104,23 @@ public class ConfigState implements Serializable {
         this.needsAuthentication = needsAuthentication;
     }
 
-    public String getPossibleIp() {
-
-        return possibleIp;
+    public String getNetaddress() {
+        return netaddress;
     }
 
-    public void setPossibleIp(String possibleIp) {
-        this.possibleIp = possibleIp;
+    public String getProtocol() {
+        return protocol.name().toLowerCase();
+    }
+
+    public void setNetaddress(String netaddress) {
+        this.netaddress = netaddress;
     }
 
     public int getSubnetmask() {
         return subnetmask;
     }
 
-    public void setSubnetmask(int subnetmask) {
+    public void setSubnetmask(short subnetmask) {
         this.subnetmask = subnetmask;
     }
 }

@@ -4,6 +4,7 @@ import de.hartz.vpn.Helper.Helper;
 import de.hartz.vpn.Helper.OpenVPNHelper;
 import de.hartz.vpn.Helper.Statics;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
+import de.hartz.vpn.MainApplication.UserData;
 import de.hartz.vpn.Utilities.Linux;
 import de.hartz.vpn.Utilities.Logger;
 import de.hartz.vpn.Utilities.OutputStreamHandler;
@@ -24,7 +25,6 @@ public class ConfigOpenVPN {
 
     // Default parameters.
     public static final String DEFAULT_PORT = "1194";
-    public static final String DEFAULT_PROTOCOL = "udp";
     public static final String DEFAULT_ADAPTER_NAME = "tap";
 
     public static final String DEFAULT_IP = "10.0.0.0";
@@ -74,24 +74,10 @@ public class ConfigOpenVPN {
 
         content += "port " + DEFAULT_PORT; //TODO: Move to ConfigState.
         content += System.getProperty("line.separator");
-        content += "proto " + DEFAULT_PROTOCOL; //TODO: Move to ConfigState. UDP or TCP.
+        content += "proto " +  UserData.getInstance().getVpnConfigState().getProtocol();
         content += System.getProperty("line.separator");
 
-        // tun = routing
-        // tap = bridging ; tap supports broadcast (important for games)
-        /*
-        // TODO: Maybe just use bridging if
-        if (configState.getNetworkType() == ConfigState.NetworkType.END_TO_END) {
-            tun
-            // Need different subnets.
-        } else {
-            tap
-            // Needs same subnet.
-            // Could also be END_TO_END. Maybe useful for broadcasts. For End_TO_END OWN SUBNET is useful?
-        }
-        http://wiki.openvpn.eu/index.php/Vergleich_TUN/TAP
-         */
-        content += "dev " + DEFAULT_ADAPTER_NAME; // TODO: Check TUN or TAP?
+        content += "dev " + DEFAULT_ADAPTER_NAME; // TODO: TAP for broadcasts, TUN for performance.
         content += System.getProperty("line.separator");
 
         // Certificate location.

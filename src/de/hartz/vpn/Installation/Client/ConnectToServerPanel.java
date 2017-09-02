@@ -17,6 +17,9 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
     private boolean successfullConnected = false;
 
     public ConnectToServerPanel() {
+        // TODO: Add mediator connection..
+
+
         // TODO: Maybe ask 3 options: 1) connect to server 2) (Super express) connect to network via (hardcoded) mediation server 3) connect to network with custom mediation server.
 
         JPanel wrapper = new JPanel();

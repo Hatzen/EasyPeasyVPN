@@ -34,6 +34,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
     private JList list;
     private JLabel ownStatusText;
+    private JLabel networkStatusText;
     private StatusComponent ownStatus;
     private JTabbedPane content;
     private JTextArea outputTextArea;
@@ -85,11 +86,18 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new BorderLayout());
         statusPanel.setPreferredSize(new Dimension(statusPanel.getWidth(), STATUS_HEIGHT));
-        ownStatus = new StatusComponent();
-        ownStatus.setPreferredSize(new Dimension(STATUS_HEIGHT,STATUS_HEIGHT));
+            ownStatus = new StatusComponent();
+            ownStatus.setPreferredSize(new Dimension(STATUS_HEIGHT,STATUS_HEIGHT));
         statusPanel.add(ownStatus, BorderLayout.WEST);
-        ownStatusText = new JLabel("ownIP and isClient/Server");
-        statusPanel.add(ownStatusText, BorderLayout.CENTER);
+
+            JPanel statusCenter = new JPanel();
+            statusCenter.setLayout(new BoxLayout(statusCenter, BoxLayout.Y_AXIS));
+            networkStatusText = new JLabel("Networkname");
+            networkStatusText.setFont(new Font("Arial", Font.BOLD, 16));
+            ownStatusText = new JLabel("ownIP and isClient/Server");
+            statusCenter.add(networkStatusText);
+            statusCenter.add(ownStatusText);
+        statusPanel.add(statusCenter, BorderLayout.CENTER);
 
         JPanel padding = new JPanel();
         padding.setLayout(new BorderLayout());
@@ -103,8 +111,9 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     }
 
     private void startVPN() {
+        ownStatus.setConnecting(true);
         String configFilename = "client";
-        if (!UserData.isClientInstallation()) {
+        if (!UserData.getInstance().isClientInstallation()) {
             MetaServer.getInstance().startServer();
             configFilename = "server";
         }
@@ -195,7 +204,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
     private void refreshModel() {
         DefaultListModel model = new DefaultListModel();
-        for (UserList.User user : UserData.userList) {
+        for (UserList.User user : UserData.getInstance().getUserList()) {
             model.addElement(user.getVpnIp() + " / " + user.getCommonName());
         }
         list.setModel( model );
@@ -235,7 +244,6 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
         if (line.contains(SUCCESSFUL_INIT)) {
             // Successful connected.
-            System.out.println("Online");
             setOnlineState(true);
         }
         refreshModel();
@@ -244,6 +252,10 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     @Override
     public void setOnlineState(boolean online) {
         ownStatus.setOnline(online);
+        networkStatusText.setText(UserData.getInstance().getVpnConfigState().getNetworkName());
+        String prefix = UserData.getInstance().isClientInstallation() ? "Client: " : "Server: ";
+        ownStatusText.setText(prefix + "");
+
         if (online) {
             // Check for avaiable connections.
             final ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
@@ -254,13 +266,15 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
                     String netaddress = "10.0.0";
                     ArrayList<String> ips = NetworkHelper.getAllReachableClientsForNetaddress(netaddress);
 
-                    UserData.userList.clear();
+                    UserData.getInstance().getUserList().clear();
+                    UserList userList =  UserData.getInstance().getUserList();
+                    userList.clear();
                     for (String ip : ips) {
-                        UserData.userList.add(new UserList.User(ip, "-"));
+                        userList.add(new UserList.User(ip, "-"));
                     }
                     refreshModel();
                 }
-            }, 0, 1, TimeUnit.MINUTES);
+            }, 0, 30, TimeUnit.SECONDS);
         }
     }
 

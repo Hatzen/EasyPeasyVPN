@@ -145,10 +145,6 @@ public class NetworkHelper {
                 NetworkInterface intf = en.nextElement();
                 for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
                     InetAddress tmpAddress = enumIpAddr.nextElement();
-                    /*NetworkInterface networkInterface = NetworkInterface.getByInetAddress(tmpAddress);
-                    for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
-                        netmasks.add( address.getNetworkPrefixLength() );
-                    }*/
                     short subnet = NetworkInterface.getByInetAddress(tmpAddress).getInterfaceAddresses().get(0).getNetworkPrefixLength();
                     String ip = tmpAddress.toString() + "/" + subnet;
                     // Only ipv4 addresses.
@@ -188,5 +184,11 @@ public class NetworkHelper {
             }.start();
         }
         return ipAddresses;
+    }
+
+    public static String getRecommendedIp() {
+        // TODO: Check getAllUsedIpAddresses and use 1) 10.0.0.0 2) 172.16.0.0 3) 192.168.0.0 the one which is not used.
+        // NOTE: Maybe Openvpn is already used so ip is already used. So lookup interfaces and compare ips..
+        return "10.0.0.0";
     }
 }

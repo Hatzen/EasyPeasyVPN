@@ -4,6 +4,7 @@ import de.hartz.vpn.Helper.Helper;
 import de.hartz.vpn.Installation.Client.ConnectToServerPanel;
 import de.hartz.vpn.Installation.Server.ChooseNetworkType;
 import de.hartz.vpn.Installation.Server.ChoosePerformancePanel;
+import de.hartz.vpn.Installation.Server.NetworkNamePanel;
 import de.hartz.vpn.Installation.Server.StartPanel;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
 import de.hartz.vpn.MainApplication.UserData;
@@ -32,6 +33,8 @@ public class InstallationController {
     private static InstallationController instance = new InstallationController();
     private InstallationFrame mainFrame;
     private InstallationCallback callback;
+
+    private ConfigState tmpConfigState;
 
     private static boolean hasGUI;
 
@@ -106,6 +109,7 @@ public class InstallationController {
      * @param showGUI Boolean indicating whether the application is started via console.
      */
     public void startInstallation(boolean showGUI, boolean client, InstallationCallback callback) {
+        tmpConfigState = new ConfigState();
         hasGUI = showGUI;
         this.callback = callback;
         if (showGUI) {
@@ -116,19 +120,18 @@ public class InstallationController {
                 System.out.println("Client installation");
                 currentPanelOrder.clear();
                 currentPanelOrder.addAll(clientPanelOrder);
-                UserData.clientInstallation = true;
             } else {
                 System.out.println("Server installation");
                 currentPanelOrder.clear();
                 currentPanelOrder.addAll(expressPanelOrder);
-                UserData.clientInstallation = false;
             }
+            UserData.getInstance().setClientInstallation(client);
 
 
             showPanel(0);
         } else {
             drawLogoWithoutGUI();
-            if (UserData.isClientInstallation())
+            if (UserData.getInstance().isClientInstallation())
                 new ExpressInstallationPanel().startExternalInstallation();
         }
     }
@@ -147,7 +150,7 @@ public class InstallationController {
      * Adds a specific panel to the client panel order. After the config file has loaded, so it can decide which adapter to install.
      */
     public void addClientPanel() {
-        if (UserData.getVpnConfigState().getAdapter() == ConfigState.Adapter.OpenVPN) {
+        if (UserData.getInstance().getVpnConfigState().getAdapter() == ConfigState.Adapter.OpenVPN) {
             int i = 0;
             while( i < currentPanelOrder.size()) {
                 if (currentPanelOrder.get(i) instanceof ConnectToServerPanel) {
@@ -168,6 +171,15 @@ public class InstallationController {
         showPanel(nextIndex);
     }
 
+    /**
+     * Returns the temporarily {@link ConfigState} of the network. After successfull installation it will be moved
+     * to {@link UserData}
+     * @returns the tmpConfigState.
+     */
+    public ConfigState getTmpConfigState() {
+        return tmpConfigState;
+    }
+
     private void initGUI() {
         hasGUI = true;
         mainFrame = new InstallationFrame("Installation");
@@ -181,6 +193,7 @@ public class InstallationController {
 
         // ExpressServer Panels
         expressPanelOrder.add(startPanel);
+        expressPanelOrder.add(new NetworkNamePanel());
         expressPanelOrder.add(new ExpressInstallationPanel());
         expressPanelOrder.add(new ExternalIpPanel());
 
@@ -244,6 +257,7 @@ public class InstallationController {
     private void showNextPanel(InstallationPanel currentPanel) {
         if (currentPanel.isFinishingPanel()) {
             callback.onInstallationSuccess();
+            UserData.getInstance().setVpnConfigState(tmpConfigState);
             mainFrame.dispose();
         }
 

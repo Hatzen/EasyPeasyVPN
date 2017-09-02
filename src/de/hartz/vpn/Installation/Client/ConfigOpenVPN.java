@@ -40,9 +40,9 @@ public class ConfigOpenVPN {
 
 
         // TODO: SAME AS SERVER
-        content += "proto " + DEFAULT_PROTOCOL; //TODO: Move to ConfigState. UDP or TCP.
+        content += "proto " + UserData.getInstance().getVpnConfigState().getProtocol();
         content += System.getProperty("line.separator");
-        content += "dev " + DEFAULT_ADAPTER_NAME; // TODO: Check TUN or TAP?
+        content += "dev " + DEFAULT_ADAPTER_NAME; // TODO: TAP for broadcasts, TUN for performance.
         content += System.getProperty("line.separator");
 
         content += "cipher " + DEFAULT_CIPHER; // TODO: Move to ConfigState. And look for performance increase.
@@ -53,7 +53,7 @@ public class ConfigOpenVPN {
         content += System.getProperty("line.separator");
 
 
-        // TODO: Different from server.
+        // TODO: Different from server. (?)
         // Certificate location.
         content += "ca \"" + INSTALLATION_PATH + "client.ca\"";
         content += System.getProperty("line.separator");
@@ -137,8 +137,8 @@ public class ConfigOpenVPN {
 
     @Linux
     public void configurateIptables() {
-        // Maybe not needed?
         // https://arashmilani.com/post?id=53
+        // Raspian works without it. Maybe not needed?
 
         /*
         // TODO: Save persistent: iptables-save && iptables-restore.

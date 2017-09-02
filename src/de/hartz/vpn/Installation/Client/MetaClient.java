@@ -117,7 +117,7 @@ public class MetaClient extends Thread {
         }
         commands.add(EXIT);
 
-        UserData.setVpnConfigState(config);
+        UserData.getInstance().setVpnConfigState(config);
     }
 
     private void receiveFile(File file) throws IOException {
