@@ -4,7 +4,6 @@ import de.hartz.vpn.Helper.Helper;
 import de.hartz.vpn.Helper.OpenVPNHelper;
 import de.hartz.vpn.Helper.Statics;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
-import de.hartz.vpn.MainApplication.UserData;
 import de.hartz.vpn.Utilities.Linux;
 import de.hartz.vpn.Utilities.Logger;
 import de.hartz.vpn.Utilities.OutputStreamHandler;
@@ -74,7 +73,7 @@ public class ConfigOpenVPN {
 
         content += "port " + DEFAULT_PORT; //TODO: Move to ConfigState.
         content += System.getProperty("line.separator");
-        content += "proto " +  UserData.getInstance().getVpnConfigState().getProtocol();
+        content += "proto " +  configState.getProtocol();
         content += System.getProperty("line.separator");
 
         content += "dev " + DEFAULT_ADAPTER_NAME; // TODO: TAP for broadcasts, TUN for performance.

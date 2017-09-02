@@ -3,6 +3,7 @@ package de.hartz.vpn.Installation.Client;
 import de.hartz.vpn.Helper.NetworkHelper;
 import de.hartz.vpn.Helper.OpenVPNHelper;
 import de.hartz.vpn.Helper.Statics;
+import de.hartz.vpn.Installation.InstallationController;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
 import de.hartz.vpn.MainApplication.UserData;
 
@@ -27,7 +28,6 @@ public class MetaClient extends Thread {
     public static final String FILE_PATH_CA = OpenVPNHelper.getOpenVPNInstallationPath() + "client.ca";
     public static final String FILE_PATH_CRT = OpenVPNHelper.getOpenVPNInstallationPath() + "client.crt";
     public static final String FILE_PATH_KEY = OpenVPNHelper.getOpenVPNInstallationPath() + "client.key";
-    //public final static int FILE_SIZE = Integer.MAX_VALUE; //doesnt work because its to large..
 
     private FileOutputStream fos = null;
     private BufferedOutputStream bos = null;
@@ -117,7 +117,7 @@ public class MetaClient extends Thread {
         }
         commands.add(EXIT);
 
-        UserData.getInstance().setVpnConfigState(config);
+        InstallationController.getInstance().setTmpConfigState(config);
     }
 
     private void receiveFile(File file) throws IOException {

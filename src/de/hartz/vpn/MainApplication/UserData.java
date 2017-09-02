@@ -22,8 +22,8 @@ public class UserData implements Serializable{
     public static String serverIp;
     //END OF: Client only.
 
-    public boolean clientInstallation = true;
-    private static ConfigState VPN_CONFIG_STATE;
+    private boolean clientInstallation = true;
+    private ConfigState vpnConfigState;
 
     /**
      * Returns the one and only {@link UserData} object. If one is saved it will loaded.
@@ -63,14 +63,14 @@ public class UserData implements Serializable{
      * Sets the current vpn config state and saves it persistent.
      */
     public ConfigState getVpnConfigState() {
-        return VPN_CONFIG_STATE;
+        return vpnConfigState;
     }
 
     /**
      * Sets the current vpn config state and saves it persistent.
      */
     public void setVpnConfigState(ConfigState configState) {
-        VPN_CONFIG_STATE = configState;
+        vpnConfigState = configState;
         writeUserData();
     }
 
@@ -91,8 +91,9 @@ public class UserData implements Serializable{
             instance = (UserData) ois.readObject();
             return  true;
         } catch (Exception e) {
+            // TODO: Check for data version.
             System.out.println("UserData not loaded. File does not exist (?)");
-            //e.printStackTrace();
+            e.printStackTrace();
         }
         return false;
     }

@@ -180,6 +180,10 @@ public class InstallationController {
         return tmpConfigState;
     }
 
+    public void setTmpConfigState(ConfigState tmpConfigState) {
+        this.tmpConfigState = tmpConfigState;
+    }
+
     private void initGUI() {
         hasGUI = true;
         mainFrame = new InstallationFrame("Installation");

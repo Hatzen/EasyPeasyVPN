@@ -2,6 +2,7 @@ package de.hartz.vpn.MainApplication;
 
 import de.hartz.vpn.Helper.Helper;
 import de.hartz.vpn.Helper.NetworkHelper;
+import de.hartz.vpn.Helper.OpenVPNParserHelper;
 import de.hartz.vpn.Helper.UiHelper;
 import de.hartz.vpn.Installation.InstallationController;
 import de.hartz.vpn.MainApplication.Server.MetaServer;
@@ -107,7 +108,10 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         padding.add(statusPanel, BorderLayout.NORTH);
 
         setVisible(true);
-        //startVPN();
+
+        if (canAutoStart()) {
+            startVPN();
+        }
     }
 
     private void startVPN() {
@@ -245,7 +249,13 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         if (line.contains(SUCCESSFUL_INIT)) {
             // Successful connected.
             setOnlineState(true);
+        } else if (OpenVPNParserHelper.hasDeviceProblem(line) ) {
+            UiHelper.showAlert("OpenVPN Device already in use. \n Make sure there is no other program using openvpn. If the problem persist restart your computer or as a last step reinstall adapter.");
+        } else if (OpenVPNParserHelper.hasFatalError(line)) {
+            setOnlineState(false);
         }
+
+
         refreshModel();
     }
 
@@ -275,7 +285,19 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
                     refreshModel();
                 }
             }, 0, 30, TimeUnit.SECONDS);
+        } else {
+            UserData.getInstance().getUserList().clear();
+            refreshModel();
         }
+    }
+
+    private boolean canAutoStart() {
+        UserData.getInstance();
+        UserData.getInstance().getVpnConfigState();
+        UserData.getInstance().getVpnConfigState().getNetworkName();
+        String network = UserData.getInstance().getVpnConfigState().getNetworkName();
+
+        return (network != null && !network.equals(""));
     }
 
     @Override

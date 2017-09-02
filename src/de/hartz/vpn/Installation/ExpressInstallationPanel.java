@@ -229,7 +229,7 @@ public class ExpressInstallationPanel extends InstallationPanel {
         if (UserData.getInstance().isClientInstallation()) {
             new de.hartz.vpn.Installation.Client.ConfigOpenVPN();
         } else {
-            new ConfigOpenVPN(UserData.getInstance().getVpnConfigState(), this);
+            new ConfigOpenVPN(InstallationController.getInstance().getTmpConfigState(), this);
         }
     }
 

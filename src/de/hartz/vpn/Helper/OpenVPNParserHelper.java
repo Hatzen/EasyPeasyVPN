@@ -1,5 +1,7 @@
 package de.hartz.vpn.Helper;
 
+import de.hartz.vpn.Utilities.Windows;
+
 /**
  * Class that contains functions to get specific informations from a logline of the OpenVPN stdout.
  */
@@ -23,6 +25,21 @@ public class OpenVPNParserHelper {
         }
         String serverIp = line.substring(indexOfMatchBefore + matchBefore.length(), line.indexOf("/", indexOfMatchBefore + matchBefore.length()) );
         return serverIp;
+    }
+
+    @Windows
+    public static boolean hasDeviceProblem(String line) {
+        return line.contains("All TAP-Windows adapters on this system are currently in use.");
+    }
+
+    /**
+     * DEMO DATA:
+     Sat Sep 02 18:25:59 2017 Exiting due to fatal error
+     * @param line
+     * @return
+     */
+    public static boolean hasFatalError(String line) {
+        return line.contains("Exiting due to fatal error");
     }
 
     /**
