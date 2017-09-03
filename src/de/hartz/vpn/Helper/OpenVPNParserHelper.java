@@ -5,13 +5,13 @@ import de.hartz.vpn.Utilities.Windows;
 /**
  * Class that contains functions to get specific informations from a logline of the OpenVPN stdout.
  */
-public class OpenVPNParserHelper {
+public final class OpenVPNParserHelper {
 
     /**
      *
      * TODO: Check if its aquivalent on linux.
      * DEMO DATA:
-     Sun Jul 02 19:49:08 2017 us=339988 Notified TAP-Windows driver to set a DHCP IP/netmask of 10.0.0.1/255.255.255.0 on interface {6F249CF5-95FB-4416-AFD8-1C08B9982162} [DHCP-serv: 10.0.0.0, lease-time: 31536000]
+     Sun Sep 02 19:49:08 2017 us=339988 Notified TAP-Windows driver to set a DHCP IP/netmask of 10.0.0.1/255.255.255.0 on interface {6F249CF5-95FB-4416-AFD8-1C08B9982162} [DHCP-serv: 10.0.0.0, lease-time: 31536000]
      * @param line
      * @return
      */
@@ -34,6 +34,16 @@ public class OpenVPNParserHelper {
 
     /**
      * DEMO DATA:
+     Options error: In [CMD-LINE]:1: Error opening configuration file: C:\Program Files\OpenVPN\config\client.ovpn
+     * @param line
+     * @return
+     */
+    public static boolean hasConfigFileProblem(String line) {
+        return line.contains("Error opening configuration file:");
+    }
+
+    /**
+     * DEMO DATA:
      Sat Sep 02 18:25:59 2017 Exiting due to fatal error
      * @param line
      * @return
@@ -45,7 +55,7 @@ public class OpenVPNParserHelper {
     /**
      *
      * DEMO DATA:
-     Sun Jul 02 19:49:22 2017 us=672550 DefaultClient/192.168.2.120 SENT CONTROL [DefaultClient]: 'PUSH_REPLY,route-gateway 10.0.0.1,ping 10,ping-restart 120,ifconfig 10.0.0.2 255.255.255.0' (status=1)
+     Sun Sep 02 19:49:22 2017 us=672550 DefaultClient/192.168.2.120 SENT CONTROL [DefaultClient]: 'PUSH_REPLY,route-gateway 10.0.0.1,ping 10,ping-restart 120,ifconfig 10.0.0.2 255.255.255.0' (status=1)
      * @param line
      * @return
      */
@@ -62,7 +72,7 @@ public class OpenVPNParserHelper {
     /**
      *
      * DEMO DATA:
-     Sun Jul 02 19:49:22 2017 us=672550 DefaultClient/192.168.2.120 SENT CONTROL [DefaultClient]: 'PUSH_REPLY,route-gateway 10.0.0.1,ping 10,ping-restart 120,ifconfig 10.0.0.2 255.255.255.0' (status=1)
+     Sun Sep 02 19:49:22 2017 us=672550 DefaultClient/192.168.2.120 SENT CONTROL [DefaultClient]: 'PUSH_REPLY,route-gateway 10.0.0.1,ping 10,ping-restart 120,ifconfig 10.0.0.2 255.255.255.0' (status=1)
      * @param line
      * @return
      */
@@ -79,7 +89,7 @@ public class OpenVPNParserHelper {
     /**
      *
      * DEMO DATA:
-     Sun Jul 02 20:28:26 2017 us=189108 DefaultClient/192.168.2.120 SIGUSR1[soft,connection-reset] received, client-instance restarting
+     Sun Sep 02 20:28:26 2017 us=189108 DefaultClient/192.168.2.120 SIGUSR1[soft,connection-reset] received, client-instance restarting
      * @param line
      * @return
      */

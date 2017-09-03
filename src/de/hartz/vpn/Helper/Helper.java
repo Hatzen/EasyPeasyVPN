@@ -13,7 +13,7 @@ import java.util.prefs.Preferences;
 /**
  * Helper Class that contains static methods that are needed in different classes.
  */
-public class Helper {
+public final class Helper {
 
     private static String OS = System.getProperty("os.name").toLowerCase();
     private static File TEMP_FOLDER;

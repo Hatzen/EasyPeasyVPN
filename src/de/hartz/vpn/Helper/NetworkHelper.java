@@ -14,7 +14,7 @@ import java.util.Enumeration;
 /**
  * Created by kaiha on 31.08.2017.
  */
-public class NetworkHelper {
+public final class NetworkHelper {
 
     /**
      * https://stackoverflow.com/questions/15554296/simple-java-aes-encrypt-decrypt-example
@@ -169,26 +169,79 @@ public class NetworkHelper {
      */
     public static ArrayList<String> getAllReachableClientsForNetaddress(String netaddress) {
         final ArrayList<String> ipAddresses = new ArrayList<>();
-        final int timeout=1000;
+
         for (int i=1;i<255;i++){
             final String host= netaddress + "." + i;
             new Thread() {
                 @Override
                 public void run() {
                     try {
-                        if (InetAddress.getByName(host).isReachable(timeout)) {
+                        if (InetAddress.getByName(host).isReachable(5000)) {
                             ipAddresses.add(host);
                         }
-                    } catch (IOException e) { e.printStackTrace(); }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }.start();
         }
+
+        /*
+        TODO: Check why this does not work!! Unrelible and first time alwasys ends with all ips ???
+        for (int i=1;i<255;i++){
+            final String host= netaddress + "." + i;
+            new Thread() {
+                @Override
+                public void run() {
+                    if (NetworkHelper.isReachable(host)) {
+                        ipAddresses.add(host);
+                    }
+                }
+            }.start();
+        }
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        */
+
         return ipAddresses;
     }
 
+    /**
+     * Returns a ip netaddress that is not used by this computer.
+     * @returns valid ip address.
+     */
     public static String getRecommendedIp() {
         // TODO: Check getAllUsedIpAddresses and use 1) 10.0.0.0 2) 172.16.0.0 3) 192.168.0.0 the one which is not used.
         // NOTE: Maybe Openvpn is already used so ip is already used. So lookup interfaces and compare ips..
         return "10.0.0.0";
+    }
+
+    /**
+     * Pings the given ip, to see if the host is reachable. This function is blocking the current thread til the result.
+     * https://stackoverflow.com/questions/9922543/why-does-inetaddress-isreachable-return-false-when-i-can-ping-the-ip-address
+     * @return
+     */
+    public static boolean isReachable(String ip) {
+        boolean reachable = false;
+        try {
+            String param = "n";
+            // in case of Linux change the 'n' to 'c'.
+            if ( Helper.isLinux() ) {
+                param = "c";
+            }
+
+            ProcessBuilder pb = new ProcessBuilder( "ping", "-" + param, "1", ip );
+            Process p = pb.start();
+            int returnVal = p.waitFor();
+
+            reachable = (returnVal == 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return reachable;
     }
 }

@@ -193,13 +193,13 @@ public class InstallationController {
 
         // ClientPanels
         clientPanelOrder.add(new ConnectToServerPanel());
-        clientPanelOrder.add(new ExternalIpPanel());
+        clientPanelOrder.add(new FinishingPanel());
 
         // ExpressServer Panels
         expressPanelOrder.add(startPanel);
         expressPanelOrder.add(new NetworkNamePanel());
         expressPanelOrder.add(new ExpressInstallationPanel());
-        expressPanelOrder.add(new ExternalIpPanel());
+        expressPanelOrder.add(new FinishingPanel());
 
         // CustomServer panels
         customPanelOrder.add(startPanel);

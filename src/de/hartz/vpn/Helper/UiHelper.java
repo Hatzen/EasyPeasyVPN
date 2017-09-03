@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * Created by kaiha on 31.08.2017.
  */
-public class UiHelper {
+public final class UiHelper {
 
     /**
      * Shows an error window to inform the user.

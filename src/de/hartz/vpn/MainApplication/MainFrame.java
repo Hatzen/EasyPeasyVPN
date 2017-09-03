@@ -33,6 +33,11 @@ import static de.hartz.vpn.Helper.Statics.SOFTWARE_NAME;
 public class MainFrame extends JFrame implements ActionListener, Logger, NetworkStateInterface, InstallationController.InstallationCallback {
     private final int STATUS_HEIGHT = 50;
 
+    private static final String START_VPN_SERVICE = "Start VPN Service";
+    private static final String STOP_VPN_SERVICE = "Stop VPN Service";
+
+    private OpenVPNRunner openVPNRunner;
+
     private JList list;
     private JLabel ownStatusText;
     private JLabel networkStatusText;
@@ -46,6 +51,10 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     private JMenuItem mediationMenuItem;
     private JMenuItem createNetworkItem;
     private JMenuItem joinNetworkItem;
+    private JMenuItem serviceToggleItem;
+
+    private SystemTray tray;
+    private TrayIcon trayIcon;
 
     public MainFrame() {
         setTitle(SOFTWARE_NAME);
@@ -109,12 +118,25 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
         setVisible(true);
 
+        // Terminate vpn process softly.
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                exit();
+            }
+        });
+
+        // TODO: Maybe create settings, to check whether to connect at program start.
         if (canAutoStart()) {
             startVPN();
         }
     }
 
+    private boolean isServiceRunning() {
+        return (openVPNRunner != null && openVPNRunner.isRunning());
+    }
+
     private void startVPN() {
+
         ownStatus.setConnecting(true);
         String configFilename = "client";
         if (!UserData.getInstance().isClientInstallation()) {
@@ -122,7 +144,15 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             configFilename = "server";
         }
 
-        new OpenVPNRunner(configFilename + Helper.getOpenVPNConfigExtension(), this);
+        openVPNRunner = new OpenVPNRunner(configFilename + Helper.getOpenVPNConfigExtension(), this);
+        serviceToggleItem.setText(STOP_VPN_SERVICE);
+    }
+
+    private void stopVPN() {
+        setOnlineState(false);
+
+        openVPNRunner.exitProcess();
+        serviceToggleItem.setText(START_VPN_SERVICE);
     }
 
     private void initMenuBar() {
@@ -138,6 +168,10 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         joinNetworkItem = new JMenuItem("Join");
         joinNetworkItem.addActionListener(this);
         joinNetworkItem.setAccelerator(KeyStroke.getKeyStroke('J', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+
+        serviceToggleItem = new JMenuItem(START_VPN_SERVICE);
+        serviceToggleItem.addActionListener(this);
+        serviceToggleItem.setAccelerator(KeyStroke.getKeyStroke('J', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
 
         networkInfoItem = new JMenuItem("Network info");
         networkInfoItem.addActionListener(this);
@@ -159,18 +193,18 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         menuBar.add(networkMenu);
             networkMenu.add(createNetworkItem);
             networkMenu.add(joinNetworkItem);
+            networkMenu.add(serviceToggleItem);
         menuBar.add(extrasMenu);
             extrasMenu.add(networkInfoItem);
-            extrasMenu.add(mediationMenuItem);
+            //extrasMenu.add(mediationMenuItem);
         menuBar.add(helpMenu);
             helpMenu.add(manualItem);
             helpMenu.add(aboutItem);
     }
 
     private void initTray() {
-        TrayIcon trayIcon = null;
         if (SystemTray.isSupported()) {
-            SystemTray tray = SystemTray.getSystemTray();
+            tray = SystemTray.getSystemTray();
             File file = Helper.getResourceAsFile("resources/icon.png");
             Image image = null;
             try {
@@ -185,7 +219,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
                 public void actionPerformed(ActionEvent e) {
                     if (e.getSource() == exitItem) {
                         // TODO: Make sure process like server and openvpn etc. are closed softly.
-                        System.exit(0);
+                        exit();
                     } else { // Source == openItem
                         setVisible(true);
                     }
@@ -231,6 +265,12 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             try {
                 EasyHtmlComponent.openURLInBrowser(new URL("https://github.com/Hatzen/EasyPeasyVPN/wiki"));
             } catch (Exception e) {}
+        } else if (actionEvent.getSource() == serviceToggleItem) {
+            if (!isServiceRunning()) {
+                startVPN();
+            } else {
+                stopVPN();
+            }
         }
     }
 
@@ -251,10 +291,13 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             setOnlineState(true);
         } else if (OpenVPNParserHelper.hasDeviceProblem(line) ) {
             UiHelper.showAlert("OpenVPN Device already in use. \n Make sure there is no other program using openvpn. If the problem persist restart your computer or as a last step reinstall adapter.");
+            stopVPN();
+        } else if( OpenVPNParserHelper.hasConfigFileProblem(line) ) {
+            UiHelper.showAlert("OpenVPN config file seems to be corrupted. \n Rerun configuration or fix it manually.");
+            stopVPN();
         } else if (OpenVPNParserHelper.hasFatalError(line)) {
-            setOnlineState(false);
+            stopVPN();
         }
-
 
         refreshModel();
     }
@@ -291,6 +334,16 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         }
     }
 
+    @Override
+    public void onInstallationSuccess() {
+        startVPN();
+    }
+
+    @Override
+    public void onInstallationCanceled() {
+
+    }
+
     private boolean canAutoStart() {
         UserData.getInstance();
         UserData.getInstance().getVpnConfigState();
@@ -300,13 +353,18 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         return (network != null && !network.equals(""));
     }
 
-    @Override
-    public void onInstallationSuccess() {
-        startVPN();
-    }
+    private void exit() {
+        tray.remove(trayIcon);
+        if (isServiceRunning()) {
+            stopVPN();
+        }
+        try {
+            openVPNRunner.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-    @Override
-    public void onInstallationCanceled() {
-
+        System.err.print("SOFTLY EXITED");
+        System.exit(0);
     }
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Created by kaiha on 31.08.2017.
  */
-public class OpenVPNHelper {
+public final class OpenVPNHelper {
 
     //TODO: If possible get rid off..
     // @Windows

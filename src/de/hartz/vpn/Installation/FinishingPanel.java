@@ -4,9 +4,9 @@ import javax.swing.*;
 
 /**
  */
-public class ExternalIpPanel extends InstallationPanel {
+public class FinishingPanel extends InstallationPanel {
 
-    public ExternalIpPanel() {
+    public FinishingPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         add(new JLabel("Successful installed. Finish to start client."));
