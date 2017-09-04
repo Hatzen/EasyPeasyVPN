@@ -6,7 +6,7 @@ import de.hartz.vpn.MainApplication.Server.ConfigState;
 import java.io.*;
 import java.util.ArrayList;
 
-import static de.hartz.vpn.Helper.Statics.USER_DATA_FILE_PATH;
+import static de.hartz.vpn.Helper.Constants.USER_DATA_FILE_PATH;
 
 /**
  * Hold the data for the current session of this user.

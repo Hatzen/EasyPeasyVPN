@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static de.hartz.vpn.Helper.Statics.SOFTWARE_NAME;
+import static de.hartz.vpn.Helper.Constants.SOFTWARE_NAME;
 
 /**
  * The main frame of the client. It displays the current vpn connection.
@@ -37,6 +37,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     private static final String STOP_VPN_SERVICE = "Stop VPN Service";
 
     private OpenVPNRunner openVPNRunner;
+    private ScheduledExecutorService vpnMemberCheckingTask;
 
     private JList list;
     private JLabel ownStatusText;
@@ -136,7 +137,6 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     }
 
     private void startVPN() {
-
         ownStatus.setConnecting(true);
         String configFilename = "client";
         if (!UserData.getInstance().isClientInstallation()) {
@@ -289,6 +289,9 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         if (line.contains(SUCCESSFUL_INIT)) {
             // Successful connected.
             setOnlineState(true);
+        } else if (OpenVPNParserHelper.getClientIpFromLine(line) != null ) {
+            NetworkHelper.OWN_VPN_IP = OpenVPNParserHelper.getClientIpFromLine(line);
+            updateOwnIpLabel();
         } else if (OpenVPNParserHelper.hasDeviceProblem(line) ) {
             UiHelper.showAlert("OpenVPN Device already in use. \n Make sure there is no other program using openvpn. If the problem persist restart your computer or as a last step reinstall adapter.");
             stopVPN();
@@ -306,32 +309,40 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     public void setOnlineState(boolean online) {
         ownStatus.setOnline(online);
         networkStatusText.setText(UserData.getInstance().getVpnConfigState().getNetworkName());
-        String prefix = UserData.getInstance().isClientInstallation() ? "Client: " : "Server: ";
-        ownStatusText.setText(prefix + "");
+        updateOwnIpLabel();
 
         if (online) {
             // Check for avaiable connections.
-            final ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-            ses.scheduleWithFixedDelay(new Runnable() {
-                @Override
-                public void run() {
-                    // TODO: Get netadress of vpn from config.
-                    String netaddress = "10.0.0";
-                    ArrayList<String> ips = NetworkHelper.getAllReachableClientsForNetaddress(netaddress);
+            if(vpnMemberCheckingTask == null || vpnMemberCheckingTask.isShutdown()) {
+                vpnMemberCheckingTask = Executors.newSingleThreadScheduledExecutor();
+                vpnMemberCheckingTask.scheduleWithFixedDelay(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO: Get netadress of vpn from config.
+                        String netaddress = "10.0.0";
+                        ArrayList<String> ips = NetworkHelper.getAllReachableClientsForNetaddress(netaddress);
 
-                    UserData.getInstance().getUserList().clear();
-                    UserList userList =  UserData.getInstance().getUserList();
-                    userList.clear();
-                    for (String ip : ips) {
-                        userList.add(new UserList.User(ip, "-"));
+                        UserData.getInstance().getUserList().clear();
+                        UserList userList =  UserData.getInstance().getUserList();
+                        userList.clear();
+                        for (String ip : ips) {
+                            userList.add(new UserList.User(ip, "-"));
+                        }
+                        refreshModel();
                     }
-                    refreshModel();
-                }
-            }, 0, 30, TimeUnit.SECONDS);
+                }, 0, 30, TimeUnit.SECONDS);
+            }
         } else {
             UserData.getInstance().getUserList().clear();
             refreshModel();
+            vpnMemberCheckingTask.shutdown();
         }
+    }
+
+
+    private void updateOwnIpLabel() {
+        String prefix = UserData.getInstance().isClientInstallation() ? "Client: " : "Server: ";
+        ownStatusText.setText(prefix + " " + NetworkHelper.getOwnVPNIP());
     }
 
     @Override

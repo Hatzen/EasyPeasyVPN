@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Global and statics variables that are needed  often at different locations.
  */
-public final class Statics {
+public final class Constants {
 
     public static final String SOFTWARE_NAME = "EasyPeasyVPN";
 

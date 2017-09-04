@@ -1,8 +1,8 @@
 package de.hartz.vpn.Installation.Server;
 
+import de.hartz.vpn.Helper.Constants;
 import de.hartz.vpn.Helper.Helper;
 import de.hartz.vpn.Helper.OpenVPNHelper;
-import de.hartz.vpn.Helper.Statics;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
 import de.hartz.vpn.Utilities.Linux;
 import de.hartz.vpn.Utilities.Logger;
@@ -324,9 +324,9 @@ public class ConfigOpenVPN {
         for (int i = 0; i < 10; i++) {
             input.add("" + System.getProperty("line.separator"));
         }
-        input.set(5, Statics.DEFAULT_CLIENT_NAME + System.getProperty("line.separator"));
-        input.set(6, Statics.DEFAULT_CLIENT_NAME + System.getProperty("line.separator"));
-        runEasyRSACommands("build-key.bat " + Statics.DEFAULT_CLIENT_NAME, input, 2);
+        input.set(5, Constants.DEFAULT_CLIENT_NAME + System.getProperty("line.separator"));
+        input.set(6, Constants.DEFAULT_CLIENT_NAME + System.getProperty("line.separator"));
+        runEasyRSACommands("build-key.bat " + Constants.DEFAULT_CLIENT_NAME, input, 2);
     }
 
     /**

@@ -16,6 +16,8 @@ import java.util.Enumeration;
  */
 public final class NetworkHelper {
 
+    public static String OWN_VPN_IP;
+
     /**
      * https://stackoverflow.com/questions/15554296/simple-java-aes-encrypt-decrypt-example
      */
@@ -165,7 +167,8 @@ public final class NetworkHelper {
      * IMPORTANT:  Currently only ipv4 with subnetmask /24 is supported!
      * https://stackoverflow.com/questions/3345857/how-to-get-a-list-of-ip-connected-in-same-network-subnet-using-java
      * @param netaddress the netadress to check.
-     * @return
+     * @returns a list of all reachable ips in the network.
+     * TODO: On my machine spotify starts stottering shortly. Maybe because of too much traffic for short time?
      */
     public static ArrayList<String> getAllReachableClientsForNetaddress(String netaddress) {
         final ArrayList<String> ipAddresses = new ArrayList<>();
@@ -176,8 +179,11 @@ public final class NetworkHelper {
                 @Override
                 public void run() {
                     try {
+                        // TODO: Make this more relieable. Might be problem of using udp???
                         if (InetAddress.getByName(host).isReachable(5000)) {
-                            ipAddresses.add(host);
+                            synchronized (ipAddresses) {
+                                ipAddresses.add(host);
+                            }
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -243,5 +249,10 @@ public final class NetworkHelper {
             e.printStackTrace();
         }
         return reachable;
+    }
+
+    public static String getOwnVPNIP() {
+        // TODO: Better way would be scanning all interfaces and checking the ip for all. Problem is that the devices are named differently on windows linux etc..
+        return OWN_VPN_IP;
     }
 }

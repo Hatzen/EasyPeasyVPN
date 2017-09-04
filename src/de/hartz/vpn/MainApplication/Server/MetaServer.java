@@ -1,8 +1,8 @@
 package de.hartz.vpn.MainApplication.Server;
 
+import de.hartz.vpn.Helper.Constants;
 import de.hartz.vpn.Helper.NetworkHelper;
 import de.hartz.vpn.Helper.OpenVPNHelper;
-import de.hartz.vpn.Helper.Statics;
 import de.hartz.vpn.MainApplication.UserData;
 
 import java.io.*;
@@ -97,7 +97,7 @@ public class MetaServer extends Thread {
     @Override
     public void run() {
         try {
-            serverSocket = new ServerSocket(Statics.MEDIATION_SERVER_PORT);
+            serverSocket = new ServerSocket(Constants.MEDIATION_SERVER_PORT);
             running = true;
             while (run) {
                 System.out.println("Waiting...");
@@ -141,7 +141,7 @@ public class MetaServer extends Thread {
 
     private String getClientName() {
         // TODO: Get Client name from authentification.
-        return Statics.DEFAULT_CLIENT_NAME;
+        return Constants.DEFAULT_CLIENT_NAME;
     }
 
     private void initClient(String command) {

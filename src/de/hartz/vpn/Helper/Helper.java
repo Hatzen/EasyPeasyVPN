@@ -23,9 +23,9 @@ public final class Helper {
      */
     public static String getOpenVPNConfigExtension() {
         if (isWindows()) {
-            return Statics.OpenVpnValues.CONFIG_EXTENSION_WINDOWS.getValue();
+            return Constants.OpenVpnValues.CONFIG_EXTENSION_WINDOWS.getValue();
         } else if(isLinux()) {
-            return Statics.OpenVpnValues.CONFIG_EXTENSION_LINUX.getValue();
+            return Constants.OpenVpnValues.CONFIG_EXTENSION_LINUX.getValue();
         }
         return null;
     }

@@ -29,6 +29,7 @@ public final class OpenVPNParserHelper {
 
     @Windows
     public static boolean hasDeviceProblem(String line) {
+        // TODO: If the application is killed by taskmanager (force kill) the openvpn process survives sometimes somehow. Any other work around?
         return line.contains("All TAP-Windows adapters on this system are currently in use.");
     }
 
@@ -55,17 +56,17 @@ public final class OpenVPNParserHelper {
     /**
      *
      * DEMO DATA:
-     Sun Sep 02 19:49:22 2017 us=672550 DefaultClient/192.168.2.120 SENT CONTROL [DefaultClient]: 'PUSH_REPLY,route-gateway 10.0.0.1,ping 10,ping-restart 120,ifconfig 10.0.0.2 255.255.255.0' (status=1)
+     Mon Sep 04 01:41:18 2017 Notified TAP-Windows driver to set a DHCP IP/netmask of 10.0.0.1/255.255.255.0 on interface {6F249CF5-95FB-4416-AFD8-1C08B9982162} [DHCP-serv: 10.0.0.0, lease-time: 31536000]
      * @param line
      * @return
      */
     public static String getClientIpFromLine(String line) {
-        if (!line.contains("SENT CONTROL [")) {
+        final String matchBefore = "DHCP IP/netmask of ";
+        if (!line.contains(matchBefore) || !line.contains("on interface")) {
             return null;
         }
-        final String matchBefore = ",ifconfig ";
         final int indexOfMatchBefore = line.indexOf(matchBefore);
-        String clientIp = line.substring(indexOfMatchBefore + matchBefore.length(), line.indexOf(" ", indexOfMatchBefore + matchBefore.length()) );
+        String clientIp = line.substring(indexOfMatchBefore + matchBefore.length(), line.indexOf("/", indexOfMatchBefore + matchBefore.length()) );
         return clientIp;
     }
 

@@ -1,8 +1,8 @@
 package de.hartz.vpn.Installation.Client;
 
+import de.hartz.vpn.Helper.Constants;
 import de.hartz.vpn.Helper.NetworkHelper;
 import de.hartz.vpn.Helper.OpenVPNHelper;
-import de.hartz.vpn.Helper.Statics;
 import de.hartz.vpn.Installation.InstallationController;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
 import de.hartz.vpn.MainApplication.UserData;
@@ -48,7 +48,7 @@ public class MetaClient extends Thread {
     @Override
     public void run() {
         try {
-            socket = new Socket(serverIp, Statics.MEDIATION_SERVER_PORT);
+            socket = new Socket(serverIp, Constants.MEDIATION_SERVER_PORT);
             System.out.println("Connecting...");
 
             printWriter = new PrintWriter( socket.getOutputStream() );
