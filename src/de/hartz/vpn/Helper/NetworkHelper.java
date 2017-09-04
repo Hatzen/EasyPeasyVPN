@@ -255,4 +255,14 @@ public final class NetworkHelper {
         // TODO: Better way would be scanning all interfaces and checking the ip for all. Problem is that the devices are named differently on windows linux etc..
         return OWN_VPN_IP;
     }
+
+    /**
+     * Hack that removes unnecessary bytes which removes all "invisible" characters.
+     * @param string The string to clean up. Remove line ending etc..
+     * @returns a clean string consisting only of visible characters.
+     * https://stackoverflow.com/questions/9057083/how-can-i-remove-all-control-characters-from-a-java-string
+     */
+    public static String getCleanString(String string) {
+        return string.replaceAll("\\p{Cntrl}", "");
+    }
 }

@@ -19,6 +19,7 @@ public class Main {
      */
     public Main() {
         setupPseudoDNSServer();
+        new MediationServer();
     }
 
     private void setupPseudoDNSServer() {
@@ -30,10 +31,9 @@ public class Main {
         ses.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
-                // TODO: Make use of the port at php and here.
-                String urlParameters = "port=123";
+                String urlParameters = "";
                 NetworkHelper.executePost(ipRefreshURL, urlParameters);
-
+                // System.out.println("Refreshed Ip at:" + ipRefreshURL);
             }
         }, 0, 1, TimeUnit.MINUTES);
     }

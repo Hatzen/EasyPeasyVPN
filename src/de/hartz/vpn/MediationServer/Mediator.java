@@ -1,4 +1,4 @@
-package de.hartz.vpn.Installation;
+package de.hartz.vpn.MediationServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;

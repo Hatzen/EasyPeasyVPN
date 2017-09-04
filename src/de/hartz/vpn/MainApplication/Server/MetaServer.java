@@ -97,7 +97,7 @@ public class MetaServer extends Thread {
     @Override
     public void run() {
         try {
-            serverSocket = new ServerSocket(Constants.MEDIATION_SERVER_PORT);
+            serverSocket = new ServerSocket(Constants.META_SERVER_PORT);
             running = true;
             while (run) {
                 System.out.println("Waiting...");

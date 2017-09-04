@@ -3,8 +3,8 @@ package de.hartz.vpn.Installation.Server;
 import de.hartz.vpn.Helper.UiHelper;
 import de.hartz.vpn.Installation.InstallationController;
 import de.hartz.vpn.Installation.InstallationPanel;
-import de.hartz.vpn.Installation.Mediator;
 import de.hartz.vpn.MainApplication.UserData;
+import de.hartz.vpn.MediationServer.Mediator;
 
 import javax.swing.*;
 import java.awt.*;

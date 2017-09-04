@@ -1,7 +1,7 @@
 package de.hartz.vpn.MainApplication;
 
-import de.hartz.vpn.Installation.Mediator;
 import de.hartz.vpn.MainApplication.Server.ConfigState;
+import de.hartz.vpn.MediationServer.Mediator;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class UserData implements Serializable{
 
     private UserData() {
         if (mediatorList.size() == 0) {
-            mediatorList.add(new Mediator("DEFAULT","hartzkai.freehostia.com/thesis/", -1, -1, true));
+            mediatorList.add(new Mediator("DEFAULT","http://hartzkai.freehostia.com/thesis/", -1, -1, true));
         }
     }
 

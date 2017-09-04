@@ -366,6 +366,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         UserData.getInstance();
         UserData.getInstance().getVpnConfigState();
         UserData.getInstance().getVpnConfigState().getNetworkName();
+        // TODO: FIX NULLPOINTER caused by getVpnConfigState
+
         String network = UserData.getInstance().getVpnConfigState().getNetworkName();
 
         return (network != null && !network.equals(""));
