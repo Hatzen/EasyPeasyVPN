@@ -40,7 +40,25 @@ public class RadioButtonWithDescription extends JPanel {
 
     public void setEnabled(boolean enabled) {
         radioButton.setEnabled(enabled);
-        descriptionComponent.setEnabled(enabled);
+        setDescriptionComponentEnabled(enabled);
+    }
+
+    public void setDescriptionComponentEnabled(boolean enabled) {
+        setSubComponentsEnabled(descriptionComponent, enabled);
+    }
+
+    private void setSubComponentsEnabled(Component component,boolean enabled) {
+        if (component instanceof JPanel) {
+            Component[] components = ((JPanel) component).getComponents();
+
+            for (Component c: components) {
+                if ( c instanceof JPanel) {
+                    setSubComponentsEnabled(c, enabled);
+                }
+                c.setEnabled(enabled);
+            }
+        }
+        component.setEnabled(false);
     }
 
     public void setSelected(boolean selected) {

@@ -35,13 +35,12 @@ public class InstallationController {
     private InstallationCallback callback;
 
     private ConfigState tmpConfigState;
+    private boolean clientInstallation;
 
     private static boolean hasGUI;
 
     private ArrayList<InstallationPanel> currentPanelOrder;
-
     private ArrayList<InstallationPanel> clientPanelOrder;
-
     private ArrayList<InstallationPanel> expressPanelOrder;
     private ArrayList<InstallationPanel> customPanelOrder;
 
@@ -110,6 +109,7 @@ public class InstallationController {
      */
     public void startInstallation(boolean showGUI, boolean client, InstallationCallback callback) {
         tmpConfigState = new ConfigState();
+        clientInstallation = client;
         hasGUI = showGUI;
         this.callback = callback;
         if (showGUI) {
@@ -125,13 +125,12 @@ public class InstallationController {
                 currentPanelOrder.clear();
                 currentPanelOrder.addAll(expressPanelOrder);
             }
-            UserData.getInstance().setClientInstallation(client);
 
 
             showPanel(0);
         } else {
             drawLogoWithoutGUI();
-            if (UserData.getInstance().isClientInstallation())
+            if (client)
                 new ExpressInstallationPanel().startExternalInstallation();
         }
     }
@@ -150,7 +149,7 @@ public class InstallationController {
      * Adds a specific panel to the client panel order. After the config file has loaded, so it can decide which adapter to install.
      */
     public void addClientPanel() {
-        if (UserData.getInstance().getVpnConfigState().getAdapter() == ConfigState.Adapter.OpenVPN) {
+        if (getTmpConfigState().getAdapter() == ConfigState.Adapter.OpenVPN) {
             int i = 0;
             while( i < currentPanelOrder.size()) {
                 if (currentPanelOrder.get(i) instanceof ConnectToServerPanel) {
@@ -182,6 +181,10 @@ public class InstallationController {
 
     public void setTmpConfigState(ConfigState tmpConfigState) {
         this.tmpConfigState = tmpConfigState;
+    }
+
+    public boolean isClientInstallation() {
+        return clientInstallation;
     }
 
     private void initGUI() {
@@ -260,6 +263,7 @@ public class InstallationController {
 
     private void showNextPanel(InstallationPanel currentPanel) {
         if (currentPanel.isFinishingPanel()) {
+            // OnFinish setup config etc.
             callback.onInstallationSuccess();
             UserData.getInstance().setVpnConfigState(tmpConfigState);
             mainFrame.dispose();

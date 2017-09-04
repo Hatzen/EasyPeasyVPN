@@ -24,10 +24,11 @@ public class NetworkNamePanel extends InstallationPanel implements ActionListene
 
     public NetworkNamePanel() {
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(new GridLayout(5, 1));
 
         networkNameField = new JTextField();
-        networkNameField.setMaximumSize( new Dimension( 1000, 50) );
+        networkNameField.setAlignmentX( Component.CENTER_ALIGNMENT );
+        networkNameField.setMaximumSize( new Dimension( 1000, 30) );
 
         ArrayList<Mediator> mediatorList = UserData.getInstance().getMediatorList();
         String[] comboBoxSource = new String[mediatorList.size()+1];
@@ -37,13 +38,21 @@ public class NetworkNamePanel extends InstallationPanel implements ActionListene
         }
         mediatorBox = new JComboBox(comboBoxSource);
         mediatorBox.setSelectedIndex(1);
-        mediatorBox.setMaximumSize( new Dimension( 1000, 50) );
+        mediatorBox.setMaximumSize( new Dimension( 1000, 30) );
         mediatorBox.addActionListener(this);
 
-        add(new JLabel("Enter a Networkname:"));
-        add(networkNameField);
-        add(new JLabel("Select Mediation Server:"));
-        add(mediatorBox);
+
+        JLabel networkNameLabel = new JLabel("Enter a Networkname:");
+        networkNameLabel.setMaximumSize( new Dimension( 1000, 30) );
+
+        JLabel mediatorLabel = new JLabel("Select Mediation Server:");
+        mediatorLabel.setMaximumSize( new Dimension( 1000, 30) );
+
+
+        add( UiHelper.getComponentWrapper(networkNameLabel));
+        add( UiHelper.getComponentWrapper(networkNameField) );
+        add( UiHelper.getComponentWrapper(mediatorLabel));
+        add( UiHelper.getComponentWrapper(mediatorBox) );
         // Inivisible Panel to keep the other components normal sized.
         add(new JPanel());
     }

@@ -171,7 +171,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
         serviceToggleItem = new JMenuItem(START_VPN_SERVICE);
         serviceToggleItem.addActionListener(this);
-        serviceToggleItem.setAccelerator(KeyStroke.getKeyStroke('J', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+        serviceToggleItem.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
 
         networkInfoItem = new JMenuItem("Network info");
         networkInfoItem.addActionListener(this);
@@ -335,7 +335,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         } else {
             UserData.getInstance().getUserList().clear();
             refreshModel();
-            vpnMemberCheckingTask.shutdown();
+            if (vpnMemberCheckingTask != null)
+                vpnMemberCheckingTask.shutdown();
         }
     }
 
@@ -347,7 +348,13 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
     @Override
     public void onInstallationSuccess() {
-        startVPN();
+        if (isServiceRunning()) {
+            // TODO: Test if this works. Maybe we need to wait til service has stopped..
+            stopVPN();
+            startVPN();
+        } else {
+            startVPN();
+        }
     }
 
     @Override

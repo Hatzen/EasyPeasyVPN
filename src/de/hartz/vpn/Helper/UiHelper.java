@@ -44,4 +44,16 @@ public final class UiHelper {
         }
     }
 
+    /**
+     * Needed for sizing components.
+     * @param component to respect his size.
+     * @returns the wrapper to simply add.
+     */
+    public static JPanel getComponentWrapper(JComponent component) {
+        JPanel wrapper = new JPanel();
+        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+        wrapper.add(component);
+        return wrapper;
+    }
+
 }
