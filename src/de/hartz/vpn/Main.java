@@ -1,6 +1,7 @@
 package de.hartz.vpn;
 
 import de.hartz.vpn.Installation.InstallationController;
+import de.hartz.vpn.MainApplication.Client.MediationConnector;
 import de.hartz.vpn.MainApplication.MainFrame;
 import de.hartz.vpn.MainApplication.UserData;
 
@@ -14,6 +15,8 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String[] args) {
+        MediationConnector.startSocket();
+
         // TODO: TEST COMMAND LINE AGAIN! Espacially callback = null might be a problem..
         if ( args.length > 0) {
             if (args.length == 1 && args[0].equals("mediator")) {

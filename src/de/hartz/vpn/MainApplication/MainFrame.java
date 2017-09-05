@@ -346,7 +346,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
                         }
                         refreshModel();
                     }
-                }, 0, 30, TimeUnit.SECONDS);
+                }, 0, 5, TimeUnit.SECONDS);
             }
 
             if (UserData.getInstance().getVpnConfigState().getMediator() != null) {

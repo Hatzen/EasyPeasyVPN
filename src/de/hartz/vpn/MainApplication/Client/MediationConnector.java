@@ -8,11 +8,23 @@ import de.hartz.vpn.MediationServer.Mediator;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 
 /**
  * Created by kaiha on 04.09.2017.
  */
 public class MediationConnector {
+
+
+    static DatagramSocket clientSocket;
+
+    public static void startSocket() {
+        try {
+            clientSocket = new DatagramSocket();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
 
     private MediationConnector() {
     }
@@ -62,12 +74,13 @@ public class MediationConnector {
 
     public static void registerNetworkAtMediator(String networkName, Mediator mediator) {
         try {
-            DatagramSocket clientSocket = new DatagramSocket();
             byte[] sendData = ("CREATE:" + networkName).getBytes("UTF-8");
             DatagramPacket sendPacket = new DatagramPacket(sendData,
                     sendData.length, InetAddress.getByName(mediator.getUrl()), Constants.MEDIATION_SERVER_PORT);
 
             clientSocket.send(sendPacket);
+            // TODO: HOLEPUNCHING DOESNT WORK THIS WAY!!!!!! NAT PORT changes by every method call. Because of closing the socket? YES, as well indirect closing by losing reference...
+            //clientSocket.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
