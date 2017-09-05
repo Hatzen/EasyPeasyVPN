@@ -1,6 +1,7 @@
 package de.hartz.vpn.MainApplication.Server;
 
 import de.hartz.vpn.Helper.NetworkHelper;
+import de.hartz.vpn.MediationServer.Mediator;
 
 import java.io.Serializable;
 
@@ -10,8 +11,6 @@ import static de.hartz.vpn.MainApplication.Server.ConfigState.Protocol.UDP;
  * Configfile that represents the configuration of a network. Used by client and server.
  */
 public class ConfigState implements Serializable {
-
-    // TODO: Maybe add mediator?
 
     public enum Adapter {
         OpenVPN,
@@ -40,6 +39,8 @@ public class ConfigState implements Serializable {
 
     private String networkName;
     private Protocol protocol;
+
+    private Mediator mediator;
 
     private Tunnel tunnel;
     private Adapter adapter;
@@ -123,4 +124,13 @@ public class ConfigState implements Serializable {
     public void setSubnetmask(short subnetmask) {
         this.subnetmask = subnetmask;
     }
+
+    public Mediator getMediator() {
+        return mediator;
+    }
+
+    public void setMediator(Mediator mediator) {
+        this.mediator = mediator;
+    }
+
 }

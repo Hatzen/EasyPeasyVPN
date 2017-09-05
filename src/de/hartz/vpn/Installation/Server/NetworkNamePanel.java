@@ -3,6 +3,7 @@ package de.hartz.vpn.Installation.Server;
 import de.hartz.vpn.Helper.UiHelper;
 import de.hartz.vpn.Installation.InstallationController;
 import de.hartz.vpn.Installation.InstallationPanel;
+import de.hartz.vpn.MainApplication.Client.MediationConnector;
 import de.hartz.vpn.MainApplication.UserData;
 import de.hartz.vpn.MediationServer.Mediator;
 
@@ -76,8 +77,10 @@ public class NetworkNamePanel extends InstallationPanel implements ActionListene
         }
         InstallationController.getInstance().getTmpConfigState().setNetworkName(networkName);
 
-        // TODO: Handle mediator.
-
+        if (!mediatorBox.getSelectedItem().equals(NO_SELECTION)) {
+            // TODO: Respect selection here.
+            InstallationController.getInstance().getTmpConfigState().setMediator(MediationConnector.getDefaultMediator());
+        }
         return true;
     }
 }

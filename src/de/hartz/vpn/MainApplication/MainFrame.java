@@ -5,6 +5,7 @@ import de.hartz.vpn.Helper.NetworkHelper;
 import de.hartz.vpn.Helper.OpenVPNParserHelper;
 import de.hartz.vpn.Helper.UiHelper;
 import de.hartz.vpn.Installation.InstallationController;
+import de.hartz.vpn.MainApplication.Client.MediationConnector;
 import de.hartz.vpn.MainApplication.Server.MetaServer;
 import de.hartz.vpn.Utilities.EasyHtmlComponent;
 import de.hartz.vpn.Utilities.Logger;
@@ -38,6 +39,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
     private OpenVPNRunner openVPNRunner;
     private ScheduledExecutorService vpnMemberCheckingTask;
+    private ScheduledExecutorService mediationPortRefresher;
 
     private JList list;
     private JLabel ownStatusText;
@@ -146,6 +148,20 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
         openVPNRunner = new OpenVPNRunner(configFilename + Helper.getOpenVPNConfigExtension(), this);
         serviceToggleItem.setText(STOP_VPN_SERVICE);
+    }
+
+    // Needed to keep external NAT port for clients alive.
+    private void mediatorKeepPortAlive() {
+        mediationPortRefresher = Executors.newSingleThreadScheduledExecutor();
+        mediationPortRefresher.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                String networkName = UserData.getInstance().getVpnConfigState().getNetworkName();
+                System.out.println("Register " + networkName);
+                MediationConnector.registerNetwork(networkName);
+            }
+        }, 0, 30, TimeUnit.SECONDS);
+
     }
 
     private void stopVPN() {
@@ -332,11 +348,20 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
                     }
                 }, 0, 30, TimeUnit.SECONDS);
             }
+
+            if (UserData.getInstance().getVpnConfigState().getMediator() != null) {
+                if(mediationPortRefresher == null || mediationPortRefresher.isShutdown()) {
+                    mediatorKeepPortAlive();
+                }
+            }
         } else {
             UserData.getInstance().getUserList().clear();
             refreshModel();
             if (vpnMemberCheckingTask != null)
                 vpnMemberCheckingTask.shutdown();
+            if (mediationPortRefresher != null) {
+                mediationPortRefresher.shutdown();
+            }
         }
     }
 
@@ -364,9 +389,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
     private boolean canAutoStart() {
         UserData.getInstance();
-        UserData.getInstance().getVpnConfigState();
-        UserData.getInstance().getVpnConfigState().getNetworkName();
-        // TODO: FIX NULLPOINTER caused by getVpnConfigState
+        if(UserData.getInstance().getVpnConfigState() == null)
+            return false;
 
         String network = UserData.getInstance().getVpnConfigState().getNetworkName();
 

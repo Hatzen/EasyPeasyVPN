@@ -93,7 +93,8 @@ public class UserData implements Serializable{
         } catch (Exception e) {
             // TODO: Check for data version.
             System.out.println("UserData not loaded. File does not exist (?)");
-            e.printStackTrace();
+            if (new File(USER_DATA_FILE_PATH).exists())
+                e.printStackTrace();
         }
         return false;
     }

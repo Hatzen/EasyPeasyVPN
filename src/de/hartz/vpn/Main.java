@@ -1,7 +1,7 @@
 package de.hartz.vpn;
 
 import de.hartz.vpn.Installation.InstallationController;
-import de.hartz.vpn.MainApplication.Client.MediationConnector;
+import de.hartz.vpn.MainApplication.MainFrame;
 import de.hartz.vpn.MainApplication.UserData;
 
 import java.awt.*;
@@ -34,8 +34,7 @@ public class Main {
             if (GraphicsEnvironment.isHeadless()) {
                 //InstallationController.getInstance().startInstallation(false, true,null);
             } else {
-                new MediationConnector();
-                //new MainFrame();
+                new MainFrame();
             }
         }
     }

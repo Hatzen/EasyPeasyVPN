@@ -1,77 +1,76 @@
 package de.hartz.vpn.MainApplication.Client;
 
 import de.hartz.vpn.Helper.Constants;
+import de.hartz.vpn.Helper.NetworkHelper;
 import de.hartz.vpn.MainApplication.UserData;
+import de.hartz.vpn.MediationServer.Mediator;
 
-import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 /**
  * Created by kaiha on 04.09.2017.
  */
 public class MediationConnector {
 
-    public MediationConnector() {
-        String mediatorIp = UserData.getInstance().getMediatorList().get(0).getUrl();
+    private MediationConnector() {
+    }
 
+    /**
+     * Returns the Ip and port that got hole punched via udp.
+     * @param networkName
+     * @returns ip:port
+     */
+    public String getAccessibleNetworkAddress(String networkName) {
+        return getAccessibleNetworkAddressAtMediator(networkName, getDefaultMediator());
+    }
 
-        DatagramSocket clientSocket = null;
+    public String getAccessibleNetworkAddressAtMediator(String networkName, Mediator mediator) {
         try {
-            clientSocket = new DatagramSocket();
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
-
-        byte[] sendData = new byte[0];
-        sendData = "CREATE:Cooles Netzwerk".getBytes();
-
-        DatagramPacket sendPacket = null;
-        try {
-            sendPacket = new DatagramPacket(sendData,
-                    sendData.length, InetAddress.getByName(mediatorIp), Constants.MEDIATION_SERVER_PORT);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        try {
+            DatagramSocket clientSocket = new DatagramSocket();
+            byte[] sendData = ("JOIN:" + networkName).getBytes("UTF-8");
+            DatagramPacket sendPacket = new DatagramPacket(sendData,
+                    sendData.length, InetAddress.getByName(mediator.getUrl()), Constants.MEDIATION_SERVER_PORT);
             clientSocket.send(sendPacket);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // TEST JOIN
-        sendData = "JOIN:Cooles Netzwerk".getBytes();
-        try {
-            sendPacket = new DatagramPacket(sendData,
-                    sendData.length, InetAddress.getByName(mediatorIp), Constants.MEDIATION_SERVER_PORT);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        try {
-            clientSocket.send(sendPacket);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-
-
-
-        DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
-        try {
+            DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
             clientSocket.receive(receivePacket);
-        } catch (IOException e) {
+            String response = new String(receivePacket.getData());
+            response = NetworkHelper.getCleanString(response);
+            System.out.println("Response: " + response);
+            if(response.equals("ERROR"))
+                return null;
+            return response;
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
 
-        String response = new String(receivePacket.getData());
-        System.out.println("Response: " + response);
+    public static Mediator getDefaultMediator() {
+        return UserData.getInstance().getMediatorList().get(0);
+    }
+
+    /**
+     * Registers a network at the default mediator.
+     * @param networkName
+     */
+    public static void registerNetwork(String networkName) {
+        registerNetworkAtMediator(networkName, getDefaultMediator());
+    }
+
+    public static void registerNetworkAtMediator(String networkName, Mediator mediator) {
+        try {
+            DatagramSocket clientSocket = new DatagramSocket();
+            byte[] sendData = ("CREATE:" + networkName).getBytes("UTF-8");
+            DatagramPacket sendPacket = new DatagramPacket(sendData,
+                    sendData.length, InetAddress.getByName(mediator.getUrl()), Constants.MEDIATION_SERVER_PORT);
+
+            clientSocket.send(sendPacket);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

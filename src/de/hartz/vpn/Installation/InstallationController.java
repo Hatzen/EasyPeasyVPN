@@ -264,6 +264,7 @@ public class InstallationController {
     private void showNextPanel(InstallationPanel currentPanel) {
         if (currentPanel.isFinishingPanel()) {
             // OnFinish setup config etc.
+            UserData.getInstance().setClientInstallation(clientInstallation);
             callback.onInstallationSuccess();
             UserData.getInstance().setVpnConfigState(tmpConfigState);
             mainFrame.dispose();
