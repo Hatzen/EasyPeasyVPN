@@ -17,4 +17,5 @@ This program is only a wrapper to make different vpn adapters easier and faster 
 - [ ] Configurable vpn with step by step instructions
 - [ ] UDP-Hole-Punching-Included to Connect over NAT/routers without configurations
   - [x] Mediation Server able to run
+  - [ ] Implement real AdHoc VPN. Remove manual client and server creation and move config files to mediator
 - [ ] integrated small lan chat
