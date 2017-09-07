@@ -21,6 +21,8 @@ This program is only a wrapper to make different vpn adapters easier and faster 
 - [ ] integrated small lan chat
 
 ## Manual
+A more informations or "mini manual" can be found at the wiki of this repository.
+https://github.com/Hatzen/EasyPeasyVPN/wiki
 
 ## Contribute
 *I want u!* 
