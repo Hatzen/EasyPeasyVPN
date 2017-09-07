@@ -19,3 +19,9 @@ This program is only a wrapper to make different vpn adapters easier and faster 
   - [x] Mediation Server able to run
   - [ ] Implement real AdHoc VPN. Remove manual client and server creation and move config files to mediator
 - [ ] integrated small lan chat
+
+## Manual
+
+## Contribute
+*I want u!* 
+u are allowed to contribute. Create issues, create pull requests and add features :)
