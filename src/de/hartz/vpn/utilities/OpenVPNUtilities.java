@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Created by kaiha on 31.08.2017.
  */
-public final class OpenVPNHelper {
+public final class OpenVPNUtilities {
 
     //TODO: If possible get rid off..
     // @Windows
@@ -23,7 +23,7 @@ public final class OpenVPNHelper {
      * @return The installation path or null if not found.
      */
     public static String getOpenVPNInstallationPath() {
-        if (Helper.isWindows()) {
+        if (GeneralUtilities.isWindows()) {
             String findValue = "OpenVPN";
 
             // After installations getenv() returns old values, missing openvpn...

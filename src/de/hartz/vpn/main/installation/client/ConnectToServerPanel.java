@@ -6,7 +6,7 @@ import de.hartz.vpn.main.installation.InstallationController;
 import de.hartz.vpn.main.installation.InstallationPanel;
 import de.hartz.vpn.mediation.Mediator;
 import de.hartz.vpn.utilities.Constants;
-import de.hartz.vpn.utilities.UiHelper;
+import de.hartz.vpn.utilities.UiUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,10 +64,10 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
         mediatorLabel.setMaximumSize( new Dimension( 1000, 30) );
 
 
-        mediatorConnectionWrapper.add( UiHelper.getComponentWrapper(networkNameLabel));
-        mediatorConnectionWrapper.add( UiHelper.getComponentWrapper(networkNameField) );
-        mediatorConnectionWrapper.add( UiHelper.getComponentWrapper(mediatorLabel));
-        mediatorConnectionWrapper.add( UiHelper.getComponentWrapper(mediatorBox) );
+        mediatorConnectionWrapper.add( UiUtilities.getComponentWrapper(networkNameLabel));
+        mediatorConnectionWrapper.add( UiUtilities.getComponentWrapper(networkNameField) );
+        mediatorConnectionWrapper.add( UiUtilities.getComponentWrapper(mediatorLabel));
+        mediatorConnectionWrapper.add( UiUtilities.getComponentWrapper(mediatorBox) );
         // Inivisible Panel to keep the other components normal sized.
         mediatorConnectionWrapper.add(new JPanel());
 
@@ -112,7 +112,7 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
     @Override
     public void onError(Exception e) {
         successfulConnected = false;
-        UiHelper.showAlert(e.getMessage());
+        UiUtilities.showAlert(e.getMessage());
     }
 
     @Override

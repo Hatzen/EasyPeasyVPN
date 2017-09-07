@@ -6,8 +6,8 @@ import de.hartz.vpn.helper.OutputStreamHandler;
 import de.hartz.vpn.helper.Windows;
 import de.hartz.vpn.main.server.ConfigState;
 import de.hartz.vpn.utilities.Constants;
-import de.hartz.vpn.utilities.Helper;
-import de.hartz.vpn.utilities.OpenVPNHelper;
+import de.hartz.vpn.utilities.GeneralUtilities;
+import de.hartz.vpn.utilities.OpenVPNUtilities;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -39,11 +39,11 @@ public class ConfigOpenVPN {
         this.configState = configState;
         this.logger = logger;
 
-        INSTALLATION_PATH = OpenVPNHelper.getOpenVPNInstallationPath();
-        if (Helper.isWindows()) {
+        INSTALLATION_PATH = OpenVPNUtilities.getOpenVPNInstallationPath();
+        if (GeneralUtilities.isWindows()) {
             String replaceSingleBackSlash = "\\\\";
             INSTALLATION_PATH = INSTALLATION_PATH.replaceAll(replaceSingleBackSlash, "/");
-        } else if (Helper.isLinux()) {
+        } else if (GeneralUtilities.isLinux()) {
             // Create needed folders.
             new File(INSTALLATION_PATH + "config/").mkdir();
             new File(INSTALLATION_PATH + "log/").mkdir();
@@ -52,9 +52,9 @@ public class ConfigOpenVPN {
         createUserFile();
         writeOVPNFile();
         try {
-            if (Helper.isWindows()) {
+            if (GeneralUtilities.isWindows()) {
                 windowsEasyRSA();
-            } else if (Helper.isLinux()) {
+            } else if (GeneralUtilities.isLinux()) {
                 linuxEasyRSA();
             }
         } catch (IOException e) {
@@ -262,7 +262,7 @@ public class ConfigOpenVPN {
             if(temp) {
                 temp = false;
 
-                String content = Helper.readFile(INSTALLATION_PATH + "easy-rsa/vars", Charset.defaultCharset());
+                String content = GeneralUtilities.readFile(INSTALLATION_PATH + "easy-rsa/vars", Charset.defaultCharset());
                 content = replaceParameter(content, "HOME=", "\"${0%/*}\"");
                 content = replaceParameter(content, "KEY_SIZE=", "" + DEFAULT_KEY_SIZE);
 
@@ -298,7 +298,7 @@ public class ConfigOpenVPN {
             e.printStackTrace();
         }
 
-        String content = Helper.readFile(INSTALLATION_PATH + "easy-rsa/vars.bat", Charset.defaultCharset());
+        String content = GeneralUtilities.readFile(INSTALLATION_PATH + "easy-rsa/vars.bat", Charset.defaultCharset());
         content = replaceParameter(content, "HOME=", "%cd%");
         content = replaceParameter(content, "KEY_SIZE=", "" + DEFAULT_KEY_SIZE);
 
@@ -369,9 +369,9 @@ public class ConfigOpenVPN {
         // Write commands.
         PrintWriter commandExecutor = new PrintWriter(process.getOutputStream());
         logger.addLogLine(command);
-        if (OpenVPNHelper.needsPathUpdate()) {
-            commandExecutor.println("SET PATH=%PATH%;" + OpenVPNHelper.openVPNBinPath);
-            System.out.println("SET PATH=%PATH%;" + OpenVPNHelper.openVPNBinPath);
+        if (OpenVPNUtilities.needsPathUpdate()) {
+            commandExecutor.println("SET PATH=%PATH%;" + OpenVPNUtilities.openVPNBinPath);
+            System.out.println("SET PATH=%PATH%;" + OpenVPNUtilities.openVPNBinPath);
         }
         commandExecutor.println("vars.bat");
         commandExecutor.println(command);

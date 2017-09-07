@@ -2,8 +2,8 @@ package de.hartz.vpn.main.server;
 
 import de.hartz.vpn.main.UserData;
 import de.hartz.vpn.utilities.Constants;
-import de.hartz.vpn.utilities.NetworkHelper;
-import de.hartz.vpn.utilities.OpenVPNHelper;
+import de.hartz.vpn.utilities.NetworkUtilities;
+import de.hartz.vpn.utilities.OpenVPNUtilities;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -15,7 +15,7 @@ import java.net.Socket;
  * Based on http://www.rgagnon.com/javadetails/java-0542.html
  */
 public class MetaServer extends Thread {
-    private static final String CONFIG_FOLDER = OpenVPNHelper.getOpenVPNInstallationPath() + "easy-rsa\\keys\\";
+    private static final String CONFIG_FOLDER = OpenVPNUtilities.getOpenVPNInstallationPath() + "easy-rsa\\keys\\";
     private static MetaServer instance;
     private static boolean run;
     private static boolean running;
@@ -194,7 +194,7 @@ public class MetaServer extends Thread {
         bis = new BufferedInputStream(fis);
         bis.read(byteArray,0,byteArray.length);
 
-        NetworkHelper.AdvancedEncryptionStandard aes = new NetworkHelper.AdvancedEncryptionStandard();
+        NetworkUtilities.AdvancedEncryptionStandard aes = new NetworkUtilities.AdvancedEncryptionStandard();
         try {
             byteArray = aes.encrypt(byteArray);
         } catch (Exception e) {

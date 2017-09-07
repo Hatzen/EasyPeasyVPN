@@ -1,7 +1,7 @@
 package de.hartz.vpn.main;
 
-import de.hartz.vpn.utilities.NetworkHelper;
-import de.hartz.vpn.utilities.UiHelper;
+import de.hartz.vpn.utilities.NetworkUtilities;
+import de.hartz.vpn.utilities.UiUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +19,7 @@ public class NetworkInfoFrame extends JFrame {
         setLayout(new BorderLayout());
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
-        UiHelper.setLookAndFeelAndIcon(this);
+        UiUtilities.setLookAndFeelAndIcon(this);
 
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
@@ -44,10 +44,10 @@ public class NetworkInfoFrame extends JFrame {
     private String getContent() {
         String content = "";
 
-        content += "External Ip:" + NetworkHelper.getExternalIp();
+        content += "External Ip:" + NetworkUtilities.getExternalIp();
         content += "\n \n";
 
-        ArrayList<String> ips = NetworkHelper.getAllUsedIpAddresses();
+        ArrayList<String> ips = NetworkUtilities.getAllUsedIpAddresses();
         for (int i = 0; i < ips.size(); i++) {
             content += "Used Ip " + i + ": " + ips.get(i) + "\n";
         }

@@ -13,7 +13,7 @@ import java.util.prefs.Preferences;
 /**
  * utilities Class that contains static methods that are needed in different classes.
  */
-public final class Helper {
+public final class GeneralUtilities {
 
     private static String OS = System.getProperty("os.name").toLowerCase();
     private static File TEMP_FOLDER;
@@ -78,8 +78,8 @@ public final class Helper {
      * @throws IOException
      */
     public static File getTempDirectory() throws IOException {
-        if (Helper.TEMP_FOLDER != null) {
-            return Helper.TEMP_FOLDER;
+        if (GeneralUtilities.TEMP_FOLDER != null) {
+            return GeneralUtilities.TEMP_FOLDER;
         }
         final File temp = File.createTempFile("easypeasyvpn-", "");
         if(!(temp.delete()))
@@ -100,7 +100,7 @@ public final class Helper {
     }
 
     public static boolean deleteTempDirectory() {
-        return Helper.TEMP_FOLDER.delete();
+        return GeneralUtilities.TEMP_FOLDER.delete();
     }
 
     /**

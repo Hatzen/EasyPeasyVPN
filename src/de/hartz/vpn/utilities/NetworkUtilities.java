@@ -14,7 +14,7 @@ import java.util.Enumeration;
 /**
  * Created by kaiha on 31.08.2017.
  */
-public final class NetworkHelper {
+public final class NetworkUtilities {
 
     public static String OWN_VPN_IP;
 
@@ -199,7 +199,7 @@ public final class NetworkHelper {
             new Thread() {
                 @Override
                 public void run() {
-                    if (NetworkHelper.isReachable(host)) {
+                    if (NetworkUtilities.isReachable(host)) {
                         ipAddresses.add(host);
                     }
                 }
@@ -236,7 +236,7 @@ public final class NetworkHelper {
         try {
             String param = "n";
             // in case of Linux change the 'n' to 'c'.
-            if ( Helper.isLinux() ) {
+            if ( GeneralUtilities.isLinux() ) {
                 param = "c";
             }
 

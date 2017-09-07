@@ -4,8 +4,8 @@ import de.hartz.vpn.main.UserData;
 import de.hartz.vpn.main.installation.InstallationController;
 import de.hartz.vpn.main.server.ConfigState;
 import de.hartz.vpn.utilities.Constants;
-import de.hartz.vpn.utilities.NetworkHelper;
-import de.hartz.vpn.utilities.OpenVPNHelper;
+import de.hartz.vpn.utilities.NetworkUtilities;
+import de.hartz.vpn.utilities.OpenVPNUtilities;
 
 import java.io.*;
 import java.net.Socket;
@@ -25,9 +25,9 @@ public class MetaClient extends Thread {
         void onFinish();
     }
 
-    public static final String FILE_PATH_CA = OpenVPNHelper.getOpenVPNInstallationPath() + "client.ca";
-    public static final String FILE_PATH_CRT = OpenVPNHelper.getOpenVPNInstallationPath() + "client.crt";
-    public static final String FILE_PATH_KEY = OpenVPNHelper.getOpenVPNInstallationPath() + "client.key";
+    public static final String FILE_PATH_CA = OpenVPNUtilities.getOpenVPNInstallationPath() + "client.ca";
+    public static final String FILE_PATH_CRT = OpenVPNUtilities.getOpenVPNInstallationPath() + "client.crt";
+    public static final String FILE_PATH_KEY = OpenVPNUtilities.getOpenVPNInstallationPath() + "client.key";
 
     private FileOutputStream fos = null;
     private BufferedOutputStream bos = null;
@@ -138,7 +138,7 @@ public class MetaClient extends Thread {
         byte[] byteArray = new byte[byteCount];
         is.read(byteArray);
 
-        NetworkHelper.AdvancedEncryptionStandard aes = new NetworkHelper.AdvancedEncryptionStandard();
+        NetworkUtilities.AdvancedEncryptionStandard aes = new NetworkUtilities.AdvancedEncryptionStandard();
         try {
             byteArray = aes.decrypt(byteArray);
         } catch (Exception e) {

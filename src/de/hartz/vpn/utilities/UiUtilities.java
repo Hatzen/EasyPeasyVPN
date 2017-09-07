@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * Created by kaiha on 31.08.2017.
  */
-public final class UiHelper {
+public final class UiUtilities {
 
     /**
      * Shows an error window to inform the user.
@@ -31,7 +31,7 @@ public final class UiHelper {
      */
     public static void setLookAndFeelAndIcon(JFrame frame) {
         try {
-            File file = Helper.getResourceAsFile("resources/icon.png");
+            File file = GeneralUtilities.getResourceAsFile("resources/icon.png");
             Image image = ImageIO.read( file );
             frame.setIconImage(image);
         } catch (IOException | NullPointerException e) {

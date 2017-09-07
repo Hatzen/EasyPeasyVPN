@@ -5,10 +5,10 @@ import de.hartz.vpn.helper.Logger;
 import de.hartz.vpn.helper.StatusComponent;
 import de.hartz.vpn.main.installation.InstallationController;
 import de.hartz.vpn.main.server.MetaServer;
-import de.hartz.vpn.utilities.Helper;
-import de.hartz.vpn.utilities.NetworkHelper;
-import de.hartz.vpn.utilities.OpenVPNParserHelper;
-import de.hartz.vpn.utilities.UiHelper;
+import de.hartz.vpn.utilities.GeneralUtilities;
+import de.hartz.vpn.utilities.NetworkUtilities;
+import de.hartz.vpn.utilities.OpenVPNParserUtilities;
+import de.hartz.vpn.utilities.UiUtilities;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -66,7 +66,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         initTray();
-        UiHelper.setLookAndFeelAndIcon(this);
+        UiUtilities.setLookAndFeelAndIcon(this);
         initMenuBar();
 
         // Overview tab.
@@ -145,7 +145,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             configFilename = "server";
         }
 
-        openVPNRunner = new OpenVPNRunner(configFilename + Helper.getOpenVPNConfigExtension(), this);
+        openVPNRunner = new OpenVPNRunner(configFilename + GeneralUtilities.getOpenVPNConfigExtension(), this);
         serviceToggleItem.setText(STOP_VPN_SERVICE);
     }
 
@@ -220,7 +220,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     private void initTray() {
         if (SystemTray.isSupported()) {
             tray = SystemTray.getSystemTray();
-            File file = Helper.getResourceAsFile("resources/icon.png");
+            File file = GeneralUtilities.getResourceAsFile("resources/icon.png");
             Image image = null;
             try {
                 image = ImageIO.read( file );
@@ -304,16 +304,16 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         if (line.contains(SUCCESSFUL_INIT)) {
             // Successful connected.
             setOnlineState(true);
-        } else if (OpenVPNParserHelper.getClientIpFromLine(line) != null ) {
-            NetworkHelper.OWN_VPN_IP = OpenVPNParserHelper.getClientIpFromLine(line);
+        } else if (OpenVPNParserUtilities.getClientIpFromLine(line) != null ) {
+            NetworkUtilities.OWN_VPN_IP = OpenVPNParserUtilities.getClientIpFromLine(line);
             updateOwnIpLabel();
-        } else if (OpenVPNParserHelper.hasDeviceProblem(line) ) {
-            UiHelper.showAlert("OpenVPN Device already in use. \n Make sure there is no other program using openvpn. If the problem persist restart your computer or as a last step reinstall adapter.");
+        } else if (OpenVPNParserUtilities.hasDeviceProblem(line) ) {
+            UiUtilities.showAlert("OpenVPN Device already in use. \n Make sure there is no other program using openvpn. If the problem persist restart your computer or as a last step reinstall adapter.");
             stopVPN();
-        } else if( OpenVPNParserHelper.hasConfigFileProblem(line) ) {
-            UiHelper.showAlert("OpenVPN config file seems to be corrupted. \n Rerun configuration or fix it manually.");
+        } else if( OpenVPNParserUtilities.hasConfigFileProblem(line) ) {
+            UiUtilities.showAlert("OpenVPN config file seems to be corrupted. \n Rerun configuration or fix it manually.");
             stopVPN();
-        } else if (OpenVPNParserHelper.hasFatalError(line)) {
+        } else if (OpenVPNParserUtilities.hasFatalError(line)) {
             stopVPN();
         }
 
@@ -335,7 +335,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
                     public void run() {
                         // TODO: Get netadress of vpn from config.
                         String netaddress = "10.0.0";
-                        ArrayList<String> ips = NetworkHelper.getAllReachableClientsForNetaddress(netaddress);
+                        ArrayList<String> ips = NetworkUtilities.getAllReachableClientsForNetaddress(netaddress);
 
                         UserData.getInstance().getUserList().clear();
                         UserList userList =  UserData.getInstance().getUserList();
@@ -367,7 +367,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
     private void updateOwnIpLabel() {
         String prefix = UserData.getInstance().isClientInstallation() ? "client: " : "server: ";
-        ownStatusText.setText(prefix + " " + NetworkHelper.getOwnVPNIP());
+        ownStatusText.setText(prefix + " " + NetworkUtilities.getOwnVPNIP());
     }
 
     @Override

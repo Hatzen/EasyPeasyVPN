@@ -1,7 +1,7 @@
 package de.hartz.vpn.main.server;
 
 import de.hartz.vpn.mediation.Mediator;
-import de.hartz.vpn.utilities.NetworkHelper;
+import de.hartz.vpn.utilities.NetworkUtilities;
 
 import java.io.Serializable;
 
@@ -59,7 +59,7 @@ public class ConfigState implements Serializable {
         adapter = Adapter.OpenVPN;
         networkType = NetworkType.END_TO_END;
         protocol = UDP;
-        netaddress = NetworkHelper.getRecommendedIp();
+        netaddress = NetworkUtilities.getRecommendedIp();
         subnetmask = 24;
 
         needsAuthentication = false;

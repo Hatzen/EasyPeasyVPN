@@ -4,9 +4,9 @@ import de.hartz.vpn.helper.Linux;
 import de.hartz.vpn.helper.OutputStreamHandler;
 import de.hartz.vpn.helper.Windows;
 import de.hartz.vpn.main.installation.server.ConfigOpenVPN;
-import de.hartz.vpn.utilities.Helper;
-import de.hartz.vpn.utilities.OpenVPNHelper;
-import de.hartz.vpn.utilities.UiHelper;
+import de.hartz.vpn.utilities.GeneralUtilities;
+import de.hartz.vpn.utilities.OpenVPNUtilities;
+import de.hartz.vpn.utilities.UiUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,15 +55,15 @@ public class ExpressInstallationPanel extends InstallationPanel {
             return;
         }
         // TODO: Check for admin rights only on windows? No, apt-get usually needs sudo.
-        if ( !Helper.isAdmin() ) {
+        if ( !GeneralUtilities.isAdmin() ) {
             addLineToOutput("Program not launched as admin. Please start again with permissions. They are needed to install the vpn adapter");
             if(InstallationController.hasGUI())
-                UiHelper.showAlert("Program not launched as admin. Please start again with permissions. They are needed to install the vpn adapter");
+                UiUtilities.showAlert("Program not launched as admin. Please start again with permissions. They are needed to install the vpn adapter");
             return;
         }
-        if (Helper.isWindows()) {
+        if (GeneralUtilities.isWindows()) {
             startWindowsInstallation();
-        } else if (Helper.isLinux()) {
+        } else if (GeneralUtilities.isLinux()) {
             startLinuxInstallation();
         }
     }
@@ -87,7 +87,7 @@ public class ExpressInstallationPanel extends InstallationPanel {
     private void startLinuxInstallation() {
         try {
             // TODO: Check for different distributions and use their package manager.
-            if (Helper.hasAPT()) {
+            if (GeneralUtilities.hasAPT()) {
                 installViaAPT();
             } else {
                 installOnLinuxWithoutPackageManager();
@@ -97,7 +97,7 @@ public class ExpressInstallationPanel extends InstallationPanel {
             e.printStackTrace();
         }
         finally {
-            Helper.deleteTempDirectory();
+            GeneralUtilities.deleteTempDirectory();
         }
     }
 
@@ -138,8 +138,8 @@ public class ExpressInstallationPanel extends InstallationPanel {
             return;
         }
 
-        File source = Helper.getResourceAsFile("resources/installer/openvpn-latest-stable.tar.gz");
-        File dest = new File(Helper.getTempDirectory(), source.getName());
+        File source = GeneralUtilities.getResourceAsFile("resources/installer/openvpn-latest-stable.tar.gz");
+        File dest = new File(GeneralUtilities.getTempDirectory(), source.getName());
         String tarFolder = dest.getParent();
         copyFile(source, dest);
 
@@ -176,7 +176,7 @@ public class ExpressInstallationPanel extends InstallationPanel {
     }
 
     private boolean isAlreadyInstalled() {
-        return (OpenVPNHelper.getOpenVPNInstallationPath() != null);
+        return (OpenVPNUtilities.getOpenVPNInstallationPath() != null);
     }
 
     @Windows
@@ -191,8 +191,8 @@ public class ExpressInstallationPanel extends InstallationPanel {
             // write to source.
             */
 
-            File source = Helper.getResourceAsFile("resources/installer/openvpn-install-2.4.2-I601.exe");
-            File dest = new File(Helper.getTempDirectory(), source.getName());
+            File source = GeneralUtilities.getResourceAsFile("resources/installer/openvpn-install-2.4.2-I601.exe");
+            File dest = new File(GeneralUtilities.getTempDirectory(), source.getName());
             String filePath = dest.getPath();
             copyFile(source ,dest);
 
@@ -217,7 +217,7 @@ public class ExpressInstallationPanel extends InstallationPanel {
             e.printStackTrace();
         }
         finally {
-            Helper.deleteTempDirectory();
+            GeneralUtilities.deleteTempDirectory();
         }
     }
 
@@ -247,7 +247,7 @@ public class ExpressInstallationPanel extends InstallationPanel {
     @Override
     public boolean onDeselect() {
         if (!isInstalled) {
-            UiHelper.showAlert("installation failed. See the log for the error and try again.");
+            UiUtilities.showAlert("installation failed. See the log for the error and try again.");
             return false;
         }
         return true;

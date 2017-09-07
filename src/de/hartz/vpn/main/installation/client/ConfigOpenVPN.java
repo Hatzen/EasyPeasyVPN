@@ -2,8 +2,8 @@ package de.hartz.vpn.main.installation.client;
 
 import de.hartz.vpn.helper.Linux;
 import de.hartz.vpn.main.UserData;
-import de.hartz.vpn.utilities.Helper;
-import de.hartz.vpn.utilities.OpenVPNHelper;
+import de.hartz.vpn.utilities.GeneralUtilities;
+import de.hartz.vpn.utilities.OpenVPNUtilities;
 
 import java.io.*;
 
@@ -17,18 +17,18 @@ public class ConfigOpenVPN {
     private static String INSTALLATION_PATH;
 
     public ConfigOpenVPN() {
-        INSTALLATION_PATH = OpenVPNHelper.getOpenVPNInstallationPath();
-        if (Helper.isWindows()) {
+        INSTALLATION_PATH = OpenVPNUtilities.getOpenVPNInstallationPath();
+        if (GeneralUtilities.isWindows()) {
             String replaceSingleBackSlash = "\\\\";
             INSTALLATION_PATH = INSTALLATION_PATH.replaceAll(replaceSingleBackSlash, "/");
-        } else if (Helper.isLinux()) {
+        } else if (GeneralUtilities.isLinux()) {
             // Create needed folders.
             new File(INSTALLATION_PATH + "config/").mkdir();
             new File(INSTALLATION_PATH + "log/").mkdir();
         }
 
         writeOVPNFile();
-        if (Helper.isLinux()) {
+        if (GeneralUtilities.isLinux()) {
 
         }
     }
@@ -127,7 +127,7 @@ public class ConfigOpenVPN {
         #comp-lzo
         */
 
-        String filePath = INSTALLATION_PATH + "config" + File.separator + "client" + Helper.getOpenVPNConfigExtension();
+        String filePath = INSTALLATION_PATH + "config" + File.separator + "client" + GeneralUtilities.getOpenVPNConfigExtension();
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "utf-8"))) {
             writer.write(content);
         } catch (IOException e) {

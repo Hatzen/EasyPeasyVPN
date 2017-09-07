@@ -5,7 +5,7 @@ import de.hartz.vpn.helper.Windows;
 /**
  * Class that contains functions to get specific informations from a logline of the OpenVPN stdout.
  */
-public final class OpenVPNParserHelper {
+public final class OpenVPNParserUtilities {
 
     /**
      *

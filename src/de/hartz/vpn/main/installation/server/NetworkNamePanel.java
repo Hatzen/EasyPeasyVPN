@@ -5,7 +5,7 @@ import de.hartz.vpn.main.UserData;
 import de.hartz.vpn.main.installation.InstallationController;
 import de.hartz.vpn.main.installation.InstallationPanel;
 import de.hartz.vpn.mediation.Mediator;
-import de.hartz.vpn.utilities.UiHelper;
+import de.hartz.vpn.utilities.UiUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,10 +50,10 @@ public class NetworkNamePanel extends InstallationPanel implements ActionListene
         mediatorLabel.setMaximumSize( new Dimension( 1000, 30) );
 
 
-        add( UiHelper.getComponentWrapper(networkNameLabel));
-        add( UiHelper.getComponentWrapper(networkNameField) );
-        add( UiHelper.getComponentWrapper(mediatorLabel));
-        add( UiHelper.getComponentWrapper(mediatorBox) );
+        add( UiUtilities.getComponentWrapper(networkNameLabel));
+        add( UiUtilities.getComponentWrapper(networkNameField) );
+        add( UiUtilities.getComponentWrapper(mediatorLabel));
+        add( UiUtilities.getComponentWrapper(mediatorBox) );
         // Inivisible Panel to keep the other components normal sized.
         add(new JPanel());
     }
@@ -72,7 +72,7 @@ public class NetworkNamePanel extends InstallationPanel implements ActionListene
         // TODO: Check if name is free at mediator.
         String networkName = networkNameField.getText();
         if (networkName.isEmpty()) {
-            UiHelper.showAlert("Missing networkname!");
+            UiUtilities.showAlert("Missing networkname!");
             return false;
         }
         InstallationController.getInstance().getTmpConfigState().setNetworkName(networkName);

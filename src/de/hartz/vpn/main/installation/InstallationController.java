@@ -7,7 +7,7 @@ import de.hartz.vpn.main.installation.server.ChoosePerformancePanel;
 import de.hartz.vpn.main.installation.server.NetworkNamePanel;
 import de.hartz.vpn.main.installation.server.StartPanel;
 import de.hartz.vpn.main.server.ConfigState;
-import de.hartz.vpn.utilities.Helper;
+import de.hartz.vpn.utilities.GeneralUtilities;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -243,7 +243,7 @@ public class InstallationController {
 
     private void drawLogoWithoutGUI() {
         try {
-            BufferedReader in = new BufferedReader(new FileReader(Helper.getResourceAsFile("resources/icon.txt")));
+            BufferedReader in = new BufferedReader(new FileReader(GeneralUtilities.getResourceAsFile("resources/icon.txt")));
             String line = in.readLine();
             while(line != null)
             {

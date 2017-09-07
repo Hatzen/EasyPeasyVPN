@@ -1,6 +1,6 @@
 package de.hartz.vpn.mediation;
 
-import de.hartz.vpn.utilities.NetworkHelper;
+import de.hartz.vpn.utilities.NetworkUtilities;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -32,7 +32,7 @@ public class Main {
             @Override
             public void run() {
                 String urlParameters = "";
-                NetworkHelper.executePost(ipRefreshURL, urlParameters);
+                NetworkUtilities.executePost(ipRefreshURL, urlParameters);
                 // System.out.println("Refreshed Ip at:" + ipRefreshURL);
             }
         }, 0, 1, TimeUnit.MINUTES);

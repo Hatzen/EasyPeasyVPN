@@ -1,6 +1,6 @@
 package de.hartz.vpn.mediation;
 
-import de.hartz.vpn.utilities.NetworkHelper;
+import de.hartz.vpn.utilities.NetworkUtilities;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -79,13 +79,13 @@ public class MediationServer extends Thread {
         System.out.println(command + " from " + clientIP.getHostAddress() + ":" + clientPort);
         if (command.contains(CREATE_NETWORK_COMMAND)) {
             String name = command.substring(CREATE_NETWORK_COMMAND.length());
-            name = NetworkHelper.getCleanString(name);
+            name = NetworkUtilities.getCleanString(name);
             System.out.println("Created Network " + name);
             Network n = new Network(name, clientIP.getHostAddress(), clientPort);
             registeredNetworks.add(n);
         } else if (command.contains(JOIN_NETWORK_COMMAND)) {
             String name = command.substring(JOIN_NETWORK_COMMAND.length());
-            name = NetworkHelper.getCleanString(name);
+            name = NetworkUtilities.getCleanString(name);
             Network network = getNetworkByName(name);
             System.out.println("JOIN Network: " + name);
 

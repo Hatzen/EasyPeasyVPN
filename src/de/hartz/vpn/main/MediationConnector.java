@@ -2,7 +2,7 @@ package de.hartz.vpn.main;
 
 import de.hartz.vpn.mediation.Mediator;
 import de.hartz.vpn.utilities.Constants;
-import de.hartz.vpn.utilities.NetworkHelper;
+import de.hartz.vpn.utilities.NetworkUtilities;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -48,7 +48,7 @@ public class MediationConnector {
             DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
             clientSocket.receive(receivePacket);
             String response = new String(receivePacket.getData());
-            response = NetworkHelper.getCleanString(response);
+            response = NetworkUtilities.getCleanString(response);
             System.out.println("Response: " + response);
             if(response.equals("ERROR"))
                 return null;
