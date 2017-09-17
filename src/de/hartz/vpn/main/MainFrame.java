@@ -5,10 +5,7 @@ import de.hartz.vpn.helper.Logger;
 import de.hartz.vpn.helper.StatusComponent;
 import de.hartz.vpn.main.installation.InstallationController;
 import de.hartz.vpn.main.server.MetaServer;
-import de.hartz.vpn.utilities.GeneralUtilities;
-import de.hartz.vpn.utilities.NetworkUtilities;
-import de.hartz.vpn.utilities.OpenVPNParserUtilities;
-import de.hartz.vpn.utilities.UiUtilities;
+import de.hartz.vpn.utilities.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -138,6 +135,12 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     }
 
     private void startVPN() {
+        String installationPath = OpenVPNUtilities.getOpenVPNInstallationPath();
+        if(installationPath == null) {
+            System.err.println("OpenVPN not FOUND! Was it uninstalled?");
+            return;
+        }
+
         ownStatus.setConnecting(true);
         String configFilename = "client";
         if (!UserData.getInstance().isClientInstallation()) {
@@ -349,7 +352,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
                         }
                         refreshModel();
                     }
-                }, 0, 3, TimeUnit.MINUTES);
+                }, 0, 40, TimeUnit.SECONDS);
             }
 
             if (UserData.getInstance().getVpnConfigState().getMediator() != null) {
@@ -412,6 +415,10 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.exit(0);
+
+        // TODO: Force close, better close all existing streams:
+        // https://stackoverflow.com/questions/2614774/what-can-cause-java-to-keep-running-after-system-exit
+        Runtime.getRuntime().halt(0);
+        //System.exit(0);
     }
 }

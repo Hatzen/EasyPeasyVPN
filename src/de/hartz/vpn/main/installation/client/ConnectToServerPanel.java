@@ -83,16 +83,18 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
 
 
         mediatorChoice = new RadioButtonWithDescription("Connect via Mediator", mediatorConnectionWrapper, this);
-        mediatorChoice.setSelected(true);
+        mediatorChoice.setEnabled(false);
         ButtonGroup group = new ButtonGroup();
         mediatorChoice.addToGroup(group);
         ipChoice = new RadioButtonWithDescription("Connect via IP", ipConnectionWrapper, this);
         ipChoice.addToGroup(group);
+        ipChoice.setSelected(true);
 
         add(mediatorChoice);
         add(ipChoice);
 
-        ipChoice.setDescriptionComponentEnabled(false);
+        ipChoice.setDescriptionComponentEnabled(true);
+        directConnect = true;
     }
 
     @Override
@@ -104,6 +106,7 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
     public boolean onDeselect() {
         if (directConnect && !successfulConnected) {
             UserData.serverIp = serverAddress.getText();
+            UserData.serverPort = new Integer(serverPort.getText());
             new MetaClient(this).start();
         }
         return false;

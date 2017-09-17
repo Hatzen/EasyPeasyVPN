@@ -35,6 +35,13 @@ public class OutputStreamHandler extends Thread {
     }
 
     public StringBuilder getOutput() {
+        /*
+        TODO: Check if this works always.
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
         return output;
     }
 }

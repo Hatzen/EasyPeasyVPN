@@ -2,6 +2,7 @@ package de.hartz.vpn.main;
 
 import de.hartz.vpn.helper.Logger;
 import de.hartz.vpn.helper.OutputStreamHandler;
+import de.hartz.vpn.utilities.GeneralUtilities;
 import de.hartz.vpn.utilities.OpenVPNUtilities;
 
 import java.io.File;
@@ -25,9 +26,22 @@ public class OpenVPNRunner extends Thread {
 
     @Override
     public void run() {
+        String installationPath = OpenVPNUtilities.getOpenVPNInstallationPath();
+        if(installationPath == null) {
+            System.err.println("OpenVPN not FOUND! Was it uninstalled?");
+            return;
+        }
         running = true;
-        String configPath = OpenVPNUtilities.getOpenVPNInstallationPath() + "config" + File.separator;
-        ProcessBuilder pb = new ProcessBuilder( "openvpn", configPath + configName );
+        String configPath = installationPath + "config" + File.separator;
+
+        System.out.println(installationPath + "bin" + File.separator + "openvpn" + " & " + configPath + configName);
+
+        String command = "openvpn";
+        if (GeneralUtilities.isWindows()) {
+            command = installationPath + "bin" + File.separator + "openvpn";
+        }
+
+        ProcessBuilder pb = new ProcessBuilder( command, configPath + configName );
         pb.redirectErrorStream(true);
         pb.directory(new File(configPath));
         try {
@@ -49,7 +63,8 @@ public class OpenVPNRunner extends Thread {
     }
 
     public void exitProcess() {
-        openVPNProcess.destroy();
+        if(openVPNProcess != null)
+            openVPNProcess.destroy();
         running = false;
     }
 

@@ -48,6 +48,7 @@ public class MetaClient extends Thread {
     @Override
     public void run() {
         try {
+            System.out.println("starting client...");
             socket = new Socket(serverIp, Constants.META_SERVER_PORT);
             System.out.println("Connecting...");
 

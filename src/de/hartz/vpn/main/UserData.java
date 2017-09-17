@@ -20,6 +20,7 @@ public class UserData implements Serializable{
 
     //client only.
     public static String serverIp;
+    public static Integer serverPort;
     //END OF: client only.
 
     private boolean clientInstallation = true;

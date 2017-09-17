@@ -59,6 +59,12 @@ public class MetaServer extends Thread {
      * Starts the server if needed.
      */
     public void startServer() {
+        // Check if already started
+        /* Thread.State currState = Thread.currentThread().getState();
+        if (currState != Thread.State.NEW && currState != Thread.State.TERMINATED) {
+            return;
+        } */
+
         if(running) {
             return;
         }
