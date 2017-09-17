@@ -104,9 +104,9 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
             JPanel statusCenter = new JPanel();
             statusCenter.setLayout(new BoxLayout(statusCenter, BoxLayout.Y_AXIS));
-            networkStatusText = new JLabel("Networkname");
+            networkStatusText = new JLabel("Not Connected.");
             networkStatusText.setFont(new Font("Arial", Font.BOLD, 16));
-            ownStatusText = new JLabel("ownIP and isClient/server");
+            ownStatusText = new JLabel("");
             statusCenter.add(networkStatusText);
             statusCenter.add(ownStatusText);
         statusPanel.add(statusCenter, BorderLayout.CENTER);
@@ -165,6 +165,10 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
     private void stopVPN() {
         setOnlineState(false);
+
+        if(MetaServer.getInstance().isRunning()) {
+            MetaServer.getInstance().stopServer();
+        }
 
         openVPNRunner.exitProcess();
         serviceToggleItem.setText(START_VPN_SERVICE);
@@ -345,7 +349,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
                         }
                         refreshModel();
                     }
-                }, 0, 5, TimeUnit.SECONDS);
+                }, 0, 3, TimeUnit.MINUTES);
             }
 
             if (UserData.getInstance().getVpnConfigState().getMediator() != null) {
@@ -403,13 +407,11 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             stopVPN();
         }
         try {
-            // TODO: This looks like blocking application from exiting.
-            openVPNRunner.join();
+            // Wait a moment for shutdown OpenVPN.
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        System.err.print("SOFTLY EXITED");
         System.exit(0);
     }
 }

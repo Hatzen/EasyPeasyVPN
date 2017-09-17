@@ -18,6 +18,11 @@ public class MediationConnector {
     static DatagramSocket clientSocket;
 
     public static void startSocket() {
+        // TODO: Remove as soon as mediation is working..
+        if (true) {
+            return;
+        }
+
         try {
             clientSocket = new DatagramSocket();
         } catch (SocketException e) {
@@ -38,6 +43,12 @@ public class MediationConnector {
     }
 
     public String getAccessibleNetworkAddressAtMediator(String networkName, Mediator mediator) {
+
+        // TODO: Remove as soon as mediation is working..
+        if (true) {
+            return "0:0";
+        }
+
         try {
             DatagramSocket clientSocket = new DatagramSocket();
             byte[] sendData = ("JOIN:" + networkName).getBytes("UTF-8");
@@ -68,6 +79,11 @@ public class MediationConnector {
      * @param networkName
      */
     public static void registerNetwork(String networkName) {
+        // TODO: Remove as soon as mediation is working..
+        if (true) {
+            return;
+        }
+
         registerNetworkAtMediator(networkName, getDefaultMediator());
     }
 

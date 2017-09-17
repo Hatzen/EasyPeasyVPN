@@ -8,6 +8,7 @@ import de.hartz.vpn.utilities.OpenVPNUtilities;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * This class represents a meta server that handles the exchange of the necessary config and certificates to get
@@ -76,12 +77,12 @@ public class MetaServer extends Thread {
      * Function to stop the server from listening.
      */
     public void stopServer() {
+        run = false;
         try {
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        run = false;
         instance = null;
         running = false;
     }
@@ -104,7 +105,16 @@ public class MetaServer extends Thread {
                 try {
                     // TODO: Check if accept has to run in own thread. So multipy clients can connect at same time..
                     // TODO: MAYBE NOT, THIS AVOIDS DOS Attacks. SOLALA, IT CAN BLOCK OTHER CLIENTS..
-                    socket = serverSocket.accept();
+                    try {
+                        socket = serverSocket.accept();
+                    } catch (SocketException e) {
+                        if (!run) {
+                            // Socket closed.
+                            break;
+                        } else {
+                            System.err.println("Error while listening");
+                        }
+                    }
                     System.out.println("Accepted connection : " + socket);
                     bufferedReader = new BufferedReader(new InputStreamReader( socket.getInputStream() ));
                     String command = bufferedReader.readLine();

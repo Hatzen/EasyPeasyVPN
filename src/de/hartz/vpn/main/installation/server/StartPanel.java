@@ -33,6 +33,7 @@ public class StartPanel extends InstallationPanel implements ActionListener {
 
         customRadioButton = new RadioButtonWithDescription( "Custom installation. Choose settings step by step.", "Customize the settings like security, performance etc.", this);
         customRadioButton.setSelected(!isExpressInstallation);
+        customRadioButton.setEnabled(false);
 
         ButtonGroup group = new ButtonGroup();
         customRadioButton.addToGroup(group);
