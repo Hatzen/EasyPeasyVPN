@@ -350,7 +350,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
             if (UserData.getInstance().getVpnConfigState().getMediator() != null) {
                 if(mediationPortRefresher == null || mediationPortRefresher.isShutdown()) {
-                    mediatorKeepPortAlive();
+                    // TODO: Reimplement when mediationserver works
+                    // mediatorKeepPortAlive();
                 }
             }
         } else {
@@ -402,6 +403,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             stopVPN();
         }
         try {
+            // TODO: This looks like blocking application from exiting.
             openVPNRunner.join();
         } catch (InterruptedException e) {
             e.printStackTrace();

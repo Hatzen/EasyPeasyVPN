@@ -22,7 +22,13 @@ public class StartPanel extends InstallationPanel implements ActionListener {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        expressRadioButton = new RadioButtonWithDescription( "Express installation. Use default settings.", "For users with less experience includes following settings:", this);
+        String configString = "UDP, ";
+        configString += "Using TAP Device so Broadcasts are supported, ";
+        configString += "No Authentication, ";
+        configString += "AES-128-CBC Encryption, ";
+        configString += "RSA Key Size of 512 Bit";
+
+        expressRadioButton = new RadioButtonWithDescription( "Express installation. Use default settings.", "For users with less experience includes following settings:" + configString, this);
         expressRadioButton.setSelected(isExpressInstallation);
 
         customRadioButton = new RadioButtonWithDescription( "Custom installation. Choose settings step by step.", "Customize the settings like security, performance etc.", this);

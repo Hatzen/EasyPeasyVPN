@@ -2,6 +2,7 @@ package de.hartz.vpn.main.installation.client;
 
 import de.hartz.vpn.helper.Linux;
 import de.hartz.vpn.main.UserData;
+import de.hartz.vpn.main.installation.InstallationController;
 import de.hartz.vpn.utilities.GeneralUtilities;
 import de.hartz.vpn.utilities.OpenVPNUtilities;
 
@@ -40,7 +41,7 @@ public class ConfigOpenVPN {
 
 
         // TODO: SAME AS SERVER
-        content += "proto " + UserData.getInstance().getVpnConfigState().getProtocol();
+        content += "proto " + InstallationController.getInstance().getTmpConfigState().getProtocol();
         content += System.getProperty("line.separator");
         content += "dev " + DEFAULT_ADAPTER_NAME; // TODO: TAP for broadcasts, TUN for performance.
         content += System.getProperty("line.separator");
