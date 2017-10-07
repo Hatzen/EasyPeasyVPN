@@ -127,17 +127,27 @@ public class MetaClient extends Thread {
         fos = new FileOutputStream(file);
 
         // Get byte count.
-        ObjectInputStream oos = new ObjectInputStream(is);
+        ObjectInputStream ois = new ObjectInputStream(is);
         int byteCount = 0;
         try {
-            byteCount = (Integer) oos.readObject();
+            byteCount = (Integer) ois.readObject();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         // Get bytes.
         byte[] byteArray = new byte[byteCount];
-        is.read(byteArray);
+        int bytesRead = is.read(byteArray);
+
+        if (bytesRead != byteCount) {
+            throw new IOException("Unexpected amount of data.");
+        }
 
         NetworkUtilities.AdvancedEncryptionStandard aes = new NetworkUtilities.AdvancedEncryptionStandard();
         try {
@@ -145,7 +155,7 @@ public class MetaClient extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        fos.write(byteArray, 0, byteArray.length);
+        fos.write(byteArray);
 
         fos.close();
     }

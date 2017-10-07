@@ -1,6 +1,7 @@
 package de.hartz.vpn.utilities;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -20,14 +21,16 @@ public final class NetworkUtilities {
 
     /**
      * https://stackoverflow.com/questions/15554296/simple-java-aes-encrypt-decrypt-example
+     * https://stackoverflow.com/questions/28172246/how-to-reset-the-cipher-to-the-state-at-the-time-of-initialization
      */
     public static class AdvancedEncryptionStandard
     {
         private byte[] key;
+        private static final byte[] INITIALISATION_VECTOR = {5,23,127,9,1,1,1,1,10,123,12,44,66,99,14,15,16};
 
-        private static final String ALGORITHM = "AES";
+        private static final String ALGORITHM = "AES/CBC/PKCS5PADDING";
 
-        // TODO: Dont use a static key.. Maybe replace by creating from server ip address (key which is known by every one)
+        // TODO: Dont use a static key.. Maybe replace by creating from server ip address (key which is known by every vpn participant)
         private byte[] getDefaultKey() {
             return "AFHSAksagAOMOLL6".getBytes(StandardCharsets.UTF_8);
         }
@@ -48,9 +51,10 @@ public final class NetworkUtilities {
          */
         public byte[] encrypt(byte[] plainText) throws Exception
         {
-            SecretKeySpec secretKey = new SecretKeySpec(key, ALGORITHM);
+            SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
             Cipher cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            IvParameterSpec iv = new IvParameterSpec(INITIALISATION_VECTOR);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
 
             return cipher.doFinal(plainText);
         }
@@ -62,9 +66,10 @@ public final class NetworkUtilities {
          */
         public byte[] decrypt(byte[] cipherText) throws Exception
         {
-            SecretKeySpec secretKey = new SecretKeySpec(key, ALGORITHM);
+            SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
             Cipher cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            IvParameterSpec iv = new IvParameterSpec(INITIALISATION_VECTOR);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
 
             return cipher.doFinal(cipherText);
         }

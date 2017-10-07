@@ -200,15 +200,20 @@ public class MetaServer extends Thread {
     private void sendConfigObject() throws IOException {
         // TODO: Use encryption here too. But its not so important.
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+        oos.reset();
+        oos.flush();
         oos.writeObject(UserData.getInstance().getVpnConfigState());
         oos.flush();
     }
 
     private void sendFile(File file) throws IOException {
+        if (file.length() > Integer.MAX_VALUE) {
+            throw new IOException("File size too large.");
+        }
         byte [] byteArray  = new byte [(int)file.length()];
         fis = new FileInputStream(file);
         bis = new BufferedInputStream(fis);
-        bis.read(byteArray,0,byteArray.length);
+        bis.read(byteArray);
 
         NetworkUtilities.AdvancedEncryptionStandard aes = new NetworkUtilities.AdvancedEncryptionStandard();
         try {
@@ -218,14 +223,22 @@ public class MetaServer extends Thread {
         }
 
         os = socket.getOutputStream();
+        os.flush();
 
         // Send size, because EOF only will be sent on closing socket.
         ObjectOutputStream oos = new ObjectOutputStream(os);
-        oos.writeObject(byteArray.length);
+        oos.writeObject(new Integer(byteArray.length));
         oos.flush();
 
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        oos.reset();
+
         System.out.println("Sending " + file.getName() + "(" + byteArray.length + " bytes)");
-        os.write(byteArray,0,byteArray.length);
+        os.write(byteArray);
         os.flush();
         System.out.println("Sent");
     }
