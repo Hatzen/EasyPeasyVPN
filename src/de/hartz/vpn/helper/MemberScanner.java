@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 /**
  * Created by kaiha on 07.10.2017.
@@ -12,13 +13,22 @@ import java.nio.charset.StandardCharsets;
  */
 public class MemberScanner {
 
-    private static final String MEMBER_PREFIX = "EASY_PEASY_VPN:";
+    /**
+     * Listeners become notify when a member broadcasts.
+     */
+    interface Listener {
+        void addMember(String ip, String name);
+    }
 
+    private static final String MEMBER_PREFIX = "EASY_PEASY_VPN:";
+    private static final int PORT = 12894;
+    private static final int SECONDS_TO_WAIT_FOR_PROPAGATE =  30;
     private static MemberScanner INSTANCE;
+    
     private String ownUserName;
     private InetAddress broadcast;
-
     private static boolean run = false;
+    private ArrayList<Listener> listeners;
 
     // Deny access.
     private MemberScanner(){}
@@ -54,22 +64,43 @@ public class MemberScanner {
         return INSTANCE;
     }
 
+    /**
+     * Adds a listener that gets called every time a member broadcasts.
+     * @param listener
+     */
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Shutdown all sockets and threads.
+     */
+    public void shutdown() {
+        run = false;
+        Server.socket.close();
+        Client.socket.close();
+    }
+
     private MemberScanner(String ownUserName, InetAddress broadcast) {
         this.ownUserName = ownUserName;
         this.broadcast = broadcast;
+        listeners = new ArrayList<>();
     }
 
     private void receivedMember(String ip, String name) {
-        // TODO: Notify callbacks..
+        for (Listener c : listeners) {
+            c.addMember(ip,name);
+        }
     }
 
     private static class Server implements Runnable {
+        static DatagramSocket socket;
 
         @Override
         public void run() {
             try {
                 //Keep a socket open to listen to all the UDP trafic that is destined for this port
-                DatagramSocket socket = new DatagramSocket(8888, InetAddress.getByName("0.0.0.0"));
+                socket = new DatagramSocket(PORT, InetAddress.getByName("0.0.0.0"));
                 socket.setBroadcast(true);
 
                 // TODO: Make clean stoppable.
@@ -94,31 +125,29 @@ public class MemberScanner {
     }
 
     private static class Client implements Runnable {
+        static DatagramSocket socket;
 
         @Override
         public void run() {
-            // TODO: Loop and send it every 30 secs
-
             // Find the server using UDP broadcast
             try {
                 //Open a random port to send the package
-                DatagramSocket c = new DatagramSocket();
-                c.setBroadcast(true);
+                socket = new DatagramSocket();
+                socket.setBroadcast(true);
                 byte[] sendData = getInstance().ownUserName.getBytes(StandardCharsets.UTF_8);
 
                 while(INSTANCE.run) {
                     // Send the broadcast package!
                     try {
-                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, INSTANCE.broadcast, 8888);
-                        c.send(sendPacket);
+                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, INSTANCE.broadcast, PORT);
+                        socket.send(sendPacket);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    Thread.sleep(30000);
+                    Thread.sleep(SECONDS_TO_WAIT_FOR_PROPAGATE * 1000);
                 }
 
-                c.close();
-                //Close the port!
+                socket.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
             } catch (InterruptedException e) {
