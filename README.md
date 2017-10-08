@@ -12,7 +12,7 @@ This program is only a wrapper to make different vpn adapters easier and faster 
 - [x] Create a server and client and connect them
 - [x] See a list of pingable clients
 - [x] See the whole OpenVPN output
-- [ ] Get an overview of all used IPs of the computer
+- [x] Get an overview of all used IPs of the computer
 - [x] Installation of all required components step by step
 - [ ] Configurable vpn with step by step instructions
 - [ ] UDP-Hole-Punching-Included to Connect over NAT/routers without configurations
@@ -21,7 +21,7 @@ This program is only a wrapper to make different vpn adapters easier and faster 
 - [ ] integrated small lan chat
 
 ## Manual
-A more informations or "mini manual" can be found at the wiki of this repository.
+For more informations or "mini manual" can be found at the wiki of this repository.
 https://github.com/Hatzen/EasyPeasyVPN/wiki
 
 ## Contribute
