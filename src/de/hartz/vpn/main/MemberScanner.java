@@ -23,7 +23,7 @@ public class MemberScanner {
 
     private static final String MEMBER_PREFIX = "EASY_PEASY_VPN:";
     private static final int PORT = 12894;
-    private static final int SECONDS_TO_WAIT_FOR_PROPAGATE =  30;
+    private static final int SECONDS_TO_WAIT_FOR_PROPAGATE =  10;
     private static MemberScanner INSTANCE;
     
     private String ownUserName;
@@ -137,7 +137,7 @@ public class MemberScanner {
                 //Open a random port to send the package
                 socket = new DatagramSocket();
                 socket.setBroadcast(true);
-                byte[] sendData = getInstance().ownUserName.getBytes(StandardCharsets.UTF_8);
+                byte[] sendData = (MEMBER_PREFIX + getInstance().ownUserName).getBytes(StandardCharsets.UTF_8);
 
                 while(INSTANCE.run) {
                     // Send the broadcast package!

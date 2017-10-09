@@ -28,7 +28,7 @@ import static de.hartz.vpn.utilities.Constants.SOFTWARE_NAME;
  * The main frame of the client. It displays the current vpn connection.
  * And can start a server or connect to an existing one.
  */
-public class MainFrame extends JFrame implements ActionListener, Logger, NetworkStateInterface, InstallationController.InstallationCallback {
+public class MainFrame extends JFrame implements ActionListener, Logger, NetworkStateInterface, InstallationController.InstallationCallback, MemberScanner.Listener {
     private final int STATUS_HEIGHT = 50;
 
     private static final String START_VPN_SERVICE = "Start VPN Service";
@@ -96,7 +96,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         statusPanel.setLayout(new BorderLayout());
         statusPanel.setPreferredSize(new Dimension(statusPanel.getWidth(), STATUS_HEIGHT));
             ownStatus = new StatusComponent();
-            ownStatus.setPreferredSize(new Dimension(STATUS_HEIGHT,STATUS_HEIGHT));
+            ownStatus.setPreferredSize(new Dimension(STATUS_HEIGHT, STATUS_HEIGHT));
         statusPanel.add(ownStatus, BorderLayout.WEST);
 
             JPanel statusCenter = new JPanel();
@@ -218,6 +218,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             networkMenu.add(serviceToggleItem);
         menuBar.add(extrasMenu);
             extrasMenu.add(networkInfoItem);
+            // TODO: Possibility to add custom mediators..
             //extrasMenu.add(mediationMenuItem);
         menuBar.add(helpMenu);
             helpMenu.add(manualItem);
@@ -343,6 +344,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
                 e.printStackTrace();
             }
             MemberScanner.init(NetworkUtilities.getHostName(), broadcastAddress);
+            // TODO: Only Register once!!!!
+            MemberScanner.getInstance().addListener(this);
 
 
             if (UserData.getInstance().getVpnConfigState().getMediator() != null) {
@@ -410,5 +413,12 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         // https://stackoverflow.com/questions/2614774/what-can-cause-java-to-keep-running-after-system-exit
         Runtime.getRuntime().halt(0);
         //System.exit(0);
+    }
+
+    @Override
+    public void addMember(String ip, String name) {
+        // TODO: Remove duplicate ips.
+        UserData.getInstance().getUserList().add(new UserList.User(ip, name));
+        refreshModel();
     }
 }

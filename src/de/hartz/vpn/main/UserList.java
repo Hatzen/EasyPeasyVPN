@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class UserList extends ArrayList<UserList.User> {
 
     public static class User {
+        // TODO: Add timestamp from moment of adding. if larger than 1 minute set to "offline".
         private String vpnIp;
         private String commonName;
 
@@ -25,12 +26,15 @@ public class UserList extends ArrayList<UserList.User> {
         }
     }
 
-    public void removeUserByName(String name) {
-        System.out.println("find " + name);
+    @Override
+    public boolean add(UserList.User user) {
+        removeUserByIp(user.getVpnIp());
+        return super.add(user);
+    }
+
+    public void removeUserByIp(String ip) {
         for (User user: this) {
-            System.out.println(name + "=" + user.commonName);
-            if(user.commonName.equals(name)) {
-                System.out.println("found");
+            if(user.getVpnIp().equals(ip)) {
                 remove(user);
                 break;
             }
