@@ -25,12 +25,14 @@ public class ConfigState implements Serializable {
     }
 
     // TODO: Closed tunnel not supported by software. Needs networkbridge between adapters (?)
+    // Closed tunnel supported with route add: https://askubuntu.com/questions/612840/adding-route-on-client-using-openvpn
     public enum Tunnel {
         CLOSED,
         SPLIT
     }
 
     // TODO: Site connections needs traffic redirection by every computer or the gateway to vpn-gateway. Not really supported by Software.
+    // Supported with route add, but user has to configure what traffic to redirect from interface to interface.
     public enum NetworkType {
         SITE_TO_SITE,
         SITE_TO_END,
@@ -47,6 +49,7 @@ public class ConfigState implements Serializable {
     private NetworkType networkType;
 
     private boolean needsAuthentication;
+    private boolean compressData;
 
     private String netaddress;
     private short subnetmask;
@@ -63,6 +66,7 @@ public class ConfigState implements Serializable {
         subnetmask = 24;
 
         needsAuthentication = false;
+        compressData = false;
     }
 
     public String getNetworkName() {
@@ -109,6 +113,10 @@ public class ConfigState implements Serializable {
         return netaddress;
     }
 
+    public void setProtocol(Protocol protocol) {
+        this.protocol = protocol;
+    }
+
     public String getProtocol() {
         return protocol.name().toLowerCase();
     }
@@ -132,5 +140,14 @@ public class ConfigState implements Serializable {
     public void setMediator(Mediator mediator) {
         this.mediator = mediator;
     }
+
+    public boolean isCompressData() {
+        return compressData;
+    }
+
+    public void setCompressData(boolean compressData) {
+        this.compressData = compressData;
+    }
+
 
 }

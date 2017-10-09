@@ -184,8 +184,14 @@ public class ConfigOpenVPN {
         # Enable compression on the VPN link and push the
         # option to the client (2.4+ only, for earlier
         # versions see below)
-        ;compress lz4-v2
-        ;push "compress lz4-v2"
+        */
+        if (configState.isCompressData()) {
+            content += "compress lz4-v2";
+            content += System.getProperty("line.separator");
+            content += "push \"compress lz4-v2\"";
+            content += System.getProperty("line.separator");
+        }
+        /*
         # For compression compatible with older clients use comp-lzo
         # If you enable it here, you must also
         # enable it in the client config file.

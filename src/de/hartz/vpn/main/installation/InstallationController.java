@@ -2,10 +2,7 @@ package de.hartz.vpn.main.installation;
 
 import de.hartz.vpn.main.UserData;
 import de.hartz.vpn.main.installation.client.ConnectToServerPanel;
-import de.hartz.vpn.main.installation.server.ChooseNetworkType;
-import de.hartz.vpn.main.installation.server.ChoosePerformancePanel;
-import de.hartz.vpn.main.installation.server.NetworkNamePanel;
-import de.hartz.vpn.main.installation.server.StartPanel;
+import de.hartz.vpn.main.installation.server.*;
 import de.hartz.vpn.main.server.ConfigState;
 import de.hartz.vpn.utilities.GeneralUtilities;
 
@@ -206,8 +203,13 @@ public class InstallationController {
 
         // CustomServer panels
         customPanelOrder.add(startPanel);
+        customPanelOrder.add(new ChooseAdapterPanel());
+        customPanelOrder.add(new ChooseNetworkTypePanel());
+        customPanelOrder.add(new ChooseProtocolPanel());
         customPanelOrder.add(new ChoosePerformancePanel());
-        customPanelOrder.add(new ChooseNetworkType());
+        customPanelOrder.add(new NetworkNamePanel());
+        customPanelOrder.add(new ExpressInstallationPanel());
+        customPanelOrder.add(new FinishingPanel());
         // Anonymisieren?
         // Encryption
         // Authentification Panel (Add user panel)

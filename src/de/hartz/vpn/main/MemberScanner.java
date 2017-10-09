@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
@@ -118,6 +119,8 @@ public class MemberScanner {
                         INSTANCE.receivedMember(receivePacket.getAddress().getHostAddress(), memberName);
                     }
                 }
+            } catch (SocketException ex) {
+                // Do nothing. Normally is exited because socket closed
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

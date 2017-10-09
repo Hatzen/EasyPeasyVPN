@@ -1,6 +1,7 @@
 package de.hartz.vpn.main.installation.server;
 
 import de.hartz.vpn.helper.RadioButtonWithDescription;
+import de.hartz.vpn.main.installation.InstallationController;
 import de.hartz.vpn.main.installation.InstallationPanel;
 
 import javax.swing.*;
@@ -10,37 +11,41 @@ import java.awt.event.ActionListener;
 /**
  * Created by kaiha on 28.05.2017.
  */
-public class ChoosePerformancePanel  extends InstallationPanel implements ActionListener {
+public class ChoosePerformancePanel extends InstallationPanel implements ActionListener {
 
-    private RadioButtonWithDescription openVpnRadioButton;
-    private RadioButtonWithDescription ipsecRadioButton;
-    private RadioButtonWithDescription freelanRadioButton;
+    private boolean compress;
+
+    private RadioButtonWithDescription compressionOnRadio;
+    private RadioButtonWithDescription compressionOffRadio;
 
     public ChoosePerformancePanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        openVpnRadioButton = new RadioButtonWithDescription( "OpenVPN Adapter", "Less Performance, full open source" ,this);
-        openVpnRadioButton.setSelected(true);
-
-        ipsecRadioButton = new RadioButtonWithDescription( "IPSec", " Good Performance,  FUTURE FEATURE", this);
-        ipsecRadioButton.setEnabled(false);
-
-        freelanRadioButton = new RadioButtonWithDescription( "FreeLan", "OpenSource Protocol, FUTURE FEATURE", this);
-        freelanRadioButton.setEnabled(false);
+        compressionOnRadio = new RadioButtonWithDescription( "Compression on", "Needs more CPU and has less latency." ,this);
+        compressionOnRadio.setSelected(true);
+        compressionOffRadio = new RadioButtonWithDescription( "Compression off", "Normal latency.", this);
 
         ButtonGroup group = new ButtonGroup();
-        openVpnRadioButton.addToGroup(group);
-        ipsecRadioButton.addToGroup(group);
-        freelanRadioButton.addToGroup(group);
+        compressionOnRadio.addToGroup(group);
+        compressionOffRadio.addToGroup(group);
 
-        this.add(openVpnRadioButton);
-        this.add(ipsecRadioButton);
-        this.add(freelanRadioButton);
+        this.add(compressionOnRadio);
+        this.add(compressionOffRadio);
+
+        compress = true;
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        // TODO: Handle selection.
+        if ( compressionOnRadio.isEventSource(event.getSource()) ) {
+            compressionOnRadio.setDescriptionComponentEnabled(true);
+            compressionOffRadio.setDescriptionComponentEnabled(false);
+            compress = true;
+        } else if( compressionOffRadio.isEventSource(event.getSource()) ) {
+            compressionOnRadio.setDescriptionComponentEnabled(false);
+            compressionOffRadio.setDescriptionComponentEnabled(true);
+            compress = false;
+        }
     }
 
     @Override
@@ -50,6 +55,7 @@ public class ChoosePerformancePanel  extends InstallationPanel implements Action
 
     @Override
     public boolean onDeselect() {
+        InstallationController.getInstance().getTmpConfigState().setCompressData(compress);
         return true;
     }
 }
