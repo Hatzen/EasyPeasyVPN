@@ -1,4 +1,4 @@
-package de.hartz.vpn.helper;
+package de.hartz.vpn.main;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

@@ -4,13 +4,11 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.URL;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Map;
 
 /**
  * Created by kaiha on 31.08.2017.
@@ -168,60 +166,6 @@ public final class NetworkUtilities {
     }
 
     /**
-     * Pings all clients via ICMP in the given network and returns a list with all ips that answered.
-     * IMPORTANT:  Currently only ipv4 with subnetmask /24 is supported!
-     * https://stackoverflow.com/questions/3345857/how-to-get-a-list-of-ip-connected-in-same-network-subnet-using-java
-     * @param netaddress the netadress to check.
-     * @returns a list of all reachable ips in the network.
-     * TODO: On my machine spotify starts stottering shortly. Maybe because of too much traffic for short time?
-     */
-    public static ArrayList<String> getAllReachableClientsForNetaddress(String netaddress) {
-        final ArrayList<String> ipAddresses = new ArrayList<>();
-
-        for (int i=1;i<255;i++){
-            final String host= netaddress + "." + i;
-            new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        // TODO: Make this more relieable. Might be problem of using udp???
-                        if (InetAddress.getByName(host).isReachable(5000)) {
-                            synchronized (ipAddresses) {
-                                ipAddresses.add(host);
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
-        }
-
-        /*
-        TODO: Check why this does not work!! Unrelible and first time alwasys ends with all ips ???
-        for (int i=1;i<255;i++){
-            final String host= netaddress + "." + i;
-            new Thread() {
-                @Override
-                public void run() {
-                    if (NetworkUtilities.isReachable(host)) {
-                        ipAddresses.add(host);
-                    }
-                }
-            }.start();
-        }
-
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        */
-
-        return ipAddresses;
-    }
-
-    /**
      * Returns a ip netaddress that is not used by this computer.
      * @returns valid ip address.
      */
@@ -232,28 +176,30 @@ public final class NetworkUtilities {
     }
 
     /**
-     * Pings the given ip, to see if the host is reachable. This function is blocking the current thread til the result.
-     * https://stackoverflow.com/questions/9922543/why-does-inetaddress-isreachable-return-false-when-i-can-ping-the-ip-address
-     * @return
+     * Returns a hostname representing this computer.
+     * @returns the name.
      */
-    public static boolean isReachable(String ip) {
-        boolean reachable = false;
-        try {
-            String param = "n";
-            // in case of Linux change the 'n' to 'c'.
-            if ( GeneralUtilities.isLinux() ) {
-                param = "c";
+    public static String getHostName() {
+        String hostname = "Unknown";
+
+        Map<String, String> env = System.getenv();
+        if (env.containsKey("COMPUTERNAME"))
+            return env.get("COMPUTERNAME");
+        else if (env.containsKey("HOSTNAME"))
+            return env.get("HOSTNAME");
+        else {
+            try
+            {
+                InetAddress addr;
+                addr = InetAddress.getLocalHost();
+                hostname = addr.getHostName();
             }
-
-            ProcessBuilder pb = new ProcessBuilder( "ping", "-" + param, "1", ip );
-            Process p = pb.start();
-            int returnVal = p.waitFor();
-
-            reachable = (returnVal == 0);
-        } catch (Exception e) {
-            e.printStackTrace();
+            catch (UnknownHostException ex)
+            {
+                System.out.println("Hostname can not be resolved");
+            }
         }
-        return reachable;
+        return hostname;
     }
 
     public static String getOwnVPNIP() {

@@ -15,8 +15,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URL;
-import java.util.ArrayList;
+import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +35,6 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     private static final String STOP_VPN_SERVICE = "Stop VPN Service";
 
     private OpenVPNRunner openVPNRunner;
-    private ScheduledExecutorService vpnMemberCheckingTask;
     private ScheduledExecutorService mediationPortRefresher;
 
     private JList list;
@@ -334,26 +334,16 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         updateOwnIpLabel();
 
         if (online) {
-            // Check for avaiable connections.
-            if(vpnMemberCheckingTask == null || vpnMemberCheckingTask.isShutdown()) {
-                vpnMemberCheckingTask = Executors.newSingleThreadScheduledExecutor();
-                vpnMemberCheckingTask.scheduleWithFixedDelay(new Runnable() {
-                    @Override
-                    public void run() {
-                        // TODO: Get netadress of vpn from config.
-                        String netaddress = "10.0.0";
-                        ArrayList<String> ips = NetworkUtilities.getAllReachableClientsForNetaddress(netaddress);
 
-                        UserData.getInstance().getUserList().clear();
-                        UserList userList =  UserData.getInstance().getUserList();
-                        userList.clear();
-                        for (String ip : ips) {
-                            userList.add(new UserList.User(ip, "-"));
-                        }
-                        refreshModel();
-                    }
-                }, 0, 40, TimeUnit.SECONDS);
+            // TODO: Get broadcast address from interface. PROBLEM: Interface maybe not up yet...
+            InetAddress broadcastAddress = null;
+            try {
+                broadcastAddress = InetAddress.getByName("10.0.0.255");
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
             }
+            MemberScanner.init(NetworkUtilities.getHostName(), broadcastAddress);
+
 
             if (UserData.getInstance().getVpnConfigState().getMediator() != null) {
                 if(mediationPortRefresher == null || mediationPortRefresher.isShutdown()) {
@@ -364,8 +354,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         } else {
             UserData.getInstance().getUserList().clear();
             refreshModel();
-            if (vpnMemberCheckingTask != null)
-                vpnMemberCheckingTask.shutdown();
+
+            MemberScanner.getInstance().shutdown();
             if (mediationPortRefresher != null) {
                 mediationPortRefresher.shutdown();
             }
