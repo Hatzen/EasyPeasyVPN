@@ -159,7 +159,6 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             @Override
             public void run() {
                 String networkName = UserData.getInstance().getVpnConfigState().getNetworkName();
-                System.out.println("Register " + networkName);
                 MediationConnector.getInstance().registerNetwork(networkName);
             }
         }, 0, 30, TimeUnit.SECONDS);

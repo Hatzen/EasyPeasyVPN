@@ -96,7 +96,7 @@ public class MediationConnector {
 
             //synchronized (clientSocket) {
                 clientSocket.send(sendPacket);
-                System.out.println("CREATED " + networkName + " on " + mediator.getUrl() + ":" +  Constants.MEDIATION_SERVER_PORT);
+                //System.out.println("CREATED " + networkName + " on " + mediator.getUrl() + ":" +  Constants.MEDIATION_SERVER_PORT);
             //}
             // TODO: HOLEPUNCHING DOESNT WORK THIS WAY!!!!!! NAT PORT changes by every method call. Because of closing the socket? YES, as well indirect closing by losing reference...
 
@@ -158,19 +158,26 @@ public class MediationConnector {
         public void run() {
             try {
                 while (run) {
+                    System.out.println("1 Redirector running:");
                     DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
                     s1.receive(receivePacket);
 
+                    System.out.println("2 recieved: " + receivePacket.getAddress() + " " + receivePacket.getPort());
+
                     DatagramPacket sendPacket;
-                    if ( receivePacket.getAddress() != InetAddress.getLoopbackAddress()) {
+                    if ( !receivePacket.getAddress().equals(InetAddress.getLoopbackAddress())) {
                         clientPort = receivePacket.getPort();
                         clientAddress = receivePacket.getAddress();
                         sendPacket = new DatagramPacket(receivePacket.getData(),
                                 receivePacket.getLength(), InetAddress.getLoopbackAddress(), 1194);
+                        System.out.println("2.1 ");
                     } else {
                         sendPacket = new DatagramPacket(receivePacket.getData(),
                                 receivePacket.getLength(), clientAddress, clientPort);
+                        System.out.println("2.2 ");
                     }
+                    System.out.println("3 send: " + sendPacket.getAddress() + " " + sendPacket.getPort());
+
                     //synchronized (clientSocket) {
                         clientSocket.send(sendPacket);
                     //}
