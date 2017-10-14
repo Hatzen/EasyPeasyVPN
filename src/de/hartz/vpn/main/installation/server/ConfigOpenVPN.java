@@ -30,7 +30,7 @@ public class ConfigOpenVPN {
     public static final String DEFAULT_SUBNETMASK = "255.255.255.0";
 
     public static final String DEFAULT_CIPHER = "AES-128-CBC";
-    public static final int DEFAULT_KEY_SIZE = 512;
+    public static final int DEFAULT_KEY_SIZE = 1024;
 
     private ConfigState configState;
     private Logger logger;

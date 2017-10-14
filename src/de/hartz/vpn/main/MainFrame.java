@@ -160,7 +160,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             public void run() {
                 String networkName = UserData.getInstance().getVpnConfigState().getNetworkName();
                 System.out.println("Register " + networkName);
-                MediationConnector.registerNetwork(networkName);
+                MediationConnector.getInstance().registerNetwork(networkName);
             }
         }, 0, 30, TimeUnit.SECONDS);
 
@@ -323,6 +323,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             stopVPN();
         } else if (OpenVPNParserUtilities.hasFatalError(line)) {
             stopVPN();
+        } else if (OpenVPNParserUtilities.isServerConnectionTimeout(line)) {
+            ownStatus.setConnecting(true);
         }
 
         refreshModel();
@@ -351,14 +353,19 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             if (UserData.getInstance().getVpnConfigState().getMediator() != null) {
                 if(mediationPortRefresher == null || mediationPortRefresher.isShutdown()) {
                     // TODO: Reimplement when mediationserver works
-                    // mediatorKeepPortAlive();
+                     mediatorKeepPortAlive();
                 }
             }
         } else {
             UserData.getInstance().getUserList().clear();
             refreshModel();
 
-            MemberScanner.getInstance().shutdown();
+            try {
+                MemberScanner.getInstance().shutdown();
+            } catch (Exception e) {
+                // MemberScanner not initialized.
+            }
+
             if (mediationPortRefresher != null) {
                 mediationPortRefresher.shutdown();
             }
@@ -402,6 +409,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         if (isServiceRunning()) {
             stopVPN();
         }
+        MediationConnector.getInstance().shutdownSocket();
         try {
             // Wait a moment for shutdown OpenVPN.
             Thread.sleep(500);

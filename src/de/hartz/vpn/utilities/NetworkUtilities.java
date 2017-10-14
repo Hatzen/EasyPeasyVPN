@@ -24,9 +24,10 @@ public final class NetworkUtilities {
     public static class AdvancedEncryptionStandard
     {
         private byte[] key;
-        private static final byte[] INITIALISATION_VECTOR = {5,23,127,9,1,1,1,1,10,123,12,44,66,99,14,15,16};
+        private static final byte[] INITIALISATION_VECTOR = {5,23,127,9,1,1,1,1,10,123,12,44,66,99,14,15};
 
-        private static final String ALGORITHM = "AES/CBC/PKCS5PADDING";
+        // TODO: Use padding PKCS5Padding : BadPaddingException: Given final block not properly padded
+        private static final String ALGORITHM = "AES/CBC/Nopadding";
 
         // TODO: Dont use a static key.. Maybe replace by creating from server ip address (key which is known by every vpn participant)
         private byte[] getDefaultKey() {
@@ -49,11 +50,7 @@ public final class NetworkUtilities {
          */
         public byte[] encrypt(byte[] plainText) throws Exception
         {
-            SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
-            Cipher cipher = Cipher.getInstance(ALGORITHM);
-            IvParameterSpec iv = new IvParameterSpec(INITIALISATION_VECTOR);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-
+            Cipher cipher = getEncodeCipher();
             return cipher.doFinal(plainText);
         }
 
@@ -64,12 +61,26 @@ public final class NetworkUtilities {
          */
         public byte[] decrypt(byte[] cipherText) throws Exception
         {
+            Cipher cipher = getDecodeCipher();
+            return cipher.doFinal(cipherText);
+        }
+
+        public Cipher getEncodeCipher() throws Exception {
+            SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            IvParameterSpec iv = new IvParameterSpec(INITIALISATION_VECTOR);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+
+            return cipher;
+        }
+
+        public Cipher getDecodeCipher() throws Exception {
             SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             IvParameterSpec iv = new IvParameterSpec(INITIALISATION_VECTOR);
             cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
 
-            return cipher.doFinal(cipherText);
+            return cipher;
         }
     }
 

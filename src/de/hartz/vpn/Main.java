@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String[] args) {
-        MediationConnector.startSocket();
+        MediationConnector.getInstance().startSocket();
 
         // TODO: TEST COMMAND LINE AGAIN! Espacially callback = null might be a problem..
         if ( args.length > 0) {

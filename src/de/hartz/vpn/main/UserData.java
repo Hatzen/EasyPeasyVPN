@@ -13,6 +13,8 @@ import static de.hartz.vpn.utilities.Constants.USER_DATA_FILE_PATH;
  */
 public class UserData implements Serializable{
 
+    private int invalidate;
+
     private static UserData instance;
 
     private UserList userList = new UserList();
@@ -77,6 +79,7 @@ public class UserData implements Serializable{
 
     private UserData() {
         if (mediatorList.size() == 0) {
+            mediatorList.add(new Mediator("DEFAULT","192.168.2.214", -1, -1, false));
             mediatorList.add(new Mediator("DEFAULT","http://hartzkai.freehostia.com/thesis/", -1, -1, true));
         }
     }

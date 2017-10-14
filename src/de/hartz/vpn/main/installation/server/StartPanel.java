@@ -26,7 +26,7 @@ public class StartPanel extends InstallationPanel implements ActionListener {
         configString += "Using TAP Device so Broadcasts are supported, ";
         configString += "No Authentication, ";
         configString += "AES-128-CBC Encryption, ";
-        configString += "RSA Key Size of 512 Bit";
+        configString += "RSA Key Size of 1024 Bit";
 
         expressRadioButton = new RadioButtonWithDescription( "Express installation. Use default settings.", "For users with less experience includes following settings:" + configString, this);
         expressRadioButton.setSelected(isExpressInstallation);

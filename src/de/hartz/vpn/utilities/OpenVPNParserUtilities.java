@@ -90,6 +90,17 @@ public final class OpenVPNParserUtilities {
     /**
      *
      * DEMO DATA:
+     * ...Inactivity timeout...
+     * @param line
+     * @return
+     */
+    public static boolean isServerConnectionTimeout(String line) {
+        return line.contains("Inactivity timeout");
+    }
+
+    /**
+     *
+     * DEMO DATA:
      Sun Sep 02 20:28:26 2017 us=189108 DefaultClient/192.168.2.120 SIGUSR1[soft,connection-reset] received, client-instance restarting
      * @param line
      * @return

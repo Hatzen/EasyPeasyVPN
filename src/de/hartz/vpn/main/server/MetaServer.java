@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 
 /**
  * This class represents a meta server that handles the exchange of the necessary config and certificates to get
@@ -215,6 +216,12 @@ public class MetaServer extends Thread {
         bis = new BufferedInputStream(fis);
         bis.read(byteArray);
 
+        System.out.println("Test " + byteArray.length);
+        int rest = (16 - (byteArray.length % 16));
+        if(rest != 0) {
+            byteArray = Arrays.copyOf(byteArray, byteArray.length + rest);
+        }
+        System.out.println("Danach:  " + byteArray.length);
         NetworkUtilities.AdvancedEncryptionStandard aes = new NetworkUtilities.AdvancedEncryptionStandard();
         try {
             byteArray = aes.encrypt(byteArray);
@@ -223,19 +230,14 @@ public class MetaServer extends Thread {
         }
 
         os = socket.getOutputStream();
-        os.flush();
+        //os.flush();
 
         // Send size, because EOF only will be sent on closing socket.
         ObjectOutputStream oos = new ObjectOutputStream(os);
         oos.writeObject(new Integer(byteArray.length));
         oos.flush();
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        oos.reset();
+        oos.writeObject(new Integer(rest));
+        oos.flush();
 
         System.out.println("Sending " + file.getName() + "(" + byteArray.length + " bytes)");
         os.write(byteArray);

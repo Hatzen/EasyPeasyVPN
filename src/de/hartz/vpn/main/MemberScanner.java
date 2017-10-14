@@ -77,9 +77,11 @@ public class MemberScanner {
      * Shutdown all sockets and threads.
      */
     public void shutdown() {
-        run = false;
-        Server.socket.close();
-        Client.socket.close();
+        if(run) {
+            run = false;
+            Server.socket.close();
+            Client.socket.close();
+        }
     }
 
     private MemberScanner(String ownUserName, InetAddress broadcast) {

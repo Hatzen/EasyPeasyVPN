@@ -1,6 +1,7 @@
 package de.hartz.vpn.main.installation.client;
 
 import de.hartz.vpn.helper.RadioButtonWithDescription;
+import de.hartz.vpn.main.MediationConnector;
 import de.hartz.vpn.main.UserData;
 import de.hartz.vpn.main.installation.InstallationController;
 import de.hartz.vpn.main.installation.InstallationPanel;
@@ -83,18 +84,19 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
 
 
         mediatorChoice = new RadioButtonWithDescription("Connect via Mediator", mediatorConnectionWrapper, this);
-        mediatorChoice.setEnabled(false);
+        mediatorChoice.setEnabled(true);
+        mediatorChoice.setSelected(true);
+
         ButtonGroup group = new ButtonGroup();
         mediatorChoice.addToGroup(group);
         ipChoice = new RadioButtonWithDescription("Connect via IP", ipConnectionWrapper, this);
         ipChoice.addToGroup(group);
-        ipChoice.setSelected(true);
 
         add(mediatorChoice);
         add(ipChoice);
 
-        ipChoice.setDescriptionComponentEnabled(true);
-        directConnect = true;
+        ipChoice.setDescriptionComponentEnabled(false);
+        directConnect = false;
     }
 
     @Override
@@ -107,6 +109,15 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
         if (directConnect && !successfulConnected) {
             UserData.serverIp = serverAddress.getText();
             UserData.serverPort = new Integer(serverPort.getText());
+            new MetaClient(this).start();
+        } else if (!successfulConnected) {
+            String serverAddress= MediationConnector.getInstance().getAccessibleNetworkAddress(networkNameField.getText());
+            int indexOfSeparator = serverAddress.indexOf(':');
+            String ip = serverAddress.substring(0, indexOfSeparator);
+            String port = serverAddress.substring(indexOfSeparator + 1);
+
+            UserData.serverIp = ip;
+            UserData.serverPort = new Integer(port);
             new MetaClient(this).start();
         }
         return false;

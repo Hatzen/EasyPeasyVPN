@@ -10,6 +10,7 @@ import de.hartz.vpn.utilities.OpenVPNUtilities;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static de.hartz.vpn.main.server.MetaServer.*;
 
@@ -134,19 +135,33 @@ public class MetaClient extends Thread {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
+        int dumpData = 0;
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
+            dumpData = (Integer) ois.readObject();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
         // Get bytes.
         byte[] byteArray = new byte[byteCount];
-        int bytesRead = is.read(byteArray);
 
+        int pos = 0;
+        do {
+            int read = is.read(byteArray, pos, byteCount-pos);
+
+            // check for end of file or error
+            if (read == -1) {
+                break;
+            } else {
+                pos += read;
+            }
+        } while (pos < byteCount);
+        int bytesRead = pos;//is.read(byteArray);
+
+
+        System.out.println("read:" + bytesRead + " : " + byteCount);
         if (bytesRead != byteCount) {
-            throw new IOException("Unexpected amount of data.");
+            throw new IOException("Unexpected amount of data. Expected " + byteCount + ". Read " + bytesRead);
         }
 
         NetworkUtilities.AdvancedEncryptionStandard aes = new NetworkUtilities.AdvancedEncryptionStandard();
@@ -155,6 +170,10 @@ public class MetaClient extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("real data:" + (byteArray.length - dumpData));
+        byteArray = Arrays.copyOfRange(byteArray, 0, byteArray.length - dumpData);
+
+
         fos.write(byteArray);
 
         fos.close();
