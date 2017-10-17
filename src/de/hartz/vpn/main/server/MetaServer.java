@@ -17,7 +17,7 @@ import java.util.Arrays;
  * Based on http://www.rgagnon.com/javadetails/java-0542.html
  */
 public class MetaServer extends Thread {
-    private static final String CONFIG_FOLDER = OpenVPNUtilities.getOpenVPNInstallationPath() + "easy-rsa\\keys\\";
+    private static final String CONFIG_FOLDER = OpenVPNUtilities.getOpenVPNInstallationPath() + "easy-rsa" + File.separator + "keys" + File.separator;
     private static MetaServer instance;
     private static boolean run;
     private static boolean running;

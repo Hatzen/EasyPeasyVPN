@@ -79,7 +79,7 @@ public class UserData implements Serializable{
 
     private UserData() {
         if (mediatorList.size() == 0) {
-            mediatorList.add(new Mediator("DEFAULT","192.168.2.214", -1, -1, false));
+            //mediatorList.add(new Mediator("DEFAULT","192.168.2.214", -1, -1, false));
             mediatorList.add(new Mediator("DEFAULT","http://hartzkai.freehostia.com/thesis/", -1, -1, true));
         }
     }

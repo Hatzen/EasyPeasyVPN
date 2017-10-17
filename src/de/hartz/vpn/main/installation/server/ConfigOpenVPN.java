@@ -207,7 +207,7 @@ public class ConfigOpenVPN {
             //--client-cert-not-required
         }
 
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(INSTALLATION_PATH + "config/server.ovpn"), "utf-8"))) {
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(INSTALLATION_PATH + "config/server" + GeneralUtilities.getOpenVPNConfigExtension()), "utf-8"))) {
             writer.write(content);
         } catch (IOException e) {
             e.printStackTrace();
@@ -226,23 +226,25 @@ public class ConfigOpenVPN {
 
     @Linux
     private void linuxEasyRSA() throws IOException {
-        //TODO:  Cannot run .vars permission denied.. CHmod -> executable?
-        // Easy rsa path was an other than in the tutorial.
-        /*String[][] commands = {
-                {"cp", "-R", "/usr/share/easy-rsa/", INSTALLATION_PATH + "/easy-rsa"}, // TODO: Check maybe mkdir needed.
-                {"./vars"},
-                {"./clean-all"},
-                {"./build-ca", System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator")},
-                {"./build-key-server --batch server", System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator"),System.getProperty("line.separator")}
-            }; //cp -R /usr/share/easy-rsa/* /etc/openvpn/easy-rsa/
-        */
+        new File(INSTALLATION_PATH + "easy-rsa").mkdirs();
+
         String[][] commands = {
-                {"cp", "-R", "/usr/share/easy-rsa/", INSTALLATION_PATH + "/easy-rsa"}, // TODO: Check maybe mkdir needed.
-                {"./vars"},
-                {"./clean-all"},
-                {"./build-ca"},
-                {"./build-key-server --batch server"}
-        }; //cp -R /usr/share/easy-rsa/* /etc/openvpn/easy-rsa/
+                {"cp", "-R", "/usr/share/easy-rsa/", INSTALLATION_PATH},
+                {"cp", "openssl-1.0.0.cnf", "openssl.cnf"},
+                {"chmod", "-R", "777", "."}, // TODO: Maybe undo after success, else EVERY user can create new certificate..
+
+                {"/bin/bash", "-c", ". vars; ","./clean-all"},
+                {"/bin/bash", "-c", ". vars; ", "./build-ca","--batch"},
+                //{"/bin/bash", "-c", ". vars; ","./build-dh"},
+                {"./build-dh"},
+                {"/bin/bash", "-c", ". vars; ", "./build-key-server", "--batch", "server"},
+                {"/bin/bash", "-c", ". vars; ", "./build-key", "--batch", Constants.DEFAULT_CLIENT_NAME}
+
+                //{"cp", "keys/01.pem", "keys/dh" + DEFAULT_KEY_SIZE + ".pem"} // TODO: Why isnt the file not named like it is on windows?
+
+                //{"./build-ca","--batch"},
+                //{"./build-key-server", "--batch", "server"}
+        };
         int exitValue = 0;
 
         // TODO: Get rid off. Just needed because files first have to be copied..
