@@ -180,7 +180,7 @@ public class ConfigOpenVPN {
         tls-auth ta.key 0 # This file is secret
         */
 
-        /* TODO: #2 FUTURE! Additional performance increase?
+        /*
         # Enable compression on the VPN link and push the
         # option to the client (2.4+ only, for earlier
         # versions see below)
@@ -226,29 +226,21 @@ public class ConfigOpenVPN {
 
     @Linux
     private void linuxEasyRSA() throws IOException {
-        new File(INSTALLATION_PATH + "easy-rsa").mkdirs();
-
+        /*new File(INSTALLATION_PATH + "easy-rsa").mkdirs();
         String[][] commands = {
                 {"cp", "-R", "/usr/share/easy-rsa/", INSTALLATION_PATH},
                 {"cp", "openssl-1.0.0.cnf", "openssl.cnf"},
                 {"chmod", "-R", "777", "."}, // TODO: Maybe undo after success, else EVERY user can create new certificate..
 
-                {"/bin/bash", "-c", ". vars; ","./clean-all"},
-                {"/bin/bash", "-c", ". vars; ", "./build-ca","--batch"},
-                //{"/bin/bash", "-c", ". vars; ","./build-dh"},
-                {"./build-dh"},
-                {"/bin/bash", "-c", ". vars; ", "./build-key-server", "--batch", "server"},
-                {"/bin/bash", "-c", ". vars; ", "./build-key", "--batch", Constants.DEFAULT_CLIENT_NAME}
-
-                //{"cp", "keys/01.pem", "keys/dh" + DEFAULT_KEY_SIZE + ".pem"} // TODO: Why isnt the file not named like it is on windows?
-
-                //{"./build-ca","--batch"},
-                //{"./build-key-server", "--batch", "server"}
+                {"./vars; ", "./clean-all"},
+                {"./vars; ",  "./build-ca","--batch"},
+                {"./vars; ", "./build-dh"},
+                {"./vars; ", "./build-key-server", "--batch", "server"},
+                {"./vars; ", "./build-key", "--batch", Constants.DEFAULT_CLIENT_NAME}
         };
-        int exitValue = 0;
 
-        // TODO: Get rid off. Just needed because files first have to be copied..
-        boolean temp = true;
+        int exitValue = 0;
+        boolean filesNotCopiedYet = true;
         for (String[] command : commands) {
             System.out.println(Arrays.toString(command));
             ProcessBuilder pb = new ProcessBuilder(command);
@@ -267,8 +259,8 @@ public class ConfigOpenVPN {
             System.out.println("" + exitValue);
             System.out.println("---");
 
-            if(temp) {
-                temp = false;
+            if(filesNotCopiedYet) {
+                filesNotCopiedYet = false;
 
                 String content = GeneralUtilities.readFile(INSTALLATION_PATH + "easy-rsa/vars", Charset.defaultCharset());
                 content = replaceParameter(content, "HOME=", "\"${0%/*}\"");
@@ -285,12 +277,130 @@ public class ConfigOpenVPN {
                     e.printStackTrace();
                 }
             }
+        }*/
+        // Prepare scripts.
+        new File(INSTALLATION_PATH + "easy-rsa").mkdirs();
+        String[][] commands = {
+                {"cp", "-R", "/usr/share/easy-rsa/", INSTALLATION_PATH},
+                {"cp", "openssl-1.0.0.cnf", "openssl.cnf"},
+                {"chmod", "-R", "777", "."}, // TODO: Maybe undo after success, else EVERY user can create new certificate..
+        };
+        int exitValue;
+        for (String[] command : commands) {
+            System.out.println(Arrays.toString(command));
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.directory(new File(INSTALLATION_PATH + "/easy-rsa/"));
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+            OutputStreamHandler outputHandler = new OutputStreamHandler(process.getInputStream());
+            outputHandler.start();
+            try {
+                process.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            logger.addLogLine(outputHandler.getOutput().toString());
+            exitValue = process.exitValue();
+            System.out.println("" + exitValue);
+            System.out.println("---");
         }
+
+        // Prepare parameters.
+        String content = GeneralUtilities.readFile(INSTALLATION_PATH + "easy-rsa/vars", Charset.defaultCharset());
+        content = replaceParameter(content, "HOME=", "\"${0%/*}\"");
+        content = replaceParameter(content, "KEY_SIZE=", "" + DEFAULT_KEY_SIZE);
+
+        content = replaceParameter(content, "KEY_COUNTRY=", "DE");
+        content = replaceParameter(content, "KEY_PROVINCE=", "NRW");
+        content = replaceParameter(content, "KEY_CITY=", "MS");
+        content = replaceParameter(content, "KEY_ORG=", "EasyPeasyVPN");
+        content = replaceParameter(content, "KEY_EMAIL=", "dummy@email.de");
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(INSTALLATION_PATH + "easy-rsa/vars"), "utf-8"))) {
+            writer.write(content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Execute scripts.
+        runEasyRSACommandsLinux("clean-all", 0, 0);
+        runEasyRSACommandsLinux("build-ca", 8, 0);
+        runEasyRSACommandsLinux("build-dh", 0, 0);
+        runEasyRSACommandsLinux("build-key-server server", 10, 2);
+
+        // TODO: Build client scripts
+        ArrayList<String> input = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            input.add("" + System.getProperty("line.separator"));
+        }
+        input.set(5, Constants.DEFAULT_CLIENT_NAME + System.getProperty("line.separator"));
+        input.set(6, Constants.DEFAULT_CLIENT_NAME + System.getProperty("line.separator"));
+        runEasyRSACommandsLinux("build-key " + Constants.DEFAULT_CLIENT_NAME, input, 2);
+    }
+
+    private void runEasyRSACommandsLinux(String command, int skips, int confirmations) throws IOException {
+        ArrayList<String> input = new ArrayList<>();
+        for (int i = 0; i < skips; i++) {
+            // Skip all settings to use default values.
+            input.add("" + System.getProperty("line.separator"));
+        }
+        runEasyRSACommandsLinux(command, input, confirmations);
+    }
+
+    /**
+     * Needed, to execute every command with vars.bat and to confirm some values.
+     * @param command
+     * @param inputs ArrayList of answers to give.
+     * @param confirmations number of how often "y" should be entered (after the skips).
+     * @throws IOException
+     */
+    @Windows
+    private void runEasyRSACommandsLinux(String command, ArrayList<String> inputs, int confirmations) throws IOException {
+        // TODO: Doesnt work. Creating files need "sudo java ..." cause of location. Because of sudo it is not possible to do "./vars; ./clean-all" cause export isnt available for "clean-all"
+        ProcessBuilder pb = new ProcessBuilder( "/bin/bash", "vars", ";", "/bin/bash", command);
+        pb.redirectErrorStream(true);
+        pb.directory(new File(INSTALLATION_PATH + "easy-rsa/"));
+        Process process = pb.start();
+
+        OutputStreamHandler outputHandler = new OutputStreamHandler(process.getInputStream());
+
+        // Write commands.
+        PrintWriter commandExecutor = new PrintWriter(process.getOutputStream());
+        logger.addLogLine(command);
+        //commandExecutor.println("vars.bat");
+        //commandExecutor.println(command);
+
+
+        for (String input :inputs) {
+            commandExecutor.print(input);
+        }
+        for (int i = 0; i < confirmations; i++) {
+            // Confirm all config settings..
+            // Very strange behaviour. It needs a delay regarding stackoverflow comment and the exact same command twice.
+            // https://stackoverflow.com/questions/39913424/how-to-execute-batch-script-which-takes-multiple-inputs-by-using-java-process-bu
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            commandExecutor.print("y" + "\r\n");
+            commandExecutor.print("y" + "\r\n");
+            commandExecutor.flush();
+        }
+
+        commandExecutor.println("exit");
+        commandExecutor.flush();
+        commandExecutor.close();
+        outputHandler.start();
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        logger.addLogLine(outputHandler.getOutput().toString());
     }
 
     @Windows
     private void windowsEasyRSA() throws IOException {
-        // TODO: Make OS independent.
 
         // Creates vars.bat.
         try {
@@ -321,10 +431,10 @@ public class ConfigOpenVPN {
             e.printStackTrace();
         }
 
-        runEasyRSACommands("clean-all.bat", 0, 0);
-        runEasyRSACommands("build-ca.bat", 8, 0);
-        runEasyRSACommands("build-dh.bat", 0, 0);
-        runEasyRSACommands("build-key-server.bat server", 10, 2);
+        runEasyRSACommandsWindows("clean-all.bat", 0, 0);
+        runEasyRSACommandsWindows("build-ca.bat", 8, 0);
+        runEasyRSACommandsWindows("build-dh.bat", 0, 0);
+        runEasyRSACommandsWindows("build-key-server.bat server", 10, 2);
 
         // TODO: Build client scripts.
         //TODO:  DO THIS ALSO WITH LINUX INSTALLATION!!!!!!!!!!!!!
@@ -334,7 +444,7 @@ public class ConfigOpenVPN {
         }
         input.set(5, Constants.DEFAULT_CLIENT_NAME + System.getProperty("line.separator"));
         input.set(6, Constants.DEFAULT_CLIENT_NAME + System.getProperty("line.separator"));
-        runEasyRSACommands("build-key.bat " + Constants.DEFAULT_CLIENT_NAME, input, 2);
+        runEasyRSACommandsWindows("build-key.bat " + Constants.DEFAULT_CLIENT_NAME, input, 2);
     }
 
     /**
@@ -344,13 +454,14 @@ public class ConfigOpenVPN {
      * @param confirmations number of how often "y" should be entered (after the skips).
      * @throws IOException
      */
-    private void runEasyRSACommands(String command, int skips, int confirmations) throws IOException {
+    @Windows
+    private void runEasyRSACommandsWindows(String command, int skips, int confirmations) throws IOException {
         ArrayList<String> input = new ArrayList<>();
         for (int i = 0; i < skips; i++) {
             // Skip all settings to use default values.
             input.add("" + System.getProperty("line.separator"));
         }
-        runEasyRSACommands(command, input, confirmations);
+        runEasyRSACommandsWindows(command, input, confirmations);
     }
 
     /**
@@ -361,7 +472,7 @@ public class ConfigOpenVPN {
      * @throws IOException
      */
     @Windows
-    private void runEasyRSACommands(String command, ArrayList<String> inputs, int confirmations) throws IOException {
+    private void runEasyRSACommandsWindows(String command, ArrayList<String> inputs, int confirmations) throws IOException {
         ProcessBuilder pb = new ProcessBuilder( "cmd.exe");
         pb.redirectErrorStream(true);
         pb.directory(new File(INSTALLATION_PATH + "easy-rsa/"));

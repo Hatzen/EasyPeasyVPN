@@ -8,7 +8,8 @@ import de.hartz.vpn.utilities.OpenVPNUtilities;
 
 import java.io.*;
 
-import static de.hartz.vpn.main.installation.server.ConfigOpenVPN.*;
+import static de.hartz.vpn.main.installation.server.ConfigOpenVPN.DEFAULT_ADAPTER_NAME;
+import static de.hartz.vpn.main.installation.server.ConfigOpenVPN.DEFAULT_CIPHER;
 
 /**
  * Class that writes the needed openvpn config file.
@@ -68,7 +69,7 @@ public class ConfigOpenVPN {
         # You can have multiple remote entries
         # to load balance between the servers.
          */
-        content += "remote " + UserData.serverIp + " " + DEFAULT_PORT; //TODO: Move to ConfigState.
+        content += "remote " + UserData.serverIp + " " + UserData.serverPort;
         content += System.getProperty("line.separator");
         /*
         # Specify that we are a client and that we

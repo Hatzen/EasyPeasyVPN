@@ -224,6 +224,10 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             helpMenu.add(aboutItem);
     }
 
+    private boolean isMediatorNeeded() {
+        return UserData.getInstance().getVpnConfigState().getProtocol().equals("udp") && !UserData.getInstance().isClientInstallation();
+    }
+
     private void initTray() {
         if (SystemTray.isSupported()) {
             tray = SystemTray.getSystemTray();
@@ -344,14 +348,15 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
+
             MemberScanner.init(NetworkUtilities.getHostName(), broadcastAddress);
             // TODO: Only Register once!!!!
             MemberScanner.getInstance().addListener(this);
 
+            if (isMediatorNeeded()) {
+                MediationConnector.getInstance().startSocket();
 
-            if (UserData.getInstance().getVpnConfigState().getMediator() != null) {
-                if(mediationPortRefresher == null || mediationPortRefresher.isShutdown()) {
-                    // TODO: Reimplement when mediationserver works
+                if(UserData.getInstance().getVpnConfigState().getMediator() != null && (mediationPortRefresher == null || mediationPortRefresher.isShutdown())) {
                      mediatorKeepPortAlive();
                 }
             }
@@ -408,7 +413,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         if (isServiceRunning()) {
             stopVPN();
         }
-        MediationConnector.getInstance().shutdownSocket();
+        if(isMediatorNeeded())
+            MediationConnector.getInstance().shutdownSocket();
         try {
             // Wait a moment for shutdown OpenVPN.
             Thread.sleep(500);
