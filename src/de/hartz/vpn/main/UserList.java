@@ -11,10 +11,12 @@ public class UserList extends ArrayList<UserList.User> {
         // TODO: Add timestamp from moment of adding. if larger than 1 minute set to "offline".
         private String vpnIp;
         private String commonName;
+        private int timeouts;
 
         public User(String vpnIp, String commonName) {
             this.vpnIp = vpnIp;
             this.commonName = commonName;
+            timeouts = 0;
         }
 
         public String getVpnIp() {
@@ -23,6 +25,14 @@ public class UserList extends ArrayList<UserList.User> {
 
         public String getCommonName() {
             return commonName;
+        }
+
+        public boolean incrementTimeout() {
+            if (++timeouts > 3) {
+                UserData.getInstance().getUserList().removeUserByIp(vpnIp);
+                return true;
+            }
+            return false;
         }
     }
 

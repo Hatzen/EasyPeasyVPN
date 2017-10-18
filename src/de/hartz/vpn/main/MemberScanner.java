@@ -150,6 +150,7 @@ public class MemberScanner {
                         e.printStackTrace();
                     }
                     Thread.sleep(SECONDS_TO_WAIT_FOR_PROPAGATE * 1000);
+                    incrementTimeouts();
                 }
 
                 socket.close();
@@ -157,6 +158,12 @@ public class MemberScanner {
                 ex.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+        }
+
+        private void incrementTimeouts() {
+            for (UserList.User u : UserData.getInstance().getUserList()) {
+                u.incrementTimeout();
             }
         }
     }

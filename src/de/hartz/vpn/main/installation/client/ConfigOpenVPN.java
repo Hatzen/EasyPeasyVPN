@@ -40,8 +40,6 @@ public class ConfigOpenVPN {
         // More infos about the keys and values: http://wiki.openvpn.eu/index.php/OpenVPN-Syntax
         String content = "";
 
-
-        // TODO: SAME AS SERVER
         content += "proto " + InstallationController.getInstance().getTmpConfigState().getProtocol();
         content += System.getProperty("line.separator");
         content += "dev " + DEFAULT_ADAPTER_NAME; // TODO: TAP for broadcasts, TUN for performance.
@@ -54,8 +52,6 @@ public class ConfigOpenVPN {
         content += "verb " + 3;
         content += System.getProperty("line.separator");
 
-
-        // TODO: Different from server. (?)
         // Certificate location.
         content += "ca \"" + INSTALLATION_PATH + "client.ca\"";
         content += System.getProperty("line.separator");
@@ -122,7 +118,7 @@ public class ConfigOpenVPN {
         tls-auth ta.key 1
         */
 
-        /* TODO: #2 FUTURE! Additional performance increase?
+        /*
         # Enable compression on the VPN link.
         # Don't enable this unless it is also
         # enabled in the server config file.
