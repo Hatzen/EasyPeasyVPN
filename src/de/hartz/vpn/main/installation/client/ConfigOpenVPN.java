@@ -129,6 +129,13 @@ public class ConfigOpenVPN {
         #comp-lzo
         */
 
+        /*
+        Allow remote peer to change its IP address and/or port number, such as due to DHCP (this is the default if --remote is not used). --float when specified with --remote allows an OpenVPN session to initially connect to a peer at a known address, however if packets arrive from a new address and pass all authentication tests, the new address will take control of the session. This is useful when you are connecting to a peer which holds a dynamic address such as a dial-in user or DHCP client.
+        Essentially, --float tells OpenVPN to accept authenticated packets from any address, not only the address which was specified in the --remote option.
+         */
+        content += "float";
+        content += System.getProperty("line.separator");
+
         String filePath = INSTALLATION_PATH + "config" + File.separator + "client" + GeneralUtilities.getOpenVPNConfigExtension();
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "utf-8"))) {
             writer.write(content);
