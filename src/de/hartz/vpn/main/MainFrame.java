@@ -326,7 +326,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             stopVPN();
         } else if (OpenVPNParserUtilities.hasFatalError(line)) {
             stopVPN();
-        } else if (OpenVPNParserUtilities.isServerConnectionTimeout(line)) {
+        } else if (OpenVPNParserUtilities.isServerConnectionTimeout(line) && UserData.getInstance().isClientInstallation()) {
             ownStatus.setConnecting(true);
         }
 

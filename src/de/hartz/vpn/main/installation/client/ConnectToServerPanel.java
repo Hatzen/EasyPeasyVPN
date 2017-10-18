@@ -6,7 +6,6 @@ import de.hartz.vpn.main.UserData;
 import de.hartz.vpn.main.installation.InstallationController;
 import de.hartz.vpn.main.installation.InstallationPanel;
 import de.hartz.vpn.mediation.Mediator;
-import de.hartz.vpn.utilities.Constants;
 import de.hartz.vpn.utilities.UiUtilities;
 
 import javax.swing.*;
@@ -77,25 +76,24 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
         ipConnectionWrapper.setPreferredSize(new Dimension(400,100));
         serverAddress = new JTextField("192.168.2.118");
         serverAddress.setPreferredSize(new Dimension(300,30));
-        serverPort = new JTextField("" + Constants.MEDIATION_SERVER_PORT);
+        serverPort = new JTextField("1194");
         serverPort.setPreferredSize(new Dimension(100,30));
         ipConnectionWrapper.add(serverAddress);
         ipConnectionWrapper.add(serverPort);
 
 
         mediatorChoice = new RadioButtonWithDescription("Connect via Mediator", mediatorConnectionWrapper, this);
-        mediatorChoice.setEnabled(true);
-        mediatorChoice.setSelected(true);
 
         ButtonGroup group = new ButtonGroup();
         mediatorChoice.addToGroup(group);
         ipChoice = new RadioButtonWithDescription("Connect via IP", ipConnectionWrapper, this);
         ipChoice.addToGroup(group);
+        ipChoice.setSelected(true);
 
         add(mediatorChoice);
         add(ipChoice);
 
-        ipChoice.setDescriptionComponentEnabled(false);
+        mediatorChoice.setDescriptionComponentEnabled(false);
         directConnect = false;
     }
 
