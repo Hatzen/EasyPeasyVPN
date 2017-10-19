@@ -76,6 +76,7 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
         ipConnectionWrapper.setPreferredSize(new Dimension(400,100));
         serverAddress = new JTextField("192.168.2.118");
         serverAddress.setPreferredSize(new Dimension(300,30));
+        serverAddress.requestFocus();
         serverPort = new JTextField("1194");
         serverPort.setPreferredSize(new Dimension(100,30));
         ipConnectionWrapper.add(serverAddress);
@@ -94,7 +95,7 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
         add(ipChoice);
 
         mediatorChoice.setDescriptionComponentEnabled(false);
-        directConnect = false;
+        directConnect = true;
     }
 
     @Override
@@ -104,11 +105,11 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
 
     @Override
     public boolean onDeselect() {
-        if (directConnect && !successfulConnected) {
+        if (directConnect) {
             UserData.serverIp = serverAddress.getText();
             UserData.serverPort = new Integer(serverPort.getText());
             new MetaClient(this).start();
-        } else if (!successfulConnected) {
+        } else {
             String serverAddress= MediationConnector.getInstance().getAccessibleNetworkAddress(networkNameField.getText());
             int indexOfSeparator = serverAddress.indexOf(':');
             String ip = serverAddress.substring(0, indexOfSeparator);
