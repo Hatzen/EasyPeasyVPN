@@ -21,9 +21,9 @@ import static de.hartz.vpn.main.server.MetaServer.*;
 public class MetaClient extends Thread {
 
     interface ClientListener {
-        void onError(Exception e);
-        void onCommandFinished(String command);
-        void onFinish();
+        void onClientMetaDataError(Exception e);
+        void onClientMetaDataCommandFinished(String command);
+        void onClientMetaDataFinish();
     }
 
     public static final String FILE_PATH_CA = OpenVPNUtilities.getOpenVPNInstallationPath() + "client.ca";
@@ -61,9 +61,9 @@ public class MetaClient extends Thread {
                 printWriter.flush();
                 receiveAnswer(command);
             }
-            clientListener.onFinish();
+            clientListener.onClientMetaDataFinish();
         } catch (IOException e) {
-            clientListener.onError(e);
+            clientListener.onClientMetaDataError(e);
             e.printStackTrace();
         } finally {
             try {
@@ -98,7 +98,7 @@ public class MetaClient extends Thread {
             default:
                 System.out.println("UNKNOW COMMAND:" + command);
         }
-        clientListener.onCommandFinished(command);
+        clientListener.onClientMetaDataCommandFinished(command);
     }
 
     private void receiveConfigObject() throws IOException {

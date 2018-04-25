@@ -1,5 +1,6 @@
 package de.hartz.vpn.main;
 
+import de.hartz.vpn.helper.LoadingFrame;
 import de.hartz.vpn.utilities.NetworkUtilities;
 import de.hartz.vpn.utilities.UiUtilities;
 
@@ -10,7 +11,9 @@ import java.util.ArrayList;
 /**
  * Created by kaiha on 02.09.2017.
  */
-public class NetworkInfoFrame extends JFrame {
+public class NetworkInfoFrame extends LoadingFrame {
+
+    private JTextArea outputTextArea;
 
     public NetworkInfoFrame() {
         setTitle("NetworkInfo");
@@ -31,7 +34,7 @@ public class NetworkInfoFrame extends JFrame {
         add(padding, BorderLayout.CENTER);
         padding.add(content, BorderLayout.CENTER);
 
-        JTextArea outputTextArea = new JTextArea(getContent());
+        outputTextArea = new JTextArea();
         outputTextArea.setEnabled(false);
         outputTextArea.setLineWrap(true);
         outputTextArea.setWrapStyleWord(true);
@@ -39,6 +42,7 @@ public class NetworkInfoFrame extends JFrame {
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         content.add(scrollPane);
         setVisible(true);
+        new Thread(this).start();
     }
 
     private String getContent() {
@@ -56,4 +60,8 @@ public class NetworkInfoFrame extends JFrame {
         return content;
     }
 
+    @Override
+    public void performTask() {
+        outputTextArea.append( getContent());
+    }
 }

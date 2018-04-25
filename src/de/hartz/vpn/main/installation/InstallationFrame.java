@@ -1,5 +1,6 @@
 package de.hartz.vpn.main.installation;
 
+import de.hartz.vpn.helper.LoadingFrame;
 import de.hartz.vpn.utilities.UiUtilities;
 
 import javax.swing.*;
@@ -10,7 +11,7 @@ import java.awt.event.ActionListener;
 /**
  * The gui for the {@link InstallationController}.
  */
-public class InstallationFrame extends JFrame implements ActionListener {
+public class InstallationFrame extends LoadingFrame implements ActionListener {
 
     private JPanel content;
     private InstallationPanel currentContentPanel;
@@ -84,5 +85,12 @@ public class InstallationFrame extends JFrame implements ActionListener {
 
     private InstallationPanel getCurrentContentPanel() {
         return currentContentPanel;
+    }
+
+    @Override
+    public void performTask() {
+        if (currentContentPanel != null) {
+            currentContentPanel.performTask();
+        }
     }
 }

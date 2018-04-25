@@ -28,7 +28,7 @@ public class InstallationController {
     }
 
     private static InstallationController instance = new InstallationController();
-    private InstallationFrame mainFrame;
+    private InstallationFrame installationFrame;
     private InstallationCallback callback;
 
     private ConfigState tmpConfigState;
@@ -97,7 +97,7 @@ public class InstallationController {
      * @return
      */
     public boolean isLast(JPanel currentPanel) {
-        return currentPanelOrder.indexOf(currentPanel) == currentPanelOrder.size()-1;
+        return currentPanelOrder.indexOf(currentPanel) == currentPanelOrder.size() - 1;
     }
 
     /**
@@ -123,7 +123,7 @@ public class InstallationController {
                 currentPanelOrder.addAll(expressPanelOrder);
             }
 
-
+            installationFrame.setLoading(false);
             showPanel(0);
         } else {
             drawLogoWithoutGUI();
@@ -136,10 +136,18 @@ public class InstallationController {
      * Sets the installation frames visibility. Not possible if it was started without GUI.
      * @param visible Boolean indicating whether the frame should be visible.
      */
-    public void setMainFrameVisible(boolean visible) {
+    public void setInstallationFrameVisible(boolean visible) {
         if (!hasGUI)
             return;
-        mainFrame.setVisible(visible);
+        installationFrame.setVisible(visible);
+    }
+
+    /**
+     * Set the loading screen.
+     * @param isLoading boolean indicating whether to start or stop loading. This will also execute {@link InstallationPanel#performTask()}
+     */
+    public void setLoading(boolean isLoading) {
+        installationFrame.setLoading(isLoading);
     }
 
     /**
@@ -184,10 +192,14 @@ public class InstallationController {
         return clientInstallation;
     }
 
+    /**
+     * Initializes the installation frame.
+     */
     private void initGUI() {
         hasGUI = true;
-        mainFrame = new InstallationFrame("installation");
-        mainFrame.setVisible(true);
+        installationFrame = new InstallationFrame("installation");
+        installationFrame.setVisible(true);
+        installationFrame.setLoading(true);
 
         InstallationPanel startPanel = new StartPanel();
 
@@ -210,32 +222,42 @@ public class InstallationController {
         customPanelOrder.add(new NetworkNamePanel());
         customPanelOrder.add(new ExpressInstallationPanel());
         customPanelOrder.add(new FinishingPanel());
-        // Anonymisieren?
+
+        // TODO: Some features that would be nice to choose:
+        // Keep Anonymous?
         // Encryption
         // Authentification Panel (Add user panel)
-            // --> Nachirchten, Onlinestatus etc
+            // --> Chat, Online status etc
         // Mediation server
             // How to forward ips / access router
         // "How secure/ fast is this" panel
     }
 
+    /**
+     * Can display any panel of the currently available panels.
+     * Called by {@link #showNextPanel}  and {@link #showPreviousPanel}.
+     * @param index
+     */
     private void showPanel(int index) {
         InstallationPanel panel = currentPanelOrder.get(index);
         panel.onSelect();
-        mainFrame.setContent(panel);
-        mainFrame.setNextButtonTextToFinish(false);
-        mainFrame.setNextEnabled(true);
-        mainFrame.setPreviousEnabled(true);
+        installationFrame.setContent(panel);
+        installationFrame.setNextButtonTextToFinish(false);
+        installationFrame.setNextEnabled(true);
+        installationFrame.setPreviousEnabled(true);
         if (isFirst(panel)) {
-            mainFrame.setPreviousEnabled(false);
+            installationFrame.setPreviousEnabled(false);
         }
         if (panel.isFinishingPanel()) {
-            mainFrame.setNextButtonTextToFinish(true);
+            installationFrame.setNextButtonTextToFinish(true);
         } else if (isLast(panel)) {
-            mainFrame.setNextEnabled(false);
+            installationFrame.setNextEnabled(false);
         }
     }
 
+    /**
+     * Default constructor.
+     */
     private InstallationController() {
         clientPanelOrder = new ArrayList<>();
         currentPanelOrder = new ArrayList<>();
@@ -243,6 +265,9 @@ public class InstallationController {
         customPanelOrder = new ArrayList<>();
     }
 
+    /**
+     * Draws a ascii art logo to the command line interface.
+     */
     private void drawLogoWithoutGUI() {
         try {
             BufferedReader in = new BufferedReader(new FileReader(GeneralUtilities.getResourceAsFile("resources/icon.txt")));
@@ -263,13 +288,17 @@ public class InstallationController {
         }
     }
 
+    /**
+     * Called when the next button is clicked.
+     * @param currentPanel the panel on which the button was clicked.
+     */
     private void showNextPanel(InstallationPanel currentPanel) {
         if (currentPanel.isFinishingPanel()) {
             // OnFinish setup config etc.
             UserData.getInstance().setClientInstallation(clientInstallation);
             callback.onInstallationSuccess();
             UserData.getInstance().setVpnConfigState(tmpConfigState);
-            mainFrame.dispose();
+            installationFrame.dispose();
         }
 
         boolean panelCanBeDeselected = currentPanel.onDeselect();
@@ -285,11 +314,15 @@ public class InstallationController {
         showPanel(nextIndex);
     }
 
+    /**
+     * Called when the previous button is clicked.
+     * @param currentPanel the panel on which the button was clicked.
+     */
     private void showPreviousPanel(JPanel currentPanel) {
         if (isFirst(currentPanel)) {
             return;
         }
-        int nextIndex = currentPanelOrder.indexOf(currentPanel)-1;
+        int nextIndex = currentPanelOrder.indexOf(currentPanel) - 1;
         showPanel(nextIndex);
     }
 }

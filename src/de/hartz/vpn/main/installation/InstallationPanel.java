@@ -18,6 +18,13 @@ public abstract class InstallationPanel extends JPanel implements Logger {
     public abstract boolean onDeselect();
 
     /**
+     * Makes it possible to do heavy task in background with showing loading animation.
+     */
+    public void performTask() {
+
+    }
+
+    /**
      * Method indicating whether the panel is the last installation step.
      * @return
      */

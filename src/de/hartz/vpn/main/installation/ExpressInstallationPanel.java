@@ -201,9 +201,9 @@ public class ExpressInstallationPanel extends InstallationPanel {
             OutputStreamHandler outputHandler = new OutputStreamHandler(process.getInputStream());
             outputHandler.start();
 
-            InstallationController.getInstance().setMainFrameVisible(false);
+            InstallationController.getInstance().setInstallationFrameVisible(false);
             process.waitFor();
-            InstallationController.getInstance().setMainFrameVisible(true);
+            InstallationController.getInstance().setInstallationFrameVisible(true);
             addLineToOutput(outputHandler.getOutput().toString());
             int exitValue = process.exitValue();
 

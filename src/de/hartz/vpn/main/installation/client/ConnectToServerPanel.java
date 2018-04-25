@@ -105,6 +105,7 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
 
     @Override
     public boolean onDeselect() {
+        InstallationController.getInstance().setLoading(true);
         if (directConnect) {
             UserData.serverIp = serverAddress.getText();
             UserData.serverPort = new Integer(serverPort.getText());
@@ -123,18 +124,20 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
     }
 
     @Override
-    public void onError(Exception e) {
+    public void onClientMetaDataError(Exception e) {
+        InstallationController.getInstance().setLoading(false);
         successfulConnected = false;
         UiUtilities.showAlert(e.getMessage());
     }
 
     @Override
-    public void onCommandFinished(String command) {
+    public void onClientMetaDataCommandFinished(String command) {
 
     }
 
     @Override
-    public void onFinish() {
+    public void onClientMetaDataFinish() {
+        InstallationController.getInstance().setLoading(false);
         successfulConnected = true;
         InstallationController.getInstance().addClientPanel();
         InstallationController.getInstance().forceNextPanel(this);

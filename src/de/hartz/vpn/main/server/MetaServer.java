@@ -216,12 +216,10 @@ public class MetaServer extends Thread {
         bis = new BufferedInputStream(fis);
         bis.read(byteArray);
 
-        System.out.println("Test " + byteArray.length);
         int rest = (16 - (byteArray.length % 16));
         if(rest != 0) {
             byteArray = Arrays.copyOf(byteArray, byteArray.length + rest);
         }
-        System.out.println("Danach:  " + byteArray.length);
         NetworkUtilities.AdvancedEncryptionStandard aes = new NetworkUtilities.AdvancedEncryptionStandard();
         try {
             byteArray = aes.encrypt(byteArray);
