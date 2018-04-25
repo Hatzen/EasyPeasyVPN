@@ -10,7 +10,6 @@ import java.util.TimerTask;
  */
 public abstract class  LoadingFrame extends JFrame implements Runnable {
 
-    //private Color backgroundGray = new Color(0,0, 0);
     private Color backgroundGray = new Color(200,200, 200, 200);
     private Color highlightDotBlue = new Color(0,50,200);
     private Color dotBlue = new Color(50,100,250);
@@ -18,7 +17,7 @@ public abstract class  LoadingFrame extends JFrame implements Runnable {
     private boolean isLoading;
     private int highlightDot;
 
-    private Timer timer = new Timer();
+    private Timer timer;
 
     @Override
     public void paint(Graphics g) {

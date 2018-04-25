@@ -12,6 +12,7 @@ public final class Constants {
 
     public static final int MEDIATION_SERVER_PORT = 13267;
     public static final int META_SERVER_PORT = 13268;
+    public static final int CHAT_SERVER_PORT = 13269;
     public static final String DEFAULT_CLIENT_NAME = "DefaultClient";
 
     public static final String USER_DATA_FILE_PATH = System.getProperty("user.home") + File.separator + "." + SOFTWARE_NAME +  File.separator + "userData.ser";

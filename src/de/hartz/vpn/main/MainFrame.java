@@ -3,6 +3,7 @@ package de.hartz.vpn.main;
 import de.hartz.vpn.helper.EasyHtmlComponent;
 import de.hartz.vpn.helper.Logger;
 import de.hartz.vpn.helper.StatusComponent;
+import de.hartz.vpn.main.chat.ChatController;
 import de.hartz.vpn.main.installation.InstallationController;
 import de.hartz.vpn.main.server.MetaServer;
 import de.hartz.vpn.utilities.*;
@@ -13,6 +14,8 @@ import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -34,6 +37,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     private static final String START_VPN_SERVICE = "Start VPN Service";
     private static final String STOP_VPN_SERVICE = "Stop VPN Service";
 
+    private ChatController chatController;
+
     private OpenVPNRunner openVPNRunner;
     private ScheduledExecutorService mediationPortRefresher;
 
@@ -47,6 +52,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     private JMenuItem aboutItem;
     private JMenuItem manualItem;
     private JMenuItem networkInfoItem;
+    private JMenuItem showConfigItem;
     private JMenuItem mediationMenuItem;
     private JMenuItem createNetworkItem;
     private JMenuItem joinNetworkItem;
@@ -71,6 +77,22 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         JPanel overviewPanel = new JPanel();
         overviewPanel.setLayout( new BorderLayout());
         list = new JList();
+        list.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                JList list = (JList) evt.getSource();
+                // Double-click detected
+                if (evt.getClickCount() >= 2) {
+                    int index = list.locationToIndex(evt.getPoint());
+                    if (index == -1) {
+                        return;
+                    }
+                    System.out.println(index);
+                    String ip = UserData.getInstance().getUserList().get(index).getVpnIp();
+                    System.out.println(ip);
+                    chatController.chatWith(ip);
+                }
+            }
+        });
         list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         list.setCellRenderer(new StatusComponent());
         JScrollPane scrollPane = new JScrollPane(list);
@@ -135,6 +157,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     }
 
     private void startVPN() {
+        chatController = new ChatController();
         String installationPath = OpenVPNUtilities.getOpenVPNInstallationPath();
         if(installationPath == null) {
             System.err.println("OpenVPN not FOUND! Was it uninstalled?");
@@ -198,6 +221,10 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         networkInfoItem.addActionListener(this);
         networkInfoItem.setAccelerator(KeyStroke.getKeyStroke('I', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
 
+        showConfigItem = new JMenuItem("Show config");
+        showConfigItem.addActionListener(this);
+        showConfigItem.setAccelerator(KeyStroke.getKeyStroke('F', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+
         mediationMenuItem = new JMenuItem("Mediation settings");
         mediationMenuItem.addActionListener(this);
         mediationMenuItem.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
@@ -217,6 +244,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             networkMenu.add(serviceToggleItem);
         menuBar.add(extrasMenu);
             extrasMenu.add(networkInfoItem);
+        extrasMenu.add(showConfigItem);
             // TODO: Possibility to add custom mediators..
             //extrasMenu.add(mediationMenuItem);
         menuBar.add(helpMenu);
@@ -282,6 +310,12 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             InstallationController.getInstance().startInstallation(true, true, this);
         } else if (actionEvent.getSource() == networkInfoItem) {
             new NetworkInfoFrame();
+        } else if (actionEvent.getSource() == showConfigItem) {
+            try {
+                Desktop.getDesktop().edit(new File(OpenVPNUtilities.getOpenVPNConfigPath()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if (actionEvent.getSource() == joinNetworkItem) {
             InstallationController.getInstance().startInstallation(true, true, this);
         } else if (actionEvent.getSource() == aboutItem) {

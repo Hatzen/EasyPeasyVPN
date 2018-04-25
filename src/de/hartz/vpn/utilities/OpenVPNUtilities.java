@@ -1,6 +1,7 @@
 package de.hartz.vpn.utilities;
 
 import de.hartz.vpn.helper.OutputStreamHandler;
+import de.hartz.vpn.main.UserData;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,8 +79,24 @@ public final class OpenVPNUtilities {
         return null;
     }
 
+    public static String getOpenVPNConfigPath() {
+        String installationPath = OpenVPNUtilities.getOpenVPNInstallationPath();
+        if(installationPath == null) {
+            System.err.println("OpenVPN not FOUND! Was it uninstalled?");
+            return null;
+        }
+        String configFilename = "client";
+        if (!UserData.getInstance().isClientInstallation()) {
+            configFilename = "server";
+        }
+        String configName = configFilename + GeneralUtilities.getOpenVPNConfigExtension();
+        String configPath = installationPath + "config" + File.separator;
+
+        return configPath + configName;
+    }
+
     /**
-     * Checks if OpenSSL/ OpenVPN is avaiale on command line. Needed if openvpn is fresh installed and path is not ready yet.
+     * Checks if OpenSSL/ OpenVPN is available on command line. Needed if openvpn is fresh installed and path is not ready yet.
      * @return true if path needs an extension.
      */
     public static boolean needsPathUpdate() {
