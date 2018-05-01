@@ -6,7 +6,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Created by kaiha on 25.04.2018.
+ * Base class which should be extended by every frame that needs the possibility to do heavy tasks in background with a
+ * specific loading animation.
  */
 public abstract class  LoadingFrame extends JFrame implements Runnable {
 

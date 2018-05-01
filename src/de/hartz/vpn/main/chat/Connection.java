@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- * Created by kaiha on 25.04.2018.
+ * Wrapper class that handles the communication with a vpn partner. It can parallel write and read messages from a socket.
  */
 public class Connection {
 

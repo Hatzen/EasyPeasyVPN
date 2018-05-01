@@ -23,7 +23,7 @@ public class Main {
                 InstallationController.getInstance().startInstallation(false, false, null);
             } else if (args.length == 2 && args[0].equals("client")) {
                 UserData.getInstance().setClientInstallation(true);
-                UserData.serverIp = args[1];
+                UserData.getInstance().setServerIp(args[1]);
                 InstallationController.getInstance().startInstallation(false, true, null);
             }
             else {

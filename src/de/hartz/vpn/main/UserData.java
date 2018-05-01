@@ -11,30 +11,18 @@ import static de.hartz.vpn.utilities.Constants.USER_DATA_FILE_PATH;
 /**
  * Hold the data for the current session of this user.
  */
-public class UserData implements Serializable{
-
-    private int invalidate;
-
+public class UserData {
     private static UserData instance;
-
-    private UserList userList = new UserList();
-    private ArrayList<Mediator> mediatorList = new ArrayList<>();
-
-    //client only.
-    public static String serverIp;
-    public static Integer serverPort;
-    //END OF: client only.
-
-    private boolean clientInstallation = true;
-    private ConfigState vpnConfigState;
+    private static Data data;
 
     /**
      * Returns the one and only {@link UserData} object. If one is saved it will loaded.
      * @returns the instance.
      */
     public static UserData getInstance() {
-        if (instance == null && !loadUserData()) {
+        if (instance == null) {
             instance = new UserData();
+            loadUserData();
         }
         return instance;
     }
@@ -43,11 +31,11 @@ public class UserData implements Serializable{
      * @returns a list of all active users in the vpn.
      */
     public UserList getUserList() {
-        return userList;
+        return data.userList;
     }
 
     public ArrayList<Mediator> getMediatorList() {
-        return mediatorList;
+        return data.mediatorList;
     }
 
     /**
@@ -55,33 +43,35 @@ public class UserData implements Serializable{
      * @returns true if its a client installation.
      */
     public boolean isClientInstallation() {
-        return clientInstallation;
+        return data.clientInstallation;
     }
 
     public void setClientInstallation(boolean clientInstallation) {
-        this.clientInstallation = clientInstallation;
+        data.clientInstallation = clientInstallation;
     }
 
     /**
      * Sets the current vpn config state and saves it persistent.
      */
     public ConfigState getVpnConfigState() {
-        return vpnConfigState;
+        return data.vpnConfigState;
     }
 
     /**
      * Sets the current vpn config state and saves it persistent.
      */
     public void setVpnConfigState(ConfigState configState) {
-        vpnConfigState = configState;
+        data.vpnConfigState = configState;
         writeUserData();
     }
 
     private UserData() {
-        if (mediatorList.size() == 0) {
-            //mediatorList.add(new Mediator("DEFAULT","192.168.2.214", -1, -1, false));
-            mediatorList.add(new Mediator("DEFAULT","http://hartzkai.freehostia.com/thesis/", -1, -1, true));
-        }
+        data = new Data();
+        data.clientInstallation = true;
+        data.userList = new UserList();
+        data.mediatorList = new ArrayList<>();
+        //mediatorList.add(new Mediator("DEFAULT","192.168.2.214", -1, -1, false));
+        data.mediatorList.add(new Mediator("DEFAULT","http://hartzkai.freehostia.com/thesis/", -1, -1, true));
     }
 
     /**
@@ -92,11 +82,11 @@ public class UserData implements Serializable{
         try {
             FileInputStream fin = new FileInputStream(USER_DATA_FILE_PATH);
             ObjectInputStream ois = new ObjectInputStream(fin);
-            instance = (UserData) ois.readObject();
+            data = (Data) ois.readObject();
             return  true;
         } catch (Exception e) {
             // TODO: Check for data version.
-            System.out.println("UserData not loaded. File does not exist (?)");
+            System.out.println("Data not loaded. File does not exist (?)");
             if (new File(USER_DATA_FILE_PATH).exists())
                 e.printStackTrace();
         }
@@ -107,7 +97,7 @@ public class UserData implements Serializable{
      * Saves the current user data object persistent.
      * @returns true if the data was saved successfully.
      */
-    private boolean writeUserData() {
+    public boolean writeUserData() {
         try {
             deleteTempData();
             File configFile = new File(USER_DATA_FILE_PATH);
@@ -115,7 +105,7 @@ public class UserData implements Serializable{
             configFile.createNewFile();
             FileOutputStream fout = new FileOutputStream(configFile);
             ObjectOutputStream oos = new ObjectOutputStream(fout);
-            oos.writeObject(instance);
+            oos.writeObject(data);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,6 +117,22 @@ public class UserData implements Serializable{
      * Deletes all data that are cached but should not be persistent.
      */
     private void deleteTempData() {
-        userList.clear();
+        data.userList.clear();
+    }
+
+    public String getServerIp() {
+        return data.serverIp;
+    }
+
+    public Integer getServerPort() {
+        return data.serverPort;
+    }
+
+    public void setServerIp(String ip) {
+        data.serverIp = ip;
+    }
+
+    public void setServerPort(Integer port) {
+        data.serverPort = port;
     }
 }

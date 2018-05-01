@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by kaiha on 25.04.2018.
+ * Model class to wrap a chat message.
  */
 public class Message implements Serializable {
     private User from;
@@ -20,7 +20,7 @@ public class Message implements Serializable {
         this.date = date;
     }
 
-    public String getReprensation() {
+    public String getRepresentation() {
         return "[" + sdf.format(date) + "] " + from.getName() + ":" + text + "\n";
     }
 }

@@ -9,7 +9,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Created by kaiha on 02.09.2017.
+ * A frame that displays all used ip addresses of this client. External ip, lan ip and vpn ip.
  */
 public class NetworkInfoFrame extends LoadingFrame {
 

@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Created by kaiha on 25.04.2018.
+ * Model class to wrap a chat user.
  */
 public class User implements Serializable {
     private String ip;

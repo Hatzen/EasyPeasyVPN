@@ -41,7 +41,7 @@ public class MetaClient extends Thread {
 
     public MetaClient(ClientListener clientListener ) {
         this.clientListener = clientListener;
-        this.serverIp = UserData.serverIp;
+        this.serverIp = UserData.getInstance().getServerIp();
         commands = new ArrayList<>();
         commands.add(SEND_CONFIG);
     }

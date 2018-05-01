@@ -244,9 +244,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             networkMenu.add(serviceToggleItem);
         menuBar.add(extrasMenu);
             extrasMenu.add(networkInfoItem);
-        extrasMenu.add(showConfigItem);
-            // TODO: Possibility to add custom mediators..
-            //extrasMenu.add(mediationMenuItem);
+            extrasMenu.add(showConfigItem);
+            extrasMenu.add(mediationMenuItem);
         menuBar.add(helpMenu);
             helpMenu.add(manualItem);
             helpMenu.add(aboutItem);
@@ -311,11 +310,14 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         } else if (actionEvent.getSource() == networkInfoItem) {
             new NetworkInfoFrame();
         } else if (actionEvent.getSource() == showConfigItem) {
+            // TODO: Change location and extension of config file. As .conf file isnt recognized.
             try {
                 Desktop.getDesktop().edit(new File(OpenVPNUtilities.getOpenVPNConfigPath()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if (actionEvent.getSource() == mediationMenuItem) {
+            new MediatorFrame();
         } else if (actionEvent.getSource() == joinNetworkItem) {
             InstallationController.getInstance().startInstallation(true, true, this);
         } else if (actionEvent.getSource() == aboutItem) {
@@ -433,7 +435,6 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
     }
 
     private boolean canAutoStart() {
-        UserData.getInstance();
         if(UserData.getInstance().getVpnConfigState() == null)
             return false;
 

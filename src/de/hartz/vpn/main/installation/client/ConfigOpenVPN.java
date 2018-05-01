@@ -65,7 +65,7 @@ public class ConfigOpenVPN {
         # You can have multiple remote entries
         # to load balance between the servers.
          */
-        content += "remote " + UserData.serverIp + " " + UserData.serverPort;
+        content += "remote " + UserData.getInstance().getServerIp() + " " + UserData.getInstance().getServerPort();
         content += System.getProperty("line.separator");
         /*
         # Specify that we are a client and that we

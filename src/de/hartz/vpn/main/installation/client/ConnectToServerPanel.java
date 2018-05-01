@@ -107,8 +107,8 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
     public boolean onDeselect() {
         InstallationController.getInstance().setLoading(true);
         if (directConnect) {
-            UserData.serverIp = serverAddress.getText();
-            UserData.serverPort = new Integer(serverPort.getText());
+            UserData.getInstance().setServerIp(serverAddress.getText());
+            UserData.getInstance().setServerPort( new Integer(serverPort.getText()) );
             new MetaClient(this).start();
         } else {
             String serverAddress= MediationConnector.getInstance().getAccessibleNetworkAddress(networkNameField.getText());
@@ -116,8 +116,8 @@ public class ConnectToServerPanel extends InstallationPanel implements MetaClien
             String ip = serverAddress.substring(0, indexOfSeparator);
             String port = serverAddress.substring(indexOfSeparator + 1);
 
-            UserData.serverIp = ip;
-            UserData.serverPort = new Integer(port);
+            UserData.getInstance().setServerIp(ip);
+            UserData.getInstance().setServerPort( new Integer(port) );
             new MetaClient(this).start();
         }
         return false;

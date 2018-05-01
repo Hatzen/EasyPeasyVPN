@@ -84,6 +84,7 @@ public class ChatController {
     }
 
     public User getOwnUser() {
+        // TODO: Get the real own user object.
         return new User("192.168.2.111", "banan");
     }
 

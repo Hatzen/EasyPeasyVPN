@@ -62,4 +62,25 @@ public class Mediator implements Serializable {
         }
         return null;
     }
+
+    public void setMediatorName(String mediatorName) {
+        this.mediatorName = mediatorName;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setMetaServerPort(int metaServerPort) {
+        this.metaServerPort = metaServerPort;
+    }
+
+    public void setUdpHolePunchingPort(int udpHolePunchingPort) {
+        this.udpHolePunchingPort = udpHolePunchingPort;
+    }
+
+    public void setRedirectFromUrl(boolean redirectFromUrl) {
+        this.redirectFromUrl = redirectFromUrl;
+    }
+
 }

@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by kaiha on 25.04.2018.
+ * A frame which can be used to chat with one participant of the vpn.
  */
 public class ChatFrame extends JFrame implements UserDataChangedListener {
     private JTextArea outputTextArea;
@@ -57,14 +57,14 @@ public class ChatFrame extends JFrame implements UserDataChangedListener {
 
         changedName(user.getName());
         for (Message message: user.getMessages()) {
-            outputTextArea.append(message.getReprensation());
+            outputTextArea.append(message.getRepresentation());
         }
         user.addListener(this);
     }
 
     @Override
     public void addedMessage(Message message) {
-        outputTextArea.append(message.getReprensation());
+        outputTextArea.append(message.getRepresentation());
     }
 
     @Override
