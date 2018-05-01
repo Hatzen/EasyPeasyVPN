@@ -11,16 +11,22 @@ public class Message implements Serializable {
     private User from;
     private String text;
     private Date date;
+    public transient boolean ownMessage;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("dd.MM HH:mm");
 
-    public Message(User from, String text, Date date) {
+    public Message(User from, String text, Date date, boolean ownMessage) {
         this.from = from;
         this.text = text;
         this.date = date;
+        this.ownMessage = ownMessage;
     }
 
     public String getRepresentation() {
-        return "[" + sdf.format(date) + "] " + from.getName() + ":" + text + "\n";
+        String representation ="[" + sdf.format(date) + "] " + from.getName() + ":" + text + "\n";
+        if (ownMessage) {
+            representation = "***SEND***" + representation;
+        }
+        return representation;
     }
 }

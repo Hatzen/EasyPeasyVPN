@@ -86,15 +86,14 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
                     if (index == -1) {
                         return;
                     }
-                    System.out.println(index);
-                    String ip = UserData.getInstance().getUserList().get(index).getVpnIp();
-                    System.out.println(ip);
-                    chatController.chatWith(ip);
+                    UserList.User user = UserData.getInstance().getUserList().get(index);
+                    chatController.chatWith(user.getVpnIp(), user.getCommonName());
                 }
             }
         });
         list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         list.setCellRenderer(new StatusComponent());
+        list.setFixedCellHeight(25);
         JScrollPane scrollPane = new JScrollPane(list);
         overviewPanel.add(scrollPane);
         content.addTab("Overview", overviewPanel);
@@ -103,7 +102,8 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         JPanel logPanel = new JPanel();
         logPanel.setLayout( new BorderLayout());
         outputTextArea = new JTextArea();
-        outputTextArea.setEnabled(false);
+        outputTextArea.setForeground(Color.gray);
+        outputTextArea.setEditable(false);
         outputTextArea.setLineWrap(true);
         outputTextArea.setWrapStyleWord(true);
         DefaultCaret caret = (DefaultCaret)outputTextArea.getCaret();
@@ -123,6 +123,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
 
             JPanel statusCenter = new JPanel();
             statusCenter.setLayout(new BoxLayout(statusCenter, BoxLayout.Y_AXIS));
+            statusCenter.setBorder(BorderFactory.createEmptyBorder(2*StatusComponent.PADDING, StatusComponent.PADDING, StatusComponent.PADDING, StatusComponent.PADDING));
             networkStatusText = new JLabel("Not Connected.");
             networkStatusText.setFont(new Font("Arial", Font.BOLD, 16));
             ownStatusText = new JLabel("");
@@ -314,7 +315,7 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
             try {
                 Desktop.getDesktop().edit(new File(OpenVPNUtilities.getOpenVPNConfigPath()));
             } catch (Exception e) {
-                e.printStackTrace();
+                UiUtilities.showAlert(e.getLocalizedMessage());
             }
         } else if (actionEvent.getSource() == mediationMenuItem) {
             new MediatorFrame();

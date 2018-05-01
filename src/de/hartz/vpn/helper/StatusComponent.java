@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class StatusComponent extends JLabel implements ListCellRenderer<String> {
 
-    private final static int PADDING = 10;
+    public final static int PADDING = 5;
     private boolean online;
     private boolean connecting;
 
@@ -26,7 +26,9 @@ public class StatusComponent extends JLabel implements ListCellRenderer<String> 
 
     @Override
     public void paint(Graphics g) {
+        g.translate(5*PADDING,0);
         super.paint(g);
+        g.translate(-5*PADDING,0);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if(online) {
@@ -41,11 +43,17 @@ public class StatusComponent extends JLabel implements ListCellRenderer<String> 
     }
 
     @Override
-    public Component getListCellRendererComponent(JList<? extends String> list, String country, int index,
+    public Component getListCellRendererComponent(JList<? extends String> list, String text, int index,
                                                   boolean isSelected, boolean cellHasFocus) {
         setOpaque(true);
-        setBackground(Color.green);
-        setText(country);
+        setOnline(true);
+        if (isSelected) {
+            setBackground(Color.lightGray);
+        } else if (cellHasFocus) {
+            setBackground(Color.lightGray.brighter());
+        }
+
+        setText(text);
 
         return this;
     }

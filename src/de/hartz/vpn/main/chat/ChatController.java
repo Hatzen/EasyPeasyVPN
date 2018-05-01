@@ -27,7 +27,9 @@ public class ChatController {
                 while (run) {
                     System.out.println("Waiting for Chats...");
                     try {
-                        users.add( getUser(serverSocket.accept()) );
+                        Socket socket = serverSocket.accept();
+                        User user = addUser(socket.getInetAddress().getHostAddress(), null);
+                        user.setConnection(Connection.createConnection(user, socket));
                     } catch (SocketException e) {
                         System.err.println("Error while listening");
                     }
@@ -42,13 +44,6 @@ public class ChatController {
                 }
             }
         }
-
-        private User getUser(Socket socket) {
-            User user = new User(socket.getInetAddress().getHostAddress(), null);
-            user.setConnection(new Connection(user, socket));
-
-            return user;
-        }
     }
 
     private ServerSocket serverSocket;
@@ -59,17 +54,12 @@ public class ChatController {
         new ConnectionListener().start();
     }
 
-    public boolean chatWith(String ip) {
+    public boolean chatWith(String ip, String name) {
         try {
-            User user = getUserByIp(ip);
-            if ( user == null ) {
-                user = new User(ip, "");
-                users.add(user);
-            }
-
-            if (user.getConnection() != null) {
+            User user = addUser(ip, name);
+            if (user.getConnection() == null) {
                 Socket socket = new Socket(user.getIp(), Constants.CHAT_SERVER_PORT);
-                user.setConnection(new Connection(user, socket));
+                user.setConnection(Connection.createConnection(user, socket));
             }
             new ChatFrame(user, this).setVisible(true);
             return true;
@@ -80,12 +70,30 @@ public class ChatController {
     }
 
     public void sendMessage(String text, User destination) {
-        destination.addMessage(new Message(getOwnUser(), text, Calendar.getInstance().getTime()));
+        Message message = new Message(getOwnUser(),text, Calendar.getInstance().getTime(), true);
+        try {
+            destination.addMessage( message );
+            destination.getConnection().sendMessage(message);
+        } catch (IOException e) {
+            destination.addMessage( new Message(getOwnUser(),"ERROR MESSAGE NOT SENT!",
+                    Calendar.getInstance().getTime(), true));
+            e.printStackTrace();
+            destination.getConnection().closeConnection();
+        }
+    }
+
+    public User addUser(String ip, String name) throws IOException {
+        User user = getUserByIp(ip);
+        if ( user == null ) {
+            user = new User(ip, name);
+            users.add(user);
+        }
+        return user;
     }
 
     public User getOwnUser() {
         // TODO: Get the real own user object.
-        return new User("192.168.2.111", "banan");
+        return new User("10.0.0.1", "banan");
     }
 
     public User getUserByIp(String ip) {

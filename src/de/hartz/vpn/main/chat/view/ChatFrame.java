@@ -20,6 +20,7 @@ public class ChatFrame extends JFrame implements UserDataChangedListener {
 
     public ChatFrame(final User user, final ChatController chatController) {
         setSize(new Dimension(400,500));
+        setMinimumSize(new Dimension(400, 300));
         setLocationRelativeTo(null);
         setLayout( new BorderLayout() );
         UiUtilities.setLookAndFeelAndIcon(this);
@@ -33,6 +34,7 @@ public class ChatFrame extends JFrame implements UserDataChangedListener {
         add(scrollPane, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel();
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         bottomPanel.setLayout(new BorderLayout());
         inputTextArea = new JTextArea();
         inputTextArea.setLineWrap(true);

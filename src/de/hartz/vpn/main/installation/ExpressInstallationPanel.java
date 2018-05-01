@@ -44,6 +44,11 @@ public class ExpressInstallationPanel extends InstallationPanel {
 
     @Override
     public void onSelect() {
+        InstallationController.getInstance().setLoading(true);
+    }
+
+    @Override
+    public void performTask() {
         startExternalInstallation();
     }
 
@@ -230,6 +235,7 @@ public class ExpressInstallationPanel extends InstallationPanel {
         } else {
             new ConfigOpenVPN(InstallationController.getInstance().getTmpConfigState(), this);
         }
+        InstallationController.getInstance().setLoading(false);
     }
 
     public void addLineToOutput(String line) {

@@ -53,6 +53,11 @@ public class Mediator implements Serializable {
             return url;
         }
         try {
+            // TODO: It would be more pretty to validate data on submit.
+            String http = "http://";
+            if (url.indexOf(http) != 0) {
+                url = http + url;
+            }
             URL whatIsMyIp = new URL(url);
             BufferedReader in = new BufferedReader(new InputStreamReader(whatIsMyIp.openStream()));
             String ip = in.readLine();

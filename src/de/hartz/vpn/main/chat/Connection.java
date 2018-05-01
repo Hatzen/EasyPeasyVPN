@@ -16,37 +16,40 @@ public class Connection {
     class InputHandler extends Thread {
         private ObjectInputStream ois;
 
-        public InputHandler(Socket socket) throws IOException {
-            ois = new ObjectInputStream( socket.getInputStream() );
-            start();
-        }
-
         public void run() {
-            while (true) {
-                try {
-                     user.addMessage( (Message) ois.readObject() );
-                } catch (ClassNotFoundException e) {
-                    System.err.println("Cannot happen!");
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            try {
+                ois = new ObjectInputStream( socket.getInputStream() );
+                while (true) {
+                    Message m = (Message) ois.readObject();
+                    user.addMessage( m );
                 }
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
             }
+            closeConnection();
         }
-
     }
 
     private User user;
     private Socket socket;
 
-    public Connection(User user, Socket socket) {
-        try {
-            new InputHandler(socket);
-        } catch (IOException e) {
-            e.printStackTrace();
-            // TODO: Doesnt make sense in constructor.
-            user.setConnection(null);
-        }
+    private Connection(User user, Socket socket) {
+        this.socket = socket;
+        this.user = user;
+        new InputHandler().start();
+    }
+
+    /**
+     *
+     * Needs to be synchronized to chat with yourself. Because user and its connection will be created for starting and
+     * receiving connection.
+     * @param user
+     * @param socket
+     * @return
+     */
+    public synchronized static Connection createConnection(User user, Socket socket) {
+        Connection con = new Connection(user, socket);
+        return con;
     }
 
     public void sendMessage(Message message) throws IOException {
@@ -62,11 +65,17 @@ public class Connection {
         oos.reset();
         oos.flush();
         oos.writeObject(message);
-        user.addMessage( message );
         oos.flush();
     }
 
-
+    public void closeConnection() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        user.setConnection(null);
+    }
 
 
 }
