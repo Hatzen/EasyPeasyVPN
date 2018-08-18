@@ -3,6 +3,10 @@
  *
  * This is a general purpose Gradle build.
  * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds/
+ *
+ * TODO: Reformat this file. 
+ * TODO: Sign Jar file
+ * TODO: Add obfusication
  */
 
 import org.ajoberstar.gradle.git.tasks.*
@@ -23,8 +27,8 @@ buildscript {
     }
 
 // Only needed once to update the Dependency.
+// TODO: Refactor to git submodule (?)
 task cloneNetACT(type: GitClone) {
-	    // TODO: Refactor to git submodule
             def destination = file("NetACT")
             uri = "https://github.com/Hatzen/NetACT"
             destinationPath = destination
@@ -41,6 +45,7 @@ dependencies {
     		compile project(':NetACT')
 }
 
+// TODO: Clear folder before creating
 javadoc {
     destinationDir = file("${rootDir}/doc/javadoc/")
     source = sourceSets.main.allJava

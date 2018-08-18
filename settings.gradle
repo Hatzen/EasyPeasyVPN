@@ -7,7 +7,7 @@
  * in the user guide at https://docs.gradle.org/4.9/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'EasyPeasyVPN2'
+rootProject.name = 'EasyPeasyVPN'
 
 // https://stackoverflow.com/a/27132701/8524651
 // Reference:  https://looksok.wordpress.com/2014/07/12/compile-gradle-project-with-another-project-as-a-dependency/
