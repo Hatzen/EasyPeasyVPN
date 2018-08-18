@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="EasyPeasyVPN:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/EasyPeasyVPN_jar</output-path>
-    <root id="archive" name="EasyPeasyVPN.jar">
-      <element id="module-output" name="EasyPeasyVPN" />
-    </root>
-  </artifact>
-</component>
