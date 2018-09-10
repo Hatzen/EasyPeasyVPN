@@ -11,30 +11,33 @@
 
 import org.ajoberstar.gradle.git.tasks.*
 
-apply plugin: 'idea'
+apply plugin: 'application'
 apply plugin: 'java'
+apply plugin: 'idea'
 
 version = '1.0'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
+mainClassName = 'de.hartz.vpn.Main'
+
 // https://stackoverflow.com/a/27132701/8524651
 buildscript {
-       repositories { mavenCentral() }
-       dependencies { 
-		classpath 'org.ajoberstar:gradle-git:0.2.3'
- 	}
+    repositories { mavenCentral() }
+    dependencies {
+        classpath 'org.ajoberstar:gradle-git:0.2.3'
     }
+}
 
 // Only needed once to update the Dependency.
 // TODO: Refactor to git submodule (?)
 task cloneNetACT(type: GitClone) {
-            def destination = file("NetACT")
-            uri = "https://github.com/Hatzen/NetACT"
-            destinationPath = destination
-            bare = false
-            enabled = !destination.exists() //to clone only once
-        }
+    def destination = file("NetACT")
+    uri = "https://github.com/Hatzen/NetACT"
+    destinationPath = destination
+    bare = false
+    enabled = !destination.exists() //to clone only once
+}
 
 //Get dependencies from Maven central repository
 repositories {
@@ -42,58 +45,87 @@ repositories {
 }
 
 dependencies {
-    		compile project(':NetACT')
+    compile project(':NetACT')
+    testCompile 'junit:junit:4.11'
 }
 
 // TODO: Clear folder before creating
 javadoc {
-    destinationDir = file("${rootDir}/doc/javadoc/")
+    def destination = "${rootDir}/doc/javadoc/"
+    project.delete(files(destination))
+    destinationDir = file(destination)
     source = sourceSets.main.allJava
     classpath = configurations.compile
 }
 
 jar {
-	dependsOn 'cloneNetACT'
-	tasks.findByName('jar').mustRunAfter 'cloneNetACT'
+    dependsOn 'cloneNetACT'
+    tasks.findByName('jar').mustRunAfter 'cloneNetACT'
 
     manifest {
         attributes 'Implementation-Title': 'EasyPeasyVPN',
-                   'Implementation-Version': version,
-		   'Main-Class': 'de.hartz.vpn.Main'
+                'Implementation-Version': version,
+                'Main-Class': 'de.hartz.vpn.Main'
     }
 }
 
-task runJar2(dependsOn:jar) {
-    doLast{
-       javaexec { 
-         main="-jar";
-         args = [
-            "C:/Users/nwuser/FitNesse/fitnesse-standalone.jar"
-           ]
-       } 
+// https://www.baeldung.com/gradle-fat-jar
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'EasyPeasyVPN',
+                'Implementation-Version': version,
+                'Main-Class': 'de.hartz.vpn.Main'
     }
-  
+    baseName = 'EasyPeasyVPN-Fat'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }
 
 task runJar(type: JavaExec) {
-	dependsOn 'jar'
+    dependsOn 'jar'
     main = "-jar";
     args jar.archivePath
 }
 
 
 task runNetACTest {
-	dependsOn 'cloneNetACT'
-	dependsOn 'jar'
-	tasks.findByName('jar').mustRunAfter 'cloneNetACT'
+    dependsOn 'cloneNetACT'
+    dependsOn 'jar'
+    tasks.findByName('jar').mustRunAfter 'cloneNetACT'
 
-    doLast{
-       javaexec { 
-         main="-jar";
-         args = [
-            "C:/Users/nwuser/FitNesse/fitnesse-standalone.jar"
-           ]
-       } 
+    doLast {
+        // start file distribution server
+        exec {
+            workingDir 'NetACT'
+            commandLine 'cmd', '-c', 'python', 'main.py', 'raw/example_server.ini'
+
+            //standardOutput = new LogOutputStream(logger, LogLevel.ERROR);
+            //errorOutput  =  new LogOutputStream(logger, LogLevel.ERROR);
+
+        }
+        // start easypeasyvpn client
+        exec {
+
+            //standardOutput new LogOutputStream(logger, LogLevel.INFO)
+            //errorOutput    new LogOutputStream(logger, LogLevel.ERROR)
+            workingDir 'NetACT'
+            commandLine 'python', 'main.py', 'raw/example_client.ini'
+
+        }
     }
-  
+
+}
+
+
+
+task taskX(type: ParallelRealtimeProcess) {
+	//doLast {
+        
+   args = //[["ping", "192.168.2.1"]]
+	[["python", "main.py", "raw/example_server.ini"]
+	,["python", "main.py", "raw/example_client.ini"]]
+    cwd = "NetACT"
+    logger = logger
+
+    //}
 }

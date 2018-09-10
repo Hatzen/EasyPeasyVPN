@@ -17,9 +17,10 @@ import netact.modules.NetACTCommunicator;
 public class Main {
 
     public static void main(String[] args) {
-        MediationConnector.startSocket();
+        MediationConnector.getInstance().startSocket();
 
         NetACTCommunicator.sendState("Start");
+        NetACTCommunicator.waitForState("Start");
 
         // TODO: TEST COMMAND LINE AGAIN! Espacially callback = null might be a problem..
         if ( args.length > 0) {

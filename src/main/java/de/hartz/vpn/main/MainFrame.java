@@ -361,6 +361,9 @@ public class MainFrame extends JFrame implements ActionListener, Logger, Network
         } else if( OpenVPNParserUtilities.hasConfigFileProblem(line) ) {
             UiUtilities.showAlert("OpenVPN config file seems to be corrupted. \n Rerun configuration or fix it manually.");
             stopVPN();
+        } else if (OpenVPNParserUtilities.hasNetshError(line)) {
+            UiUtilities.showAlert("Problems with the network adapter. \nPlease be sure to start this application with admin or root privileges.");
+            stopVPN();
         } else if (OpenVPNParserUtilities.hasFatalError(line)) {
             stopVPN();
         } else if (OpenVPNParserUtilities.isServerConnectionTimeout(line) && UserData.getInstance().isClientInstallation()) {

@@ -45,6 +45,16 @@ public final class OpenVPNParserUtilities {
 
     /**
      * DEMO DATA:
+     Sat Aug 18 20:11:40 2018 ERROR: netsh command failed: returned error code 1
+     * @param line
+     * @return
+     */
+    public static boolean hasNetshError(String line) {
+        return line.contains("netsh command failed: returned error code 1");
+    }
+
+    /**
+     * DEMO DATA:
      Sat Sep 02 18:25:59 2017 Exiting due to fatal error
      * @param line
      * @return

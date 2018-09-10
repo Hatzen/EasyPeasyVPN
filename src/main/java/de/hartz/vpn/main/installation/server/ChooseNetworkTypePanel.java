@@ -10,13 +10,13 @@ import java.awt.event.ActionListener;
 /**
  * Created by kaiha on 28.05.2017.
  */
-public class ChooseNetworkType extends InstallationPanel implements ActionListener {
+public class ChooseNetworkTypePanel extends InstallationPanel implements ActionListener {
 
     private RadioButtonWithDescription endToEnd;
     private RadioButtonWithDescription siteToEnd;
     private RadioButtonWithDescription siteToSite;
 
-    public ChooseNetworkType() {
+    public ChooseNetworkTypePanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         endToEnd = new RadioButtonWithDescription( "End-to-End", "Connect single devices over different networks." ,this);

@@ -1,4 +1,4 @@
-package de.hartz.vpn.main.installation;
+package de.hartz.vpn.main;
 
 import de.hartz.vpn.helper.LoadingFrame;
 import de.hartz.vpn.mediation.Mediator;
